@@ -186,6 +186,11 @@ class Config:
     def flask_port(self) -> int:
         return int(os.getenv("FLASK_PORT", "5000"))
 
+    @property
+    def dashboard_url(self) -> str:
+        """Dashboard URL（用于邮件等外部链接）"""
+        return os.getenv("DASHBOARD_URL", "http://127.0.0.1:5000")
+
     # === YouTube API配置 ===
     @property
     def youtube_api_key(self) -> Optional[str]:

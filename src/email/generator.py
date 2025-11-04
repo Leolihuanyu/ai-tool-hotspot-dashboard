@@ -68,7 +68,7 @@ class EmailContentGenerator:
     def prepare_template_data(
         self,
         data: Dict[str, Any],
-        dashboard_url: str = "http://127.0.0.1:5000"
+        dashboard_url: str = None
     ) -> Dict[str, Any]:
         """准备模板渲染数据
 
@@ -79,6 +79,10 @@ class EmailContentGenerator:
         Returns:
             模板变量字典
         """
+        # 使用配置的Dashboard URL（如果未提供）
+        if dashboard_url is None:
+            dashboard_url = config.dashboard_url
+
         # 提取Top 10机会
         opportunities = data.get("opportunities", [])
         top_10 = sorted(
@@ -190,7 +194,7 @@ class EmailContentGenerator:
 
     def generate_email_content(
         self,
-        dashboard_url: str = "http://127.0.0.1:5000"
+        dashboard_url: str = None
     ) -> tuple[str, str, str]:
         """生成邮件内容
 
@@ -205,6 +209,10 @@ class EmailContentGenerator:
             json.JSONDecodeError: JSON解析失败
             Exception: 模板渲染失败
         """
+        # 使用配置的Dashboard URL（如果未提供）
+        if dashboard_url is None:
+            dashboard_url = config.dashboard_url
+
         try:
             # 加载数据
             data = self.load_latest_data()
