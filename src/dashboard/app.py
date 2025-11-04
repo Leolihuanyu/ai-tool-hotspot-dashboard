@@ -42,5 +42,10 @@ def run_app():
     app.run(host='0.0.0.0', port=port, debug=debug)
 
 
+# 为生产环境（Gunicorn）创建app实例
+# 这样Gunicorn可以通过 "src.dashboard.app:app" 找到Flask应用对象
+app = create_app()
+
+
 if __name__ == '__main__':
     run_app()
