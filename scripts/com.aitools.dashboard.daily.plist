@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- 任务标识符（必须唯一） -->
+    <key>Label</key>
+    <string>com.aitools.dashboard.daily</string>
+
+    <!-- 脚本路径 - 需要替换为实际路径 -->
+    <key>Program</key>
+    <string>/Users/ri/Projects/ai-tool-hotspot-dashboard/scripts/run_daily_pipeline.sh</string>
+
+    <!-- 工作目录 -->
+    <key>WorkingDirectory</key>
+    <string>/Users/ri/Projects/ai-tool-hotspot-dashboard</string>
+
+    <!-- 标准输出日志 -->
+    <key>StandardOutPath</key>
+    <string>/Users/ri/Projects/ai-tool-hotspot-dashboard/logs/cron/launchd_stdout.log</string>
+
+    <!-- 标准错误日志 -->
+    <key>StandardErrorPath</key>
+    <string>/Users/ri/Projects/ai-tool-hotspot-dashboard/logs/cron/launchd_stderr.log</string>
+
+    <!-- 环境变量 -->
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        <!-- 如果需要额外环境变量，在这里添加 -->
+    </dict>
+
+    <!-- 定时执行时间 - 每天早上8点 -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>8</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <!-- 失败自动重启 -->
+    <key>KeepAlive</key>
+    <false/>
+
+    <!-- 运行条件 - 仅在加载后运行 -->
+    <key>RunAtLoad</key>
+    <false/>
+
+    <!-- 成功退出码 -->
+    <key>SuccessfulExitCodes</key>
+    <array>
+        <integer>0</integer>
+        <integer>2</integer> <!-- Pipeline成功但邮件失败也视为部分成功 -->
+    </array>
+
+    <!-- 失败后等待时间（秒） -->
+    <key>ThrottleInterval</key>
+    <integer>300</integer>
+</dict>
+</plist>

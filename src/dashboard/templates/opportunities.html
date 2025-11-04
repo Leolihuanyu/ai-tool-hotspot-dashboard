@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block title %}机会榜 - AI Opportunity Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2>机会榜</h2>
+    <p>基于痛点、AI工具和热点匹配的Top 10产品机会</p>
+</div>
+
+<div class="opportunities-list">
+    {% for opp in opportunities %}
+    <div class="opportunity-card" data-opp-id="{{ opp.id }}">
+        <div class="opp-header">
+            <div class="opp-rank">
+                {% if loop.index <= 3 %}
+                <span class="rank-badge top-{{ loop.index }}">🏆 Top {{ loop.index }}</span>
+                {% else %}
+                <span class="rank-badge">{{ loop.index }}</span>
+                {% endif %}
+            </div>
+            <div class="opp-score">
+                <span class="score-label">机会评分</span>
+                <span class="score-value">{{ opp.opportunity_score|round(1) }}</span>
+            </div>
+        </div>
+
+        <div class="pain-point-section">
+            <h3>💡 用户痛点</h3>
+            <div class="pain-point-content">
+                <p class="original-text">{{ opp.pain_point_text or '未找到痛点描述' }}</p>
+
+                {% if opp.pain_point_context %}
+                <div class="context">
+                    <strong>上下文:</strong> {{ opp.pain_point_context }}
+                </div>
+                {% endif %}
+
+                {% if opp.pain_point_keywords %}
+                <div class="keywords">
+                    <strong>关键词:</strong>
+                    {% for keyword in opp.pain_point_keywords %}
+                    <span class="keyword-tag">{{ keyword }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if opp.pain_point_confidence %}
+                <div class="confidence">
+                    <span class="confidence-label">置信度:</span>
+                    <span class="confidence-value">{{ (opp.pain_point_confidence * 100)|int }}%</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="mvp-section">
+            <h3>🚀 MVP建议</h3>
+            <button class="expand-btn" onclick="toggleSection(this, 'mvp-{{ loop.index }}')">
+                <span class="expand-icon">▶</span> 展开查看详情
+            </button>
+            <div class="mvp-content collapsed" id="mvp-{{ loop.index }}">
+                <div class="mvp-cn">
+                    <h4>中文建议:</h4>
+                    <p>{{ opp.mvp_suggestion_cn or '待生成' }}</p>
+                </div>
+                <div class="mvp-ja">
+                    <h4>日文建議:</h4>
+                    <p>{{ opp.mvp_suggestion_ja or '待生成' }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="related-section">
+            <h3>🔗 相关资源</h3>
+            <button class="expand-btn" onclick="toggleSection(this, 'related-{{ loop.index }}')">
+                <span class="expand-icon">▶</span> 展开查看
+            </button>
+            <div class="related-content collapsed" id="related-{{ loop.index }}">
+                {% if opp.related_tools %}
+                <div class="related-tools">
+                    <h4>相关AI工具 ({{ opp.related_tools|length }}):</h4>
+                    <ul class="tools-list">
+                        {% for tool in opp.related_tools[:5] %}
+                        <li>
+                            <strong>{{ tool.name }}</strong> - {{ tool.description[:100] }}...
+                            <span class="pricing">{{ tool.pricing_model }}</span>
+                            {% if tool.url %}
+                            <a href="{{ tool.url }}" target="_blank" class="btn-tiny">访问</a>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                {% if opp.related_topics %}
+                <div class="related-topics">
+                    <h4>相关热点 ({{ opp.related_topics|length }}):</h4>
+                    <ul class="topics-list">
+                        {% for topic in opp.related_topics[:5] %}
+                        <li>
+                            <strong>{{ topic.title }}</strong>
+                            <span class="heat-badge">🔥 {{ topic.heat_score|round(1) }}</span>
+                            {% if topic.url %}
+                            <a href="{{ topic.url }}" target="_blank" class="btn-tiny">查看</a>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="scores-section">
+            <h3>📊 评分详情</h3>
+            <button class="expand-btn" onclick="toggleSection(this, 'scores-{{ loop.index }}')">
+                <span class="expand-icon">▶</span> 展开查看
+            </button>
+            <div class="scores-content collapsed" id="scores-{{ loop.index }}">
+                {% if opp.scores %}
+                <div class="score-breakdown">
+                    {% for dimension, score in opp.scores.items() %}
+                    <div class="score-item">
+                        <span class="dimension-name">{{ dimension }}:</span>
+                        <div class="score-bar">
+                            <div class="score-fill" style="width: {{ (score * 10)|int }}%"></div>
+                        </div>
+                        <span class="dimension-value">{{ score|round(1) }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="tags-section">
+            {% for tag in opp.tags[:8] %}
+            <span class="tag">{{ tag }}</span>
+            {% endfor %}
+        </div>
+
+        <div class="card-footer">
+            <span class="quality-score">数据质量: {{ (opp.data_quality_score * 100)|int }}%</span>
+            <span class="timestamp">生成时间: {{ opp.timestamp[:10] }}</span>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% if not opportunities %}
+    <div class="empty-state">
+        <p>暂无机会数据。请先运行数据抓取和处理流程。</p>
+        <code>python -m src.cli.main run-pipeline</code>
+    </div>
+    {% endif %}
+</div>
+
+<script src="{{ url_for('static', filename='js/opportunities.js') }}"></script>
+{% endblock %}

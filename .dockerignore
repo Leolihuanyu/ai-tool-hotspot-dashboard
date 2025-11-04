@@ -1,0 +1,81 @@
+# Python相关
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# 虚拟环境
+venv/
+env/
+ENV/
+.venv
+
+# IDE和编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# 测试和覆盖率
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+.tox/
+
+# 文档和规范
+docs/
+specs/
+*.md
+!README.md
+
+# 环境变量文件（不要复制到容器）
+.env
+.env.local
+.env.*.local
+
+# 数据文件（由GitHub Actions提供或容器内生成）
+data/*.json
+data/archive/
+data/*.sqlite
+data/*.db
+
+# 日志文件
+*.log
+logs/
+
+# 临时文件
+tmp/
+temp/
+*.tmp
+
+# macOS launchd配置
+*.plist
+
+# 测试文件
+test_*.py
+tests/
+*_test.py
+
+# CI/CD配置
+.github/
+.gitlab-ci.yml
+
+# Render配置（已在仓库根目录）
+render.yaml
+
+# 脚本（可能不需要在容器中）
+scripts/
+Makefile

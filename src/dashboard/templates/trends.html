@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}热点榜 - AI Opportunity Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2>热点榜</h2>
+    <p>最新热点话题和趋势(共 {{ total }} 条)</p>
+</div>
+
+<div class="filters">
+    <label>数据源筛选:</label>
+    <select id="source-filter" onchange="filterBySource(this.value)">
+        <option value="">全部</option>
+        {% for source in sources %}
+        <option value="{{ source }}" {% if current_source == source %}selected{% endif %}>{{ source }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<div class="trends-grid">
+    {% for topic in topics %}
+    <div class="trend-card">
+        <div class="trend-header">
+            <h3>{{ topic.title }}</h3>
+            <span class="heat-score">🔥 {{ topic.heat_score|round(1) }}</span>
+        </div>
+
+        <p class="source-badge">{{ topic.source }}</p>
+
+        {% if topic.trend_direction %}
+        <div class="trend-direction">
+            {% if topic.trend_direction == 'rising' %}
+            <span class="trend-badge rising">📈 上升</span>
+            {% elif topic.trend_direction == 'falling' %}
+            <span class="trend-badge falling">📉 下降</span>
+            {% else %}
+            <span class="trend-badge stable">➡️ 稳定</span>
+            {% endif %}
+
+            {% if topic.trend_velocity %}
+            <span class="velocity">{{ topic.trend_velocity|round(1) }}%</span>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <p class="description">{{ topic.description[:150] }}...</p>
+
+        <div class="summary-section">
+            <h4>中文摘要:</h4>
+            <p>{{ topic.summary_cn or '待生成' }}</p>
+        </div>
+
+        <div class="summary-section">
+            <h4>日文摘要:</h4>
+            <p>{{ topic.summary_ja or '待生成' }}</p>
+        </div>
+
+        <div class="tags">
+            {% for tag in topic.tags[:5] %}
+            <span class="tag">{{ tag }}</span>
+            {% endfor %}
+        </div>
+
+        {% if topic.platforms %}
+        <div class="platforms">
+            <strong>出现平台:</strong>
+            {% for platform in topic.platforms %}
+            <span class="platform-badge">{{ platform }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="card-footer">
+            <span class="quality-score">质量: {{ (topic.data_quality_score * 100)|int }}%</span>
+            <span class="timestamp">{{ topic.timestamp[:10] }}</span>
+            <a href="{{ topic.url }}" target="_blank" class="btn-small">查看原文</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if total > per_page %}
+<div class="pagination">
+    {% if page > 1 %}
+    <a href="/trends?page={{ page - 1 }}{% if current_source %}&source={{ current_source }}{% endif %}" class="btn-small">上一页</a>
+    {% endif %}
+
+    <span class="page-info">第 {{ page }} 页 / 共 {{ ((total - 1) // per_page + 1) }} 页</span>
+
+    {% if page * per_page < total %}
+    <a href="/trends?page={{ page + 1 }}{% if current_source %}&source={{ current_source }}{% endif %}" class="btn-small">下一页</a>
+    {% endif %}
+</div>
+{% endif %}
+
+<script src="/static/js/trends.js"></script>
+{% endblock %}

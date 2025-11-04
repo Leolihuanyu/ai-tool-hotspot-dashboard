@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}AI工具榜 - AI Opportunity Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h2>AI工具榜</h2>
+    <p>最新AI工具和产品(共 {{ total }} 条)</p>
+</div>
+<div class="filters">
+    <label>数据源筛选:</label>
+    <select id="source-filter" onchange="filterBySource(this.value)">
+        <option value="">全部</option>
+        {% for source in sources %}
+        <option value="{{ source }}" {% if current_source == source %}selected{% endif %}>{{ source }}</option>
+        {% endfor %}
+    </select>
+</div>
+<div class="tools-grid">
+    {% for tool in tools %}
+    <div class="tool-card">
+        <h3>{{ tool.name }}</h3>
+        <p class="source-badge">{{ tool.source }}</p>
+        <p class="description">{{ tool.description[:150] }}...</p>
+        <div class="summary-section">
+            <h4>中文摘要:</h4>
+            <p>{{ tool.summary_cn or '待生成' }}</p>
+        </div>
+        <div class="tags">
+            {% for tag in tool.tags[:3] %}
+            <span class="tag">{{ tag }}</span>
+            {% endfor %}
+        </div>
+        <div class="card-footer">
+            <span class="quality-score">质量: {{ (tool.data_quality_score * 100)|int }}%</span>
+            <a href="{{ tool.url }}" target="_blank" class="btn-small">访问</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<script>
+function filterBySource(source) {
+    if (source) {window.location.href = '/tools?source=' + encodeURIComponent(source);
+    } else {window.location.href = '/tools';}
+}
+</script>
+{% endblock %}

@@ -1,0 +1,201 @@
+"""êhï1
+
+I@	WebLbï1Æþýp
+"""
+
+import json
+import os
+from flask import render_template, jsonify, request
+from src.utils.logger import get_logger
+
+logger = get_logger(__name__)
+
+
+def load_latest_data():
+    """}°pn
+
+    Returns:
+        +ai_tools, trending_topics, opportunitiesWx
+    """
+    try:
+        data_path = os.path.join('data', 'latest.json')
+
+        if not os.path.exists(data_path):
+            logger.warning(f"Data file not found: {data_path}")
+            return {
+                'ai_tools': [],
+                'trending_topics': [],
+                'pain_points': [],
+                'opportunities': []
+            }
+
+        with open(data_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        return data
+
+    except Exception as e:
+        logger.error(f"Failed to load data: {e}")
+        return {
+            'ai_tools': [],
+            'trending_topics': [],
+            'pain_points': [],
+            'opportunities': []
+        }
+
+
+def register_routes(app):
+    """è@	ï1
+
+    Args:
+        app: Flask(
+    """
+
+    @app.route('/')
+    def index():
+        """u"""
+        try:
+            data = load_latest_data()
+
+            stats = {
+                'ai_tools_count': len(data.get('ai_tools', [])),
+                'trending_topics_count': len(data.get('trending_topics', [])),
+                'opportunities_count': len(data.get('opportunities', []))
+            }
+
+            return render_template('index.html', stats=stats)
+
+        except Exception as e:
+            logger.error(f"Error in index route: {e}")
+            return render_template('error.html', error=str(e)), 500
+
+    @app.route('/tools')
+    def tools():
+        """AIåwub"""
+        try:
+            data = load_latest_data()
+            tools_list = data.get('ai_tools', [])
+
+            # ·ÖåâÂp
+            source_filter = request.args.get('source', None)
+            page = int(request.args.get('page', 1))
+            per_page = int(request.args.get('per_page', 30))
+
+            # e[	
+            if source_filter:
+                tools_list = [t for t in tools_list if t.get('source') == source_filter]
+
+            # 	öô(°(M)
+            tools_list.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
+
+            # u
+            total = len(tools_list)
+            start = (page - 1) * per_page
+            end = start + per_page
+            tools_page = tools_list[start:end]
+
+            # ·Ö@	ï(pn
+            all_sources = list(set(t.get('source') for t in data.get('ai_tools', [])))
+
+            return render_template(
+                'tools.html',
+                tools=tools_page,
+                total=total,
+                page=page,
+                per_page=per_page,
+                sources=all_sources,
+                current_source=source_filter
+            )
+
+        except Exception as e:
+            logger.error(f"Error in tools route: {e}")
+            return render_template('error.html', error=str(e)), 500
+
+    @app.route('/trends')
+    def trends():
+        """í¹ub"""
+        try:
+            data = load_latest_data()
+            topics_list = data.get('trending_topics', [])
+
+            # ·ÖåâÂp
+            source_filter = request.args.get('source', None)
+            page = int(request.args.get('page', 1))
+            per_page = int(request.args.get('per_page', 30))
+
+            # e[	
+            if source_filter:
+                topics_list = [t for t in topics_list if t.get('source') == source_filter]
+
+            # 	í¦
+            topics_list.sort(key=lambda x: x.get('heat_score', 0), reverse=True)
+
+            # u
+            total = len(topics_list)
+            start = (page - 1) * per_page
+            end = start + per_page
+            topics_page = topics_list[start:end]
+
+            # ·Ö@	ï(pn
+            all_sources = list(set(t.get('source') for t in data.get('trending_topics', [])))
+
+            return render_template(
+                'trends.html',
+                topics=topics_page,
+                total=total,
+                page=page,
+                per_page=per_page,
+                sources=all_sources,
+                current_source=source_filter
+            )
+
+        except Exception as e:
+            logger.error(f"Error in trends route: {e}")
+            return render_template('error.html', error=str(e)), 500
+
+    @app.route('/opportunities')
+    def opportunities():
+        """:ub"""
+        try:
+            data = load_latest_data()
+            opps_list = data.get('opportunities', [])
+
+            # 	opportunity_score,ÖTop 10
+            opps_list.sort(key=lambda x: x.get('opportunity_score', 0), reverse=True)
+            top_opportunities = opps_list[:10]
+
+            return render_template(
+                'opportunities.html',
+                opportunities=top_opportunities
+            )
+
+        except Exception as e:
+            logger.error(f"Error in opportunities route: {e}")
+            return render_template('error.html', error=str(e)), 500
+
+    @app.route('/api/v1/tools')
+    def api_tools():
+        """API: ·ÖAIåwh"""
+        try:
+            data = load_latest_data()
+            tools_list = data.get('ai_tools', [])
+
+            return jsonify({
+                'success': True,
+                'count': len(tools_list),
+                'data': tools_list
+            })
+
+        except Exception as e:
+            logger.error(f"Error in API tools route: {e}")
+            return jsonify({'success': False, 'error': str(e)}), 500
+
+    @app.route('/health')
+    def health():
+        """e·Àåï¹"""
+        return jsonify({
+            'status': 'healthy',
+            'service': 'ai-tool-hotspot-dashboard'
+        })
+
+    logger.info("@	ï1è")

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日AI工具机会报告 / Daily AI Tool Opportunity Report</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        .header {
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 24px;
+        }
+        .header .subtitle {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .summary-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+        }
+        .stat-box {
+            text-align: center;
+        }
+        .stat-box .number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        .stat-box .label {
+            font-size: 12px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+        }
+        .opportunity-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #fafafa;
+        }
+        .opportunity-card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: box-shadow 0.3s ease;
+        }
+        .opportunity-rank {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            line-height: 30px;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .opportunity-score {
+            float: right;
+            font-size: 18px;
+            font-weight: bold;
+            color: #FF9800;
+        }
+        .pain-point {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .summary {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #ffffff;
+            border-left: 3px solid #2196F3;
+        }
+        .summary-cn {
+            margin-bottom: 8px;
+            color: #555;
+        }
+        .summary-ja {
+            color: #777;
+            font-style: italic;
+        }
+        .mvp-suggestion {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #e8f5e9;
+            border-radius: 4px;
+            border-left: 3px solid #4CAF50;
+        }
+        .mvp-title {
+            font-weight: bold;
+            color: #2e7d32;
+            margin-bottom: 8px;
+        }
+        .mvp-content {
+            font-size: 14px;
+            color: #555;
+        }
+        .related-items {
+            margin-top: 15px;
+            font-size: 13px;
+        }
+        .related-label {
+            font-weight: bold;
+            color: #666;
+        }
+        .tag {
+            display: inline-block;
+            background-color: #e3f2fd;
+            color: #1976d2;
+            padding: 3px 8px;
+            border-radius: 3px;
+            margin-right: 5px;
+            margin-top: 5px;
+            font-size: 11px;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 12px;
+        }
+        .cta-button {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .cta-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 标题部分 -->
+        <div class="header">
+            <h1>🚀 每日AI工具机会报告</h1>
+            <div class="subtitle">Daily AI Tool Opportunity Report | {{ date }}</div>
+        </div>
+
+        <!-- 统计摘要 -->
+        <div class="summary-stats">
+            <div class="stat-box">
+                <div class="number">{{ ai_tools_count }}</div>
+                <div class="label">AI Tools</div>
+            </div>
+            <div class="stat-box">
+                <div class="number">{{ trending_topics_count }}</div>
+                <div class="label">Trending Topics</div>
+            </div>
+            <div class="stat-box">
+                <div class="number">{{ pain_points_count }}</div>
+                <div class="label">Pain Points</div>
+            </div>
+            <div class="stat-box">
+                <div class="number">10</div>
+                <div class="label">Top Opportunities</div>
+            </div>
+        </div>
+
+        <!-- Top 10 机会列表 -->
+        <h2 style="color: #2c3e50; margin-bottom: 20px;">📊 Top 10 产品机会</h2>
+
+        {% for opportunity in opportunities %}
+        <div class="opportunity-card">
+            <div>
+                <span class="opportunity-rank">{{ loop.index }}</span>
+                <span class="opportunity-score">{{ "%.1f"|format(opportunity.opportunity_score) }}</span>
+            </div>
+
+            <!-- 痛点描述 -->
+            <div class="pain-point">
+                💡 {{ opportunity.pain_point.original_text[:150] }}{% if opportunity.pain_point.original_text|length > 150 %}...{% endif %}
+            </div>
+
+            <!-- 中日双语摘要 -->
+            <div class="summary">
+                <div class="summary-cn">
+                    <strong>中文:</strong> {{ opportunity.pain_point.summary_cn }}
+                </div>
+                <div class="summary-ja">
+                    <strong>日本語:</strong> {{ opportunity.pain_point.summary_ja }}
+                </div>
+            </div>
+
+            <!-- MVP建议 -->
+            <div class="mvp-suggestion">
+                <div class="mvp-title">🎯 MVP 建议 / MVP Suggestion</div>
+                <div class="mvp-content">
+                    <p><strong>中文:</strong> {{ opportunity.mvp_suggestion_cn }}</p>
+                    <p><strong>日本語:</strong> {{ opportunity.mvp_suggestion_ja }}</p>
+                </div>
+            </div>
+
+            <!-- 相关工具和热点 -->
+            <div class="related-items">
+                {% if opportunity.related_tools %}
+                <div>
+                    <span class="related-label">🔧 相关AI工具:</span>
+                    {% for tool_name in opportunity.related_tools[:3] %}
+                    <span class="tag">{{ tool_name }}</span>
+                    {% endfor %}
+                    {% if opportunity.related_tools|length > 3 %}
+                    <span class="tag">+{{ opportunity.related_tools|length - 3 }} more</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                {% if opportunity.related_topics %}
+                <div style="margin-top: 5px;">
+                    <span class="related-label">📈 相关热点:</span>
+                    {% for topic_title in opportunity.related_topics[:3] %}
+                    <span class="tag">{{ topic_title }}</span>
+                    {% endfor %}
+                    {% if opportunity.related_topics|length > 3 %}
+                    <span class="tag">+{{ opportunity.related_topics|length - 3 }} more</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- 查看详情链接 -->
+            <a href="{{ dashboard_url }}/opportunities/{{ opportunity.id }}" class="cta-button">
+                查看完整详情 View Details
+            </a>
+        </div>
+        {% endfor %}
+
+        <!-- 查看更多按钮 -->
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="{{ dashboard_url }}" class="cta-button" style="background-color: #2196F3;">
+                访问完整仪表板 Visit Full Dashboard
+            </a>
+        </div>
+
+        <!-- 页脚 -->
+        <div class="footer">
+            <p>
+                📅 报告生成时间: {{ generation_time }}<br>
+                📊 数据来源: Futurepedia, ProductHunt, There's an AI for That, Reddit, X, Google Trends<br>
+                🔄 下次更新: 明天 {{ next_update_time }}
+            </p>
+            <p style="margin-top: 15px;">
+                🤖 Generated with <a href="https://claude.com/claude-code" style="color: #4CAF50;">Claude Code</a><br>
+                <em>此邮件由AI工具热点仪表板系统自动发送</em>
+            </p>
+            <p style="margin-top: 15px; font-size: 11px; color: #999;">
+                如需停止接收此邮件,请联系管理员<br>
+                To unsubscribe from this email, please contact the administrator
+            </p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,93 @@
+name: Dashboard健康检查
+
+# 这个工作流定期ping Dashboard，防止Render免费实例休眠
+# Render免费计划：15分钟无活动后休眠
+
+on:
+  # 每14分钟运行一次（保持活跃）
+  # 注意：GitHub Actions最短cron间隔是5分钟
+  schedule:
+    - cron: '*/14 * * * *'  # 每14分钟
+
+  # 支持手动触发
+  workflow_dispatch:
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - name: Ping Dashboard
+        env:
+          DASHBOARD_URL: ${{ secrets.DASHBOARD_URL || 'https://your-app.onrender.com' }}
+        run: |
+          echo "=========================================="
+          echo "Dashboard健康检查"
+          echo "=========================================="
+          echo "URL: ${DASHBOARD_URL}"
+
+          # 发送健康检查请求
+          STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" "${DASHBOARD_URL}/health" --max-time 30 || echo "000")
+
+          echo "状态码: ${STATUS_CODE}"
+
+          if [ "$STATUS_CODE" = "200" ]; then
+            echo "✓ Dashboard运行正常"
+            exit 0
+          elif [ "$STATUS_CODE" = "000" ]; then
+            echo "⚠️ 请求超时或无法连接"
+            echo "这可能是因为Dashboard正在冷启动（首次启动需要10-30秒）"
+            exit 0  # 不失败，因为冷启动是正常的
+          else
+            echo "⚠️ 异常状态码: ${STATUS_CODE}"
+            exit 0  # 不失败，只是记录
+          fi
+
+      - name: 检查结果
+        if: always()
+        run: |
+          echo "=========================================="
+          echo "健康检查完成"
+          echo "=========================================="
+          echo ""
+          echo "注意事项："
+          echo "1. 如果不需要保持Dashboard 24/7活跃，可以禁用此工作流"
+          echo "2. Render免费计划有750小时/月的运行时限"
+          echo "3. 保持活跃会消耗更多运行时间"
+          echo "4. 首次访问时仍可能需要等待冷启动"
+          echo ""
+          echo "如何禁用此工作流："
+          echo "- 在GitHub仓库设置中禁用此Action"
+          echo "- 或删除此文件: .github/workflows/health-check.yml"
+
+# 注意事项:
+#
+# 1. 配置Dashboard URL:
+#    - 在GitHub仓库设置中添加Secret: DASHBOARD_URL
+#    - 路径: Settings > Secrets and variables > Actions > New repository secret
+#    - 值: https://your-app-name.onrender.com
+#
+# 2. 是否需要此工作流？
+#    优点:
+#    - 保持Dashboard快速响应
+#    - 减少用户等待时间
+#
+#    缺点:
+#    - 消耗GitHub Actions分钟数（免费2000分钟/月，足够使用）
+#    - 消耗Render运行时间（750小时/月，约31天）
+#
+# 3. 推荐策略:
+#    - 如果您只是偶尔查看Dashboard，可以禁用此工作流
+#    - 如果希望随时快速访问，保持启用
+#    - 中间方案：修改cron为每小时运行（'0 * * * *'）
+#
+# 4. Render休眠说明:
+#    - 免费实例15分钟无活动后休眠
+#    - 休眠后首次访问需要10-30秒冷启动
+#    - 此工作流通过定期请求防止休眠
+#
+# 5. 如何禁用:
+#    方法1: 在GitHub Actions页面禁用workflow
+#    方法2: 删除此文件
+#    方法3: 将on.schedule部分注释掉

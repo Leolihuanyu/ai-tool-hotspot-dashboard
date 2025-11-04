@@ -1,0 +1,121 @@
+# Render.com 部署配置
+# 文档: https://render.com/docs/infrastructure-as-code
+
+services:
+  # Web服务 - Flask Dashboard
+  - type: web
+    name: ai-tool-hotspot-dashboard
+    runtime: docker
+    region: singapore  # 可选: oregon, frankfurt, singapore等
+    plan: free  # 免费计划
+    branch: main  # 或者您的默认分支名
+
+    # 健康检查
+    healthCheckPath: /health
+
+    # 环境变量（需要在Render Dashboard中配置敏感信息）
+    envVars:
+      # Flask配置
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_DEBUG
+        value: false
+      - key: FLASK_PORT
+        value: 5000
+
+      # 数据库路径
+      - key: DATABASE_PATH
+        value: /data/db.sqlite
+
+      # LLM配置（需要在Render Dashboard设置）
+      - key: LLM_PROVIDER
+        sync: false  # 手动在Dashboard配置
+      - key: LLM_MODEL
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+
+      # 邮件配置（需要在Render Dashboard设置）
+      - key: EMAIL_PROVIDER
+        sync: false
+      - key: SMTP_SERVER
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USERNAME
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: EMAIL_TO_LIST
+        sync: false
+
+      # API Keys（可选，在Dashboard配置）
+      - key: REDDIT_CLIENT_ID
+        sync: false
+      - key: REDDIT_CLIENT_SECRET
+        sync: false
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: YOUTUBE_API_KEY
+        sync: false
+
+      # 爬虫配置（默认值）
+      - key: ENABLE_SCRAPER_FUTUREPEDIA
+        value: true
+      - key: ENABLE_SCRAPER_PRODUCTHUNT
+        value: true
+      - key: ENABLE_SCRAPER_THERESANAI
+        value: false  # 默认禁用（需要JS渲染）
+      - key: ENABLE_SCRAPER_REDDIT
+        value: true
+      - key: ENABLE_SCRAPER_HACKERNEWS
+        value: true
+      - key: ENABLE_SCRAPER_GITHUB
+        value: true
+      - key: ENABLE_SCRAPER_TIKTOK
+        value: true
+      - key: ENABLE_SCRAPER_YOUTUBE
+        value: true
+      - key: ENABLE_SCRAPER_X_TWITTER
+        value: true
+      - key: ENABLE_SCRAPER_GOOGLE_TRENDS
+        value: true
+
+    # 持久化存储（用于SQLite数据库）
+    # 注意：免费计划不支持持久化磁盘，数据存储在GitHub仓库
+    # 如果需要持久化，需要升级到付费计划
+
+    # 自动部署设置
+    autoDeploy: true  # 推送到分支时自动部署
+
+# 注意事项:
+# 1. 免费计划限制:
+#    - 750小时/月运行时间
+#    - 512MB RAM
+#    - 15分钟无活动后休眠
+#    - 首次访问需要10-30秒冷启动
+#
+# 2. 环境变量配置:
+#    - 敏感信息(API Keys等)需要在Render Dashboard中手动配置
+#    - 访问: Dashboard > Service > Environment > Add Environment Variable
+#
+# 3. 数据存储策略:
+#    - Dashboard读取GitHub Actions生成的data/latest.json
+#    - 不依赖本地SQLite（除非升级到付费计划）
+#    - GitHub Actions每天自动提交数据到仓库
+#
+# 4. 部署步骤:
+#    a. 推送代码到GitHub
+#    b. 在Render.com创建New Web Service
+#    c. 连接GitHub仓库
+#    d. Render自动检测render.yaml
+#    e. 在Dashboard配置环境变量
+#    f. 点击"Create Web Service"
+#
+# 5. 自定义域名（可选）:
+#    - 免费计划支持自定义域名
+#    - 在Service Settings > Custom Domain添加

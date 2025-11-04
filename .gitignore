@@ -31,6 +31,8 @@ MANIFEST
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
+.claude/
+.specify/
 
 # Installer logs
 pip-log.txt
@@ -205,3 +207,26 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# === 项目特定 ===
+# 数据文件
+data/
+logs/
+*.sqlite
+*.sqlite-journal
+
+# 环境变量文件
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+
+# macOS
+.DS_Store
+
+# 临时文件
+*.tmp
+*.swp
+*.bak
