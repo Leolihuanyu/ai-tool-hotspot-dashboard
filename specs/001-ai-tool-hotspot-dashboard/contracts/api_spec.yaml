@@ -1,0 +1,840 @@
+openapi: 3.0.3
+info:
+  title: AI工具与热点机会发现仪表板 API
+  description: |
+    Flask Web仪表板的REST API规范，提供AI工具榜、热点榜、机会榜的数据访问接口。
+
+    **设计原则**:
+    - RESTful设计，资源导向
+    - JSON格式响应
+    - 支持分页、筛选、排序
+    - 符合宪法原则II（统一数据模型）
+
+    **认证**: 初期无需认证（单用户/内部使用），未来可扩展API Key认证
+  version: 1.1.0
+  contact:
+    name: AI Opportunity Matcher
+    url: https://github.com/yourproject
+
+servers:
+  - url: http://localhost:5000/api/v1
+    description: 本地开发环境
+  - url: https://your-domain.com/api/v1
+    description: 生产环境
+
+tags:
+  - name: AI Tools
+    description: AI工具数据接口
+  - name: Trending Topics
+    description: 热点话题数据接口
+  - name: Pain Points
+    description: 用户痛点数据接口
+  - name: Opportunities
+    description: 产品机会数据接口
+  - name: System
+    description: 系统状态和元数据接口
+
+paths:
+  /health:
+    get:
+      summary: 健康检查
+      description: 检查API服务和数据库状态
+      tags:
+        - System
+      responses:
+        '200':
+          description: 服务正常
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "healthy"
+                  timestamp:
+                    type: string
+                    format: date-time
+                  data_last_updated:
+                    type: string
+                    format: date-time
+                    description: latest.json最后更新时间
+                  database_status:
+                    type: string
+                    example: "connected"
+
+  /ai-tools:
+    get:
+      summary: 获取AI工具列表
+      description: |
+        获取AI工具榜数据，支持分页、筛选、排序。
+        对应仪表板"AI工具榜"页面（FR-011）。
+      tags:
+        - AI Tools
+      parameters:
+        - name: page
+          in: query
+          description: 页码（从1开始）
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: per_page
+          in: query
+          description: 每页记录数
+          required: false
+          schema:
+            type: integer
+            default: 30
+            minimum: 1
+            maximum: 100
+        - name: source
+          in: query
+          description: 按数据来源筛选（多选用逗号分隔）
+          required: false
+          schema:
+            type: string
+            example: "Futurepedia,ProductHunt"
+        - name: tags
+          in: query
+          description: 按标签筛选（多选用逗号分隔，OR逻辑）
+          required: false
+          schema:
+            type: string
+            example: "image-generation,productivity"
+        - name: pricing_model
+          in: query
+          description: 按定价模式筛选
+          required: false
+          schema:
+            type: string
+            enum: [free, freemium, paid, subscription]
+        - name: sort_by
+          in: query
+          description: 排序字段
+          required: false
+          schema:
+            type: string
+            enum: [timestamp, name, data_quality_score]
+            default: timestamp
+        - name: sort_order
+          in: query
+          description: 排序顺序
+          required: false
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+      responses:
+        '200':
+          description: 成功返回AI工具列表
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AITool'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                  filters_applied:
+                    type: object
+                    description: 当前应用的筛选条件
+        '400':
+          description: 请求参数错误
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /ai-tools/{id}:
+    get:
+      summary: 获取单个AI工具详情
+      description: 通过ID获取AI工具的完整信息
+      tags:
+        - AI Tools
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: AI工具的UUID
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: 成功返回AI工具详情
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AITool'
+        '404':
+          description: AI工具不存在
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /trending-topics:
+    get:
+      summary: 获取热点话题列表
+      description: |
+        获取热点榜数据，支持分页、筛选、排序。
+        对应仪表板"热点榜"页面（FR-012）。
+      tags:
+        - Trending Topics
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 30
+        - name: source
+          in: query
+          description: 按平台筛选（多选用逗号分隔）
+          schema:
+            type: string
+            example: "TikTok,Reddit"
+        - name: trend_direction
+          in: query
+          description: 按趋势方向筛选
+          schema:
+            type: string
+            enum: [rising, falling, stable]
+        - name: min_heat_score
+          in: query
+          description: 最低热度分数（0-100）
+          schema:
+            type: number
+            minimum: 0
+            maximum: 100
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum: [heat_score, timestamp, trend_velocity]
+            default: heat_score
+        - name: sort_order
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+      responses:
+        '200':
+          description: 成功返回热点话题列表
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TrendingTopic'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  /trending-topics/{id}:
+    get:
+      summary: 获取单个热点话题详情
+      tags:
+        - Trending Topics
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: 成功返回热点话题详情
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrendingTopic'
+        '404':
+          description: 热点话题不存在
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /pain-points:
+    get:
+      summary: 获取用户痛点列表
+      description: 获取从评论中提取的用户痛点数据
+      tags:
+        - Pain Points
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 30
+        - name: source
+          in: query
+          description: 按来源筛选
+          schema:
+            type: string
+            example: "Reddit,X"
+        - name: min_confidence_score
+          in: query
+          description: 最低置信度评分（0-1）
+          schema:
+            type: number
+            minimum: 0
+            maximum: 1
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum: [engagement_score, confidence_score, timestamp]
+            default: engagement_score
+      responses:
+        '200':
+          description: 成功返回用户痛点列表
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserPainPoint'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  /opportunities:
+    get:
+      summary: 获取产品机会列表
+      description: |
+        获取Top 10产品机会榜数据，支持分页、筛选、排序。
+        对应仪表板"机会榜"页面（FR-013）。
+      tags:
+        - Opportunities
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 10
+            maximum: 50
+        - name: min_score
+          in: query
+          description: 最低机会评分（0-100），默认60（FR-013要求）
+          schema:
+            type: number
+            minimum: 0
+            maximum: 100
+            default: 60
+        - name: tags
+          in: query
+          description: 按标签筛选
+          schema:
+            type: string
+        - name: sort_by
+          in: query
+          schema:
+            type: string
+            enum: [opportunity_score, timestamp]
+            default: opportunity_score
+      responses:
+        '200':
+          description: 成功返回产品机会列表
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Opportunity'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  /opportunities/{id}:
+    get:
+      summary: 获取单个产品机会详情
+      description: |
+        返回机会详情，包含关联的痛点、AI工具、热点话题的完整信息（展开外键）。
+        对应User Story 3 Acceptance Scenario 2（FR-013）。
+      tags:
+        - Opportunities
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: expand
+          in: query
+          description: 是否展开关联实体（默认true）
+          schema:
+            type: boolean
+            default: true
+      responses:
+        '200':
+          description: 成功返回产品机会详情
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Opportunity'
+                  - type: object
+                    properties:
+                      pain_point:
+                        $ref: '#/components/schemas/UserPainPoint'
+                      related_tools_details:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/AITool'
+                      related_topics_details:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/TrendingTopic'
+        '404':
+          description: 产品机会不存在
+
+  /scraping-logs:
+    get:
+      summary: 获取数据抓取日志
+      description: |
+        获取所有数据源的抓取日志，用于监控和调试（FR-017）。
+        符合宪法原则VI（可重现性）。
+      tags:
+        - System
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: source
+          in: query
+          description: 按数据源筛选
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: 按状态筛选
+          schema:
+            type: string
+            enum: [success, failed, partial]
+        - name: since
+          in: query
+          description: 起始时间（ISO 8601）
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: 成功返回抓取日志列表
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ScrapingLog'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+components:
+  schemas:
+    AITool:
+      type: object
+      description: AI工具实体（对应data-model.md）
+      required:
+        - id
+        - name
+        - description
+        - source
+        - url
+        - timestamp
+        - tags
+        - features
+        - pricing_model
+        - summary_cn
+        - summary_ja
+        - data_quality_score
+        - schema_version
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        name:
+          type: string
+          example: "Midjourney"
+        description:
+          type: string
+          example: "AI-powered image generation from text prompts"
+        source:
+          type: string
+          enum: [Futurepedia, ProductHunt, "There's an AI for That"]
+        url:
+          type: string
+          format: uri
+          example: "https://www.midjourney.com"
+        timestamp:
+          type: string
+          format: date-time
+          example: "2025-11-03T10:30:00Z"
+        tags:
+          type: array
+          items:
+            type: string
+          example: ["image-generation", "creativity", "design"]
+        features:
+          type: array
+          items:
+            type: string
+          example: ["text-to-image", "style-transfer", "batch-processing"]
+        pricing_model:
+          type: string
+          enum: [free, freemium, paid, subscription]
+          example: "subscription"
+        summary_cn:
+          type: string
+          maxLength: 200
+          example: "基于AI的文本生成图像工具，支持多种艺术风格"
+        summary_ja:
+          type: string
+          maxLength: 200
+          example: "テキストから画像を生成するAIツール、複数のアートスタイルをサポート"
+        data_quality_score:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.95
+        schema_version:
+          type: string
+          example: "1.1"
+
+    TrendingTopic:
+      type: object
+      description: 热点话题实体（对应data-model.md）
+      required:
+        - id
+        - title
+        - description
+        - source
+        - url
+        - timestamp
+        - heat_score
+        - trend_direction
+        - tags
+        - summary_cn
+        - summary_ja
+        - data_quality_score
+        - schema_version
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          example: "How to use ChatGPT for coding"
+        description:
+          type: string
+        source:
+          type: string
+          enum: [TikTok, YouTube, X, Reddit, "Google Trends"]
+        url:
+          type: string
+          format: uri
+        timestamp:
+          type: string
+          format: date-time
+        heat_score:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+          example: 85.5
+        trend_direction:
+          type: string
+          enum: [rising, falling, stable]
+          example: "rising"
+        tags:
+          type: array
+          items:
+            type: string
+        summary_cn:
+          type: string
+          maxLength: 200
+        summary_ja:
+          type: string
+          maxLength: 200
+        data_quality_score:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+        schema_version:
+          type: string
+          example: "1.1"
+        platforms:
+          type: array
+          items:
+            type: string
+          description: 可选，同一热点在多个平台出现时记录
+          nullable: true
+        trend_velocity:
+          type: number
+          format: float
+          description: 可选，热度增长率百分比
+          nullable: true
+          example: 35.2
+
+    UserPainPoint:
+      type: object
+      description: 用户痛点实体（对应data-model.md）
+      required:
+        - id
+        - original_text
+        - context_title
+        - extracted_keywords
+        - source
+        - url
+        - timestamp
+        - engagement_score
+        - confidence_score
+        - tags
+        - summary_cn
+        - summary_ja
+        - data_quality_score
+        - schema_version
+      properties:
+        id:
+          type: string
+          format: uuid
+        original_text:
+          type: string
+          example: "I need a tool to automatically generate thumbnails for my YouTube videos"
+        context_title:
+          type: string
+          example: "Best AI tools for content creators in 2025"
+        extracted_keywords:
+          type: array
+          items:
+            type: string
+          example: ["tool", "automatically", "generate", "thumbnails", "YouTube"]
+        source:
+          type: string
+          enum: [Reddit, X, ProductHunt]
+        url:
+          type: string
+          format: uri
+        timestamp:
+          type: string
+          format: date-time
+        engagement_score:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+          example: 72.0
+        confidence_score:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.85
+        tags:
+          type: array
+          items:
+            type: string
+        summary_cn:
+          type: string
+          maxLength: 200
+        summary_ja:
+          type: string
+          maxLength: 200
+        data_quality_score:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+        schema_version:
+          type: string
+          example: "1.1"
+        author_metadata:
+          type: object
+          description: 可选，作者元信息
+          nullable: true
+          additionalProperties: true
+          example:
+            account_type: "verified"
+            followers: 5000
+            karma: 12000
+
+    Opportunity:
+      type: object
+      description: 产品机会实体（对应data-model.md）
+      required:
+        - id
+        - pain_point_id
+        - related_tools
+        - related_topics
+        - opportunity_score
+        - mvp_suggestion_cn
+        - mvp_suggestion_ja
+        - timestamp
+        - tags
+        - data_quality_score
+        - schema_version
+      properties:
+        id:
+          type: string
+          format: uuid
+        pain_point_id:
+          type: string
+          format: uuid
+          description: 关联的痛点ID（外键）
+        related_tools:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: 关联的AI工具ID列表
+        related_topics:
+          type: array
+          items:
+            type: string
+            format: uuid
+          description: 关联的热点话题ID列表
+        opportunity_score:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+          example: 78.5
+        mvp_suggestion_cn:
+          type: string
+          example: "开发一个基于AI的YouTube缩略图生成器，支持一键生成多种风格。技术栈：Flask + Stable Diffusion API，预计2周MVP"
+        mvp_suggestion_ja:
+          type: string
+          example: "AIベースのYouTubeサムネイル生成ツールを開発し、ワンクリックで複数のスタイルをサポート。技術スタック：Flask + Stable Diffusion API、2週間でMVP"
+        timestamp:
+          type: string
+          format: date-time
+        tags:
+          type: array
+          items:
+            type: string
+        data_quality_score:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+        schema_version:
+          type: string
+          example: "1.1"
+
+    ScrapingLog:
+      type: object
+      description: 数据抓取日志（对应data-model.md）
+      required:
+        - id
+        - source
+        - status
+        - records_count
+        - errors
+        - duration_seconds
+        - timestamp
+      properties:
+        id:
+          type: string
+          format: uuid
+        source:
+          type: string
+          example: "Futurepedia"
+        status:
+          type: string
+          enum: [success, failed, partial]
+        records_count:
+          type: integer
+          minimum: 0
+          example: 45
+        errors:
+          type: array
+          items:
+            type: string
+          example: ["Timeout after 3 retries"]
+        duration_seconds:
+          type: number
+          format: float
+          minimum: 0
+          example: 12.5
+        timestamp:
+          type: string
+          format: date-time
+
+    Pagination:
+      type: object
+      description: 分页元数据
+      properties:
+        current_page:
+          type: integer
+          example: 1
+        per_page:
+          type: integer
+          example: 30
+        total_pages:
+          type: integer
+          example: 5
+        total_records:
+          type: integer
+          example: 142
+        has_next:
+          type: boolean
+          example: true
+        has_prev:
+          type: boolean
+          example: false
+
+    Error:
+      type: object
+      description: 错误响应
+      properties:
+        error:
+          type: string
+          example: "Invalid parameter: source must be one of [Futurepedia, ProductHunt, There's an AI for That]"
+        status_code:
+          type: integer
+          example: 400
+        timestamp:
+          type: string
+          format: date-time

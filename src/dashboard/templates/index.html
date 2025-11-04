@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}首页 - AI Opportunity Dashboard{% endblock %}
+{% block content %}
+<div class="hero">
+    <h2>AI工具与热点机会发现仪表板</h2>
+    <p>每日聚合AI工具、热点话题,发现产品机会</p>
+</div>
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>{{ stats.ai_tools_count }}</h3>
+        <p>AI工具</p>
+        <a href="/tools" class="btn">查看榜单</a>
+    </div>
+    <div class="stat-card">
+        <h3>{{ stats.trending_topics_count }}</h3>
+        <p>热点话题</p>
+        <a href="/trends" class="btn">查看榜单</a>
+    </div>
+    <div class="stat-card">
+        <h3>{{ stats.opportunities_count }}</h3>
+        <p>产品机会</p>
+        <a href="/opportunities" class="btn">查看榜单</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+# === 核心Web框架 ===
+Flask>=3.0.0  # Web仪表板框架
+
+# === HTTP和爬虫 ===
+requests>=2.31.0  # HTTP请求
+beautifulsoup4>=4.12.0  # HTML解析
+feedparser>=6.0.0  # RSS解析
+playwright>=1.40.0  # JavaScript密集型站点爬取（可选）
+
+# === 数据模型和验证 ===
+pydantic>=2.5.0  # 数据模型验证（宪法原则II）
+
+# === 配置管理 ===
+python-dotenv>=1.0.0  # 环境变量管理（宪法原则III）
+
+# === LLM集成 ===
+anthropic>=0.40.0  # Claude API客户端
+openai>=1.0.0  # OpenAI API客户端（可选，可替代Claude）
+
+# === 邮件服务 ===
+sendgrid>=6.12.0  # 邮件发送（research.md推荐）
+
+# === 重试和速率限制 ===
+tenacity>=8.2.0  # 重试逻辑（宪法原则I）
+ratelimit>=2.2.1  # 速率限制（宪法原则I）
+
+# === Reddit API ===
+praw>=7.7.0  # Reddit API客户端
+
+# === Google Trends ===
+pytrends>=4.9.0  # Google Trends非官方API
+
+# === 数据处理 ===
+python-dateutil>=2.8.2  # 日期处理
+
+# === 测试 ===
+pytest>=7.4.0  # 测试框架
+pytest-cov>=4.1.0  # 测试覆盖率
+pytest-asyncio>=0.21.0  # 异步测试支持
+
+# === 代码质量 ===
+black>=23.0.0  # 代码格式化
+flake8>=6.0.0  # 代码检查
+mypy>=1.5.0  # 类型检查
+
+# === 数据库 ===
+# SQLite是Python标准库的一部分，无需额外安装
