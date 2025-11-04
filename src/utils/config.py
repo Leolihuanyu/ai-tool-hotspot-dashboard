@@ -105,6 +105,49 @@ class Config:
     def scraper_timeout(self) -> int:
         return int(os.getenv("SCRAPER_TIMEOUT", "10"))
 
+    # === 爬虫启用/禁用配置 ===
+    # AI工具爬虫
+    @property
+    def enable_scraper_futurepedia(self) -> bool:
+        return os.getenv("ENABLE_SCRAPER_FUTUREPEDIA", "true").lower() == "true"
+
+    @property
+    def enable_scraper_producthunt(self) -> bool:
+        return os.getenv("ENABLE_SCRAPER_PRODUCTHUNT", "true").lower() == "true"
+
+    @property
+    def enable_scraper_theresanai(self) -> bool:
+        return os.getenv("ENABLE_SCRAPER_THERESANAI", "false").lower() == "true"
+
+    # 热点趋势爬虫
+    @property
+    def enable_scraper_reddit(self) -> bool:
+        return os.getenv("ENABLE_SCRAPER_REDDIT", "true").lower() == "true"
+
+    @property
+    def enable_scraper_hackernews(self) -> bool:
+        return os.getenv("ENABLE_SCRAPER_HACKERNEWS", "true").lower() == "true"
+
+    @property
+    def enable_scraper_github(self) -> bool:
+        return os.getenv("ENABLE_SCRAPER_GITHUB", "true").lower() == "true"
+
+    @property
+    def enable_scraper_tiktok(self) -> bool:
+        return os.getenv("ENABLE_SCRAPER_TIKTOK", "true").lower() == "true"
+
+    @property
+    def enable_scraper_youtube(self) -> bool:
+        return os.getenv("ENABLE_SCRAPER_YOUTUBE", "true").lower() == "true"
+
+    @property
+    def enable_scraper_x_twitter(self) -> bool:
+        return os.getenv("ENABLE_SCRAPER_X_TWITTER", "true").lower() == "true"
+
+    @property
+    def enable_scraper_google_trends(self) -> bool:
+        return os.getenv("ENABLE_SCRAPER_GOOGLE_TRENDS", "true").lower() == "true"
+
     # === 评分权重配置 ===
     @property
     def score_weight_pain_clarity(self) -> float:

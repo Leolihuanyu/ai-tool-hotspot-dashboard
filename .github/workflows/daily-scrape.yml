@@ -1,0 +1,160 @@
+name: 每日数据抓取
+
+on:
+  # 每天UTC 00:00运行（北京时间早上8点）
+  schedule:
+    - cron: '0 0 * * *'
+
+  # 支持手动触发
+  workflow_dispatch:
+
+jobs:
+  scrape-and-analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30  # 超时限制
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 设置Python环境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'  # 缓存pip依赖加速安装
+
+      - name: 安装依赖
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 创建数据目录
+        run: |
+          mkdir -p data/archive
+
+      - name: 初始化数据库
+        run: |
+          if [ ! -f "data/db.sqlite" ]; then
+            python -m src.cli.main init-db
+            echo "✓ 数据库初始化完成"
+          else
+            echo "✓ 数据库已存在"
+          fi
+
+      - name: 运行数据抓取Pipeline
+        env:
+          # LLM配置
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          LLM_PROVIDER: ${{ secrets.LLM_PROVIDER || 'openai' }}
+          LLM_MODEL: ${{ secrets.LLM_MODEL || 'gpt-3.5-turbo' }}
+
+          # API Keys（可选）
+          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+          GITHUB_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+
+          # 爬虫配置
+          ENABLE_SCRAPER_FUTUREPEDIA: true
+          ENABLE_SCRAPER_PRODUCTHUNT: true
+          ENABLE_SCRAPER_THERESANAI: false  # 禁用需要JS渲染的爬虫
+          ENABLE_SCRAPER_REDDIT: true
+          ENABLE_SCRAPER_HACKERNEWS: true
+          ENABLE_SCRAPER_GITHUB: true
+          ENABLE_SCRAPER_TIKTOK: true
+          ENABLE_SCRAPER_YOUTUBE: true
+          ENABLE_SCRAPER_X_TWITTER: true
+          ENABLE_SCRAPER_GOOGLE_TRENDS: true
+        run: |
+          echo "开始运行数据抓取Pipeline..."
+          python -m src.cli.main run-pipeline
+          echo "✓ Pipeline执行完成"
+
+      - name: 发送邮件报告（可选）
+        if: success()
+        env:
+          EMAIL_PROVIDER: ${{ secrets.EMAIL_PROVIDER || 'smtp' }}
+          SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT || '587' }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          EMAIL_TO_LIST: ${{ secrets.EMAIL_TO_LIST }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+        run: |
+          if [ -n "$EMAIL_FROM" ] && [ -n "$EMAIL_TO_LIST" ]; then
+            echo "发送邮件报告..."
+            python -m src.cli.main send-email || echo "⚠️ 邮件发送失败（继续执行）"
+          else
+            echo "跳过邮件发送（未配置）"
+          fi
+
+      - name: 归档数据
+        run: |
+          # 复制latest.json到归档目录（带日期）
+          if [ -f "data/latest.json" ]; then
+            DATE=$(date +%Y-%m-%d)
+            cp data/latest.json "data/archive/${DATE}.json"
+            echo "✓ 数据已归档: data/archive/${DATE}.json"
+          fi
+
+      - name: 提交数据到仓库
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "GitHub Actions Bot"
+
+          # 添加数据文件
+          git add data/latest.json
+          git add data/archive/*.json
+          git add data/db.sqlite || true  # SQLite可能不存在
+
+          # 检查是否有变更
+          if git diff --staged --quiet; then
+            echo "⚠️ 没有数据变更，跳过提交"
+            exit 0
+          fi
+
+          # 提交变更
+          DATE=$(date +"%Y-%m-%d %H:%M:%S UTC")
+          git commit -m "🤖 自动更新数据 - ${DATE}
+
+          - 更新 data/latest.json
+          - 归档历史数据
+
+          由 GitHub Actions 自动生成"
+
+          # 推送到仓库
+          git push
+          echo "✓ 数据已推送到GitHub"
+
+      - name: 工作流总结
+        if: always()
+        run: |
+          echo "=========================================="
+          echo "工作流执行完成"
+          echo "=========================================="
+
+          if [ -f "data/latest.json" ]; then
+            echo "✓ 数据文件已生成"
+
+            # 显示统计信息
+            AI_TOOLS=$(python -c "import json; print(len(json.load(open('data/latest.json')).get('ai_tools', [])))" 2>/dev/null || echo "0")
+            TRENDS=$(python -c "import json; print(len(json.load(open('data/latest.json')).get('trending_topics', [])))" 2>/dev/null || echo "0")
+            OPPS=$(python -c "import json; print(len(json.load(open('data/latest.json')).get('opportunities', [])))" 2>/dev/null || echo "0")
+
+            echo "  - AI工具数量: ${AI_TOOLS}"
+            echo "  - 热点话题数量: ${TRENDS}"
+            echo "  - 产品机会数量: ${OPPS}"
+          else
+            echo "❌ 数据文件未生成"
+          fi
+
+      - name: 通知失败（如果失败）
+        if: failure()
+        run: |
+          echo "❌ 工作流执行失败"
+          echo "请检查日志以获取详细信息"
+          # 这里可以添加Slack/Discord/Email通知

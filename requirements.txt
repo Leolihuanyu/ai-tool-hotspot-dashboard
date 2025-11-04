@@ -1,11 +1,13 @@
 # === 核心Web框架 ===
 Flask>=3.0.0  # Web仪表板框架
+gunicorn>=21.2.0  # WSGI服务器（生产环境）
 
 # === HTTP和爬虫 ===
 requests>=2.31.0  # HTTP请求
 beautifulsoup4>=4.12.0  # HTML解析
 feedparser>=6.0.0  # RSS解析
-playwright>=1.40.0  # JavaScript密集型站点爬取（可选）
+# playwright>=1.40.0  # 已移除：项目中所有爬虫使用API/RSS，无需浏览器渲染
+# 注：9/10爬虫使用官方API或RSS，1个可选爬虫已默认禁用
 
 # === 数据模型和验证 ===
 pydantic>=2.5.0  # 数据模型验证（宪法原则II）

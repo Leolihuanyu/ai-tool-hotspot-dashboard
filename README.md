@@ -82,13 +82,14 @@ make run-dashboard
 
 ## 📊 技术栈
 
-- **后端**: Python 3.10+, Flask
-- **数据抓取**: Requests, BeautifulSoup4, Playwright, Feedparser
+- **后端**: Python 3.10+, Flask, Gunicorn
+- **数据抓取**: Requests, BeautifulSoup4, Feedparser, PRAW (Reddit), pytrends
 - **数据验证**: Pydantic
-- **LLM**: Anthropic Claude Haiku 3 (Batch API)
-- **邮件**: SendGrid
+- **LLM**: OpenAI GPT-3.5 / Anthropic Claude Haiku (Batch API)
+- **邮件**: SMTP (Gmail) / SendGrid
 - **数据库**: SQLite
 - **测试**: pytest
+- **部署**: Docker, Render.com, GitHub Actions
 
 ## 🏗️ 项目结构
 
@@ -158,11 +159,82 @@ pytest tests/unit/test_models.py -v
 
 ## 📦 部署
 
-参考 `docs/deployment.md`(Phase 2将生成)了解:
-- Docker容器化部署
-- Nginx反向代理配置
-- HTTPS证书设置
-- 生产环境监控
+### 🌐 免费云端部署（推荐）
+
+本项目已配置完整的免费部署方案，无需服务器，无需信用卡！
+
+**部署架构：**
+- ☁️ **Render.com** - 托管Flask Dashboard (免费750小时/月)
+- 🤖 **GitHub Actions** - 每日自动数据抓取 (免费2000分钟/月)
+- 📦 **GitHub** - 数据存储和版本控制
+- 📧 **Gmail SMTP** - 邮件报告发送 (免费)
+
+**成本：**
+- 平台服务: $0/月
+- LLM API: ~$9-15/月 (OpenAI gpt-3.5-turbo 或 Claude Haiku)
+
+**部署步骤：**
+
+1. **配置GitHub Secrets** - 添加API Keys等环境变量
+2. **部署到Render.com** - 一键部署，3-5分钟完成
+3. **验证部署** - 访问您的Dashboard URL
+4. **配置自定义域名** - 可选，支持免费HTTPS
+
+**详细文档：**
+- 📖 [完整部署指南](docs/DEPLOYMENT.md) - 含截图步骤和常见问题
+- 🏗️ [架构说明](docs/ARCHITECTURE.md) - 技术选型和数据流
+- 🚀 [快速开始](docs/DEPLOYMENT.md#步骤2部署到rendercom) - 10分钟上线
+
+**快速链接：**
+```bash
+# 查看部署文件
+├── Dockerfile           # 轻量级镜像 (~150MB)
+├── render.yaml          # Render.com配置
+├── start.sh             # 启动脚本
+├── .github/workflows/   # GitHub Actions
+│   ├── daily-scrape.yml     # 每日数据抓取
+│   └── health-check.yml     # 保持Dashboard活跃
+```
+
+### 🖥️ 本地部署
+
+如果您想在本地服务器部署：
+
+**Docker部署：**
+```bash
+# 构建镜像
+docker build -t ai-tool-dashboard .
+
+# 运行容器
+docker run -p 5000:5000 \
+  -e OPENAI_API_KEY=your_key \
+  -e EMAIL_FROM=your@email.com \
+  ai-tool-dashboard
+```
+
+**传统部署：**
+```bash
+# 安装依赖
+pip install -r requirements.txt
+
+# 配置环境变量
+cp .env.example .env
+# 编辑 .env
+
+# 启动Dashboard
+python -m src.dashboard.app
+```
+
+**定时任务：**
+```bash
+# macOS (launchd)
+cp scripts/com.ai-dashboard.daily.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.ai-dashboard.daily.plist
+
+# Linux (cron)
+crontab -e
+# 添加: 0 8 * * * cd /path/to/project && make run-pipeline
+```
 
 ## 🤝 贡献
 
