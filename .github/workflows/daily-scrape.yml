@@ -8,6 +8,10 @@ on:
   # 支持手动触发
   workflow_dispatch:
 
+# GitHub Actions权限配置
+permissions:
+  contents: write  # 允许workflow提交和推送代码到仓库
+
 jobs:
   scrape-and-analyze:
     runs-on: ubuntu-latest
