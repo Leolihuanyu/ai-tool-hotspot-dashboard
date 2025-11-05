@@ -84,6 +84,7 @@ jobs:
           EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
           EMAIL_TO_LIST: ${{ secrets.EMAIL_TO_LIST }}
           SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          DASHBOARD_URL: ${{ secrets.DASHBOARD_URL || 'http://127.0.0.1:5000' }}
         run: |
           if [ -n "$EMAIL_FROM" ] && [ -n "$EMAIL_TO_LIST" ]; then
             echo "发送邮件报告..."
