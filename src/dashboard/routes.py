@@ -5,43 +5,98 @@ Dashboard Web界面的所有路由。
 
 import json
 import os
+import time
 from flask import render_template, jsonify, request
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+# 数据缓存（全局变量）
+_cached_data = None
+_cache_timestamp = 0
+CACHE_TTL = 300  # 缓存有效期：5分钟（300秒）
+
 
 def load_latest_data():
-    """加载最新数据
+    """加载最新数据（优先从GitHub获取，本地文件作为fallback）
+
+    数据获取优先级：
+    1. 检查缓存（5分钟有效期）
+    2. 从GitHub raw URL获取最新数据
+    3. 如果GitHub失败，尝试读取本地文件
+    4. 都失败则返回空数据
 
     Returns:
         包含ai_tools, trending_topics, pain_points, opportunities的字典
     """
+    global _cached_data, _cache_timestamp
+
+    # 1. 检查缓存是否有效
+    current_time = time.time()
+    if _cached_data and (current_time - _cache_timestamp < CACHE_TTL):
+        logger.debug("使用缓存数据")
+        return _cached_data
+
+    # 2. 尝试从GitHub获取数据
+    github_url = os.getenv(
+        'GITHUB_DATA_URL',
+        'https://raw.githubusercontent.com/Leolihuanyu/ai-tool-hotspot-dashboard/main/data/latest.json'
+    )
+
+    try:
+        import requests
+        logger.info(f"从GitHub获取数据: {github_url}")
+        response = requests.get(github_url, timeout=10)
+
+        if response.status_code == 200:
+            data = response.json()
+            # 更新缓存
+            _cached_data = data
+            _cache_timestamp = current_time
+            logger.info("成功从GitHub加载数据并更新缓存")
+            return data
+        else:
+            logger.warning(f"GitHub返回非200状态码: {response.status_code}")
+
+    except requests.exceptions.Timeout:
+        logger.warning("从GitHub获取数据超时（10秒）")
+    except requests.exceptions.RequestException as e:
+        logger.warning(f"从GitHub获取数据失败（网络错误）: {e}")
+    except json.JSONDecodeError as e:
+        logger.error(f"GitHub数据JSON解析失败: {e}")
+    except Exception as e:
+        logger.error(f"从GitHub加载数据时发生未知错误: {e}")
+
+    # 3. 尝试从本地文件加载（fallback）
     try:
         data_path = os.path.join('data', 'latest.json')
+        if os.path.exists(data_path):
+            logger.info(f"尝试从本地文件加载: {data_path}")
+            with open(data_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
 
-        if not os.path.exists(data_path):
-            logger.warning(f"Data file not found: {data_path}")
-            return {
-                'ai_tools': [],
-                'trending_topics': [],
-                'pain_points': [],
-                'opportunities': []
-            }
+            # 更新缓存
+            _cached_data = data
+            _cache_timestamp = current_time
+            logger.info("成功从本地文件加载数据")
+            return data
+        else:
+            logger.warning(f"本地数据文件不存在: {data_path}")
 
-        with open(data_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-
-        return data
-
+    except json.JSONDecodeError as e:
+        logger.error(f"本地文件JSON解析失败: {e}")
     except Exception as e:
-        logger.error(f"Failed to load data: {e}")
-        return {
-            'ai_tools': [],
-            'trending_topics': [],
-            'pain_points': [],
-            'opportunities': []
-        }
+        logger.error(f"从本地文件加载数据失败: {e}")
+
+    # 4. 所有方法都失败，返回空数据
+    logger.error("所有数据源都失败，返回空数据")
+    empty_data = {
+        'ai_tools': [],
+        'trending_topics': [],
+        'pain_points': [],
+        'opportunities': []
+    }
+    return empty_data
 
 
 def enrich_opportunities(opportunities, pain_points, ai_tools, trending_topics):
