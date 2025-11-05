@@ -4,10 +4,10 @@ name: Dashboard健康检查
 # Render免费计划：15分钟无活动后休眠
 
 on:
-  # 每14分钟运行一次（保持活跃）
-  # 注意：GitHub Actions最短cron间隔是5分钟
+  # 每小时运行一次（保持活跃）
+  # 优化：从每14分钟改为每小时，节省84%的Actions时间
   schedule:
-    - cron: '*/14 * * * *'  # 每14分钟
+    - cron: '0 * * * *'  # 每小时（更合理的频率）
 
   # 支持手动触发
   workflow_dispatch:
