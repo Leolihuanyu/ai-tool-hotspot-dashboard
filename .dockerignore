@@ -46,11 +46,14 @@ specs/
 .env.local
 .env.*.local
 
-# 数据文件（由GitHub Actions提供或容器内生成）
-data/*.json
-data/archive/
+# 数据文件
+# 注意：data/latest.json 和 data/archive/ 会被包含在镜像中供Dashboard使用
+# 只排除数据库和临时文件
 data/*.sqlite
 data/*.db
+data/*.sqlite-journal
+data/temp/
+data/cache/
 
 # 日志文件
 *.log

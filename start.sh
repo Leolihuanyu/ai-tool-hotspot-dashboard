@@ -23,15 +23,27 @@ else
 fi
 
 # 3. 检查数据文件
-if [ ! -f "data/latest.json" ]; then
-    echo "[3/4] 未找到数据文件，创建占位文件..."
-    echo '{"ai_tools": [], "trending_topics": [], "opportunities": [], "generated_at": "首次启动", "note": "请等待GitHub Actions运行数据抓取任务"}' > data/latest.json
-    echo "⚠️  数据文件将由GitHub Actions生成"
+if [ -f "data/latest.json" ]; then
+    FILE_SIZE=$(stat -f%z "data/latest.json" 2>/dev/null || stat -c%s "data/latest.json" 2>/dev/null || echo "0")
+    echo "[3/4] 数据文件已存在 (大小: $FILE_SIZE bytes)"
+
+    # 验证文件不是空的或太小
+    if [ "$FILE_SIZE" -lt 100 ]; then
+        echo "⚠️  数据文件太小，可能是占位文件"
+        echo "   等待GitHub Actions更新数据..."
+    else
+        # 显示数据文件生成时间和统计信息
+        GENERATED_AT=$(python -c "import json; print(json.load(open('data/latest.json')).get('generated_at', '未知'))" 2>/dev/null || echo "无法读取")
+        TOOLS_COUNT=$(python -c "import json; print(len(json.load(open('data/latest.json')).get('ai_tools', [])))" 2>/dev/null || echo "0")
+        OPPS_COUNT=$(python -c "import json; print(len(json.load(open('data/latest.json')).get('opportunities', [])))" 2>/dev/null || echo "0")
+        echo "   ✓ 数据生成时间: $GENERATED_AT"
+        echo "   ✓ AI工具数量: $TOOLS_COUNT"
+        echo "   ✓ 机会数量: $OPPS_COUNT"
+    fi
 else
-    echo "[3/4] 数据文件已存在"
-    # 显示数据文件生成时间
-    GENERATED_AT=$(python -c "import json; print(json.load(open('data/latest.json')).get('generated_at', '未知'))" 2>/dev/null || echo "无法读取")
-    echo "   数据生成时间: $GENERATED_AT"
+    echo "[3/4] 数据文件不存在"
+    echo "⚠️  注意：Dashboard将显示空数据，请等待GitHub Actions运行数据抓取"
+    echo "   提示：确保 data/latest.json 已被包含在Git仓库中"
 fi
 
 # 4. 启动Flask Dashboard

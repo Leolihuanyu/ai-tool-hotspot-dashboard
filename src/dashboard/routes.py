@@ -18,12 +18,12 @@ CACHE_TTL = 300  # 缓存有效期：5分钟（300秒）
 
 
 def load_latest_data():
-    """加载最新数据（优先从GitHub获取，本地文件作为fallback）
+    """加载最新数据（优先使用本地文件，GitHub作为备份）
 
     数据获取优先级：
     1. 检查缓存（5分钟有效期）
-    2. 从GitHub raw URL获取最新数据
-    3. 如果GitHub失败，尝试读取本地文件
+    2. 读取本地文件 data/latest.json（主要数据源）
+    3. 如果本地文件不存在，快速尝试从GitHub获取（2秒超时）
     4. 都失败则返回空数据
 
     Returns:
@@ -37,49 +37,28 @@ def load_latest_data():
         logger.debug("使用缓存数据")
         return _cached_data
 
-    # 2. 尝试从GitHub获取数据
-    github_url = os.getenv(
-        'GITHUB_DATA_URL',
-        'https://raw.githubusercontent.com/Leolihuanyu/ai-tool-hotspot-dashboard/main/data/latest.json'
-    )
+    # 2. 优先尝试从本地文件加载（Docker镜像中应该包含此文件）
+    data_path = os.path.join('data', 'latest.json')
 
     try:
-        import requests
-        logger.info(f"从GitHub获取数据: {github_url}")
-        response = requests.get(github_url, timeout=10)
-
-        if response.status_code == 200:
-            data = response.json()
-            # 更新缓存
-            _cached_data = data
-            _cache_timestamp = current_time
-            logger.info("成功从GitHub加载数据并更新缓存")
-            return data
-        else:
-            logger.warning(f"GitHub返回非200状态码: {response.status_code}")
-
-    except requests.exceptions.Timeout:
-        logger.warning("从GitHub获取数据超时（10秒）")
-    except requests.exceptions.RequestException as e:
-        logger.warning(f"从GitHub获取数据失败（网络错误）: {e}")
-    except json.JSONDecodeError as e:
-        logger.error(f"GitHub数据JSON解析失败: {e}")
-    except Exception as e:
-        logger.error(f"从GitHub加载数据时发生未知错误: {e}")
-
-    # 3. 尝试从本地文件加载（fallback）
-    try:
-        data_path = os.path.join('data', 'latest.json')
         if os.path.exists(data_path):
-            logger.info(f"尝试从本地文件加载: {data_path}")
+            file_size = os.path.getsize(data_path)
+            logger.info(f"从本地文件加载数据: {data_path} ({file_size} bytes)")
+
             with open(data_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
 
-            # 更新缓存
-            _cached_data = data
-            _cache_timestamp = current_time
-            logger.info("成功从本地文件加载数据")
-            return data
+            # 验证数据不是空的
+            if data and len(data.get('opportunities', [])) > 0:
+                # 更新缓存
+                _cached_data = data
+                _cache_timestamp = current_time
+                logger.info(f"✓ 成功加载本地数据: {len(data.get('ai_tools', []))} 工具, "
+                           f"{len(data.get('trending_topics', []))} 热点, "
+                           f"{len(data.get('opportunities', []))} 机会")
+                return data
+            else:
+                logger.warning(f"本地文件存在但数据为空或无效")
         else:
             logger.warning(f"本地数据文件不存在: {data_path}")
 
@@ -88,8 +67,40 @@ def load_latest_data():
     except Exception as e:
         logger.error(f"从本地文件加载数据失败: {e}")
 
+    # 3. 本地文件失败，快速尝试从GitHub获取（仅用于公开仓库）
+    github_url = os.getenv(
+        'GITHUB_DATA_URL',
+        'https://raw.githubusercontent.com/Leolihuanyu/ai-tool-hotspot-dashboard/main/data/latest.json'
+    )
+
+    try:
+        import requests
+        logger.info(f"本地文件不可用，尝试从GitHub获取: {github_url}")
+        response = requests.get(github_url, timeout=2)  # 快速失败：2秒超时
+
+        if response.status_code == 200:
+            data = response.json()
+            # 更新缓存
+            _cached_data = data
+            _cache_timestamp = current_time
+            logger.info("✓ 从GitHub加载数据成功")
+            return data
+        else:
+            logger.warning(f"GitHub返回状态码: {response.status_code}")
+
+    except requests.exceptions.Timeout:
+        logger.warning("从GitHub获取数据超时（2秒），可能是私有仓库或网络问题")
+    except requests.exceptions.RequestException as e:
+        logger.warning(f"从GitHub获取数据失败: {e}")
+    except json.JSONDecodeError as e:
+        logger.error(f"GitHub数据JSON解析失败: {e}")
+    except Exception as e:
+        logger.warning(f"GitHub加载时出错: {e}")
+
     # 4. 所有方法都失败，返回空数据
-    logger.error("所有数据源都失败，返回空数据")
+    logger.error("⚠️ 所有数据源都失败，返回空数据结构")
+    logger.error("提示：请确保 data/latest.json 存在于Docker镜像中")
+
     empty_data = {
         'ai_tools': [],
         'trending_topics': [],
