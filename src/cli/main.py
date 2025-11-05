@@ -359,7 +359,11 @@ def cmd_send_email(args):
         # 生成邮件内容
         print("\n📝 Generating email content...")
         try:
-            dashboard_url = args.dashboard_url if hasattr(args, 'dashboard_url') and args.dashboard_url else "http://127.0.0.1:5000"
+            # 优先使用环境变量中的配置，命令行参数可以覆盖
+            dashboard_url = config.dashboard_url
+            if hasattr(args, 'dashboard_url') and args.dashboard_url and args.dashboard_url != "http://127.0.0.1:5000":
+                # 只有明确指定了非默认值，才使用命令行参数
+                dashboard_url = args.dashboard_url
             subject, html_content, plain_text = email_generator.generate_email_content(
                 dashboard_url=dashboard_url
             )
@@ -489,7 +493,7 @@ def main():
 
     # send-email命令
     parser_email = subparsers.add_parser("send-email", help="发送每日报告邮件")
-    parser_email.add_argument("--dashboard-url", type=str, default="http://127.0.0.1:5000", help="仪表板URL(用于邮件中的链接)")
+    parser_email.add_argument("--dashboard-url", type=str, default=None, help="仪表板URL(用于邮件中的链接，默认从环境变量DASHBOARD_URL读取)")
     parser_email.add_argument("--no-alert", action="store_true", help="发送失败时不发送告警邮件")
     parser_email.set_defaults(func=cmd_send_email)
 
