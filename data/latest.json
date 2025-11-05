@@ -1,0 +1,654 @@
+{
+  "schema_version": "1.1",
+  "generated_at": "2025-11-05T02:07:46.074013",
+  "ai_tools": [
+    {
+      "id": "4b7b4b3b-9e8a-4354-b417-9f793753b10c",
+      "name": "OptySleep",
+      "description": "Sleep smarter: AI driven sleep insights based on your habitsDiscussion|Link",
+      "source": "ProductHunt",
+      "url": "https://www.producthunt.com/products/optysleep",
+      "timestamp": "2025-11-03T21:21:37Z",
+      "tags": [],
+      "features": [
+        "data-analysis"
+      ],
+      "pricing_model": "freemium",
+      "summary_cn": "通过分析个人睡眠习惯，AI提供智能睡眠建议，帮助改善睡眠质量，提升日常生活表现。",
+      "summary_ja": "AIがあなたの睡眠習慣を分析し、より良い睡眠を得るための洞察を提供します。これにより、睡眠の質を向上させ、健康的な生活をサポートします。",
+      "data_quality_score": 0.94,
+      "schema_version": "1.1"
+    },
+    {
+      "id": "f6ac5615-4b55-4761-9973-3dd949a6febe",
+      "name": "Termdock",
+      "description": "Terminal-centric AI development environmentDiscussion|Link",
+      "source": "ProductHunt",
+      "url": "https://www.producthunt.com/products/termdock",
+      "timestamp": "2025-11-03T08:00:59Z",
+      "tags": [],
+      "features": [
+        "ai-tool"
+      ],
+      "pricing_model": "freemium",
+      "summary_cn": "终端为中心的AI开发环境，提供高效的工具和功能，支持开发者快速构建、测试和部署AI模型，提升开发效率，简化工作流程。",
+      "summary_ja": "ターミナル中心のAI開発環境は、開発者が効率的にAIモデルを構築・テストできるツールを提供します。シンプルなインターフェースで、コーディングやデバッグが容易になり、迅速なプロトタイピングを支援します。これにより、開発の生産性が向上します。",
+      "data_quality_score": 0.94,
+      "schema_version": "1.1"
+    },
+    {
+      "id": "1c9a37db-ae7f-4dff-adb2-1959fa90aabe",
+      "name": "Uneed Community",
+      "description": "Launch, get seen, & grow alongside other makersDiscussion|Link",
+      "source": "ProductHunt",
+      "url": "https://www.producthunt.com/products/uneed",
+      "timestamp": "2025-11-02T09:24:53Z",
+      "tags": [],
+      "features": [
+        "ai-tool"
+      ],
+      "pricing_model": "freemium",
+      "summary_cn": "通过启动项目、提高曝光率，与其他创作者共同成长，分享经验与资源，实现互助与合作。",
+      "summary_ja": "他のクリエイターと共に製品を発表し、視認性を高め、成長するためのプラットフォームです。アイデアを共有し、フィードバックを受けながら、相互にサポートし合うことで、成功を目指します。",
+      "data_quality_score": 0.94,
+      "schema_version": "1.1"
+    },
+    {
+      "id": "9ed15e8e-5621-492f-a064-d8391350aaca",
+      "name": "Aritect",
+      "description": "The all-in-one platform for actionable market intelligenceDiscussion|Link",
+      "source": "ProductHunt",
+      "url": "https://www.producthunt.com/products/aritect",
+      "timestamp": "2025-11-03T13:22:30Z",
+      "tags": [],
+      "features": [
+        "ai-tool"
+      ],
+      "pricing_model": "freemium",
+      "summary_cn": "这是一款整合市场情报的平台，提供可操作的数据分析和洞察，帮助用户做出明智的商业决策。",
+      "summary_ja": "市場情報を一元管理できるプラットフォームで、迅速に実用的な洞察が得られます。データ分析やトレンド把握が簡単にでき、意思決定をサポートします。ビジネスの成長を促進するための便利なツールです。",
+      "data_quality_score": 0.94,
+      "schema_version": "1.1"
+    },
+    {
+      "id": "5d958af6-e972-4452-a7f1-5fedc1b45fa8",
+      "name": "MCP Playground",
+      "description": "Open-source MCP playground to test and introspect serversDiscussion|Link",
+      "source": "ProductHunt",
+      "url": "https://www.producthunt.com/products/mcp-playground",
+      "timestamp": "2025-11-03T08:50:09Z",
+      "tags": [],
+      "features": [
+        "ai-tool"
+      ],
+      "pricing_model": "freemium",
+      "summary_cn": "开源MCP平台用于测试和分析服务器，帮助用户了解服务器性能和配置，提升运维效率，易于使用，适合开发者和运维人员。",
+      "summary_ja": "オープンソースのMCPプレイグラウンドは、サーバーをテストし、詳細を調査するためのツールです。ユーザーは簡単にサーバーの動作を確認し、問題点を見つけることができます。これにより、効率的な運用と改善が可能になります。",
+      "data_quality_score": 0.94,
+      "schema_version": "1.1"
+    },
+    {
+      "id": "b042bb57-dfd4-424f-94e7-3fedf901db85",
+      "name": "Lovelace",
+      "description": "AI-powered cloud IDE for coding from anywhereDiscussion|Link",
+      "source": "ProductHunt",
+      "url": "https://www.producthunt.com/products/lovelace",
+      "timestamp": "2025-11-03T19:17:03Z",
+      "tags": [],
+      "features": [
+        "code-generation"
+      ],
+      "pricing_model": "freemium",
+      "summary_cn": "这款基于AI的云端IDE允许用户随时随地编写代码，提供智能提示和自动补全功能，提高编程效率，方便团队协作。",
+      "summary_ja": "AIを活用したクラウドIDEは、どこからでもコーディングが可能です。ユーザーはインターネット経由でアクセスし、効率的にプログラムを作成できます。リアルタイムのサポートやコラボレーション機能により、チームでの開発もスムーズに行えます。",
+      "data_quality_score": 0.94,
+      "schema_version": "1.1"
+    },
+    {
+      "id": "28c9e0ae-3edf-43b6-92c5-3fdc6dff4998",
+      "name": "EQUO",
+      "description": "Explainable AI financial advisor for geeks.Discussion|Link",
+      "source": "ProductHunt",
+      "url": "https://www.producthunt.com/products/equo",
+      "timestamp": "2025-10-26T23:19:00Z",
+      "tags": [],
+      "features": [
+        "ai-tool"
+      ],
+      "pricing_model": "freemium",
+      "summary_cn": "可解释的人工智能财务顾问，旨在帮助用户理解投资决策。通过透明的分析和建议，用户能更好地掌握个人财务管理。",
+      "summary_ja": "説明可能なAIを活用した金融アドバイザーで、テクノロジーに詳しい人々向け。ユーザーはAIの判断根拠を理解でき、透明性のある投資アドバイスを受けられる。これにより、より安心して投資決定ができる。",
+      "data_quality_score": 0.94,
+      "schema_version": "1.1"
+    },
+    {
+      "id": "ef905cc9-d89e-47fb-bfcb-4cee64f0f696",
+      "name": "Jinna.ai",
+      "description": "AI invoicing that creates, sends & chases for youDiscussion|Link",
+      "source": "ProductHunt",
+      "url": "https://www.producthunt.com/products/jinna-ai-2",
+      "timestamp": "2025-11-01T19:32:39Z",
+      "tags": [],
+      "features": [
+        "ai-tool"
+      ],
+      "pricing_model": "freemium",
+      "summary_cn": "AI发票系统能自动生成、发送和跟进发票，简化财务流程，节省时间，提高工作效率，让你专注于核心业务。",
+      "summary_ja": "AI請求書作成サービスは、請求書を自動で作成し、送信し、支払いを追跡します。これにより、手間を省き、時間を節約し、効率的に資金管理が可能になります。煩わしい作業から解放され、ビジネスに集中できます。",
+      "data_quality_score": 0.94,
+      "schema_version": "1.1"
+    },
+    {
+      "id": "8f6bae3a-39cd-4a52-82ef-c73ca7734933",
+      "name": "Expertise Booking",
+      "description": "Go Bananas with this AI Native CalendarDiscussion|Link",
+      "source": "ProductHunt",
+      "url": "https://www.producthunt.com/products/expertise-ai",
+      "timestamp": "2025-10-20T19:02:31Z",
+      "tags": [],
+      "features": [
+        "ai-tool"
+      ],
+      "pricing_model": "freemium",
+      "summary_cn": "这款AI原生日历能智能安排日程，自动优化时间管理，提高工作效率，帮助用户轻松掌控日常事务。",
+      "summary_ja": "AIネイティブカレンダーは、スケジュール管理を簡単にし、タスクの優先順位を自動で提案します。使いやすいインターフェースで、日々の計画を効率化し、時間を有効活用できるツールです。",
+      "data_quality_score": 0.94,
+      "schema_version": "1.1"
+    },
+    {
+      "id": "2e8dd89f-0dcd-465d-a0e3-2cb6d4761f63",
+      "name": "WishfulMail",
+      "description": "Write magical letters to Santa, the Tooth Fairy & othersDiscussion|Link",
+      "source": "ProductHunt",
+      "url": "https://www.producthunt.com/products/wishfulmail-magical-platform-for-kids",
+      "timestamp": "2025-11-01T13:28:15Z",
+      "tags": [],
+      "features": [
+        "text-generation"
+      ],
+      "pricing_model": "freemium",
+      "summary_cn": "写神奇的信给圣诞老人、牙仙子等，让孩子们表达愿望和感受，增加节日乐趣，培养想象力和书写能力。",
+      "summary_ja": "サンタや歯の妖精などに魔法の手紙を書くサービスです。子どもたちの想像力を育み、特別な体験を提供します。手紙を通じて夢や願いを伝える楽しさを感じられ、思い出に残る瞬間を作ります。",
+      "data_quality_score": 0.94,
+      "schema_version": "1.1"
+    }
+  ],
+  "trending_topics": [
+    {
+      "id": "aca7625f-ffa5-42b8-8852-1c38962f8114",
+      "title": "Sora 2 megathread (part 3)",
+      "description": "Sora 2 megathread (part 3)\n\nThe last one hit the post limit of 100,000 comments.\n\n# Do not try to buy codes. You will get scammed.\n\n# Do not try to sell codes. You will get permanently banned.\n\nWe have a bot set up to distribute invite codes [in the Discord](https://discord.gg/k55eH4aq) so join if you can't find codes in the comments here. Check the #sora-invite-codes channel.\n\n## [The Discord](https://discord.gg/k55eH4aq) has dozens of invite codes available, with more being posted constantly!\n",
+      "source": "Reddit",
+      "url": "https://reddit.com/r/OpenAI/comments/1o8kmg9/sora_2_megathread_part_3/",
+      "timestamp": "2025-10-16T22:41:55Z",
+      "heat_score": 100.0,
+      "trend_direction": "stable",
+      "tags": [
+        "Reddit",
+        "r/OpenAI",
+        "discussion"
+      ],
+      "summary_cn": "Sora 2讨论区已满，禁止买卖邀请码，违者将被封禁。可加入Discord获取邀请码，#sora-invite-codes频道有大量邀请码可用。",
+      "summary_ja": "Soraの招待コードについての情報です。コードの購入や販売は詐欺や永久追放のリスクがあるため避けてください。Discordサーバーに参加すれば、招待コードが多数提供されています。#sora-invite-codesチャンネルで確認できます。",
+      "data_quality_score": 0.8,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "73ddfb77-6af7-44c4-aa45-9434906a9c10",
+      "title": "AMA on our DevDay Launches",
+      "description": "AMA on our DevDay Launches\n\nIt’s the best time in history to be a builder. At DevDay \\[2025\\], we introduced the next generation of tools and models to help developers code faster, build agents more reliably, and scale their apps in ChatGPT.\n\nAsk us questions about our launches such as:\n\nAgentKit  \nApps SDK  \nSora 2 in the API  \nGPT-5 Pro in the API  \nCodex\n\nMissed out on our announcements? Watch the replays: [https://youtube.com/playlist?list=PLOXw6I10VTv8-mTZk0v7oy1Bxfo3D2K5o&si=nSbLbLDZO7o-NM",
+      "source": "Reddit",
+      "url": "https://reddit.com/r/OpenAI/comments/1o1j23g/ama_on_our_devday_launches/",
+      "timestamp": "2025-10-08T18:39:36Z",
+      "heat_score": 100.0,
+      "trend_direction": "stable",
+      "tags": [
+        "Reddit",
+        "r/OpenAI",
+        "discussion"
+      ],
+      "summary_cn": "在DevDay 2025上，我们推出了新工具和模型，包括AgentKit、Apps SDK、Sora 2和GPT-5 Pro，帮助开发者更快编码、可靠构建和扩展应用。",
+      "summary_ja": "DevDay 2025で、開発者向けの新しいツールやモデルが発表されました。これにより、コーディングが速くなり、エージェントの信頼性が向上し、アプリのスケーリングが容易になります。特にAgentKitやApps SDK、GPT-5 Proなどが注目されています。詳しくは再放送を確認してください。",
+      "data_quality_score": 0.8,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "19aa0e62-e68b-423f-b53b-538a53aa55e6",
+      "title": "Can literally anyone explain how a future with AI in the USA works?",
+      "description": "Can literally anyone explain how a future with AI in the USA works?\n\nI literally do not understand how a future with AI in the USA could possibly ever work. Say that AI is so incredibly effective and well developed in two years that it eliminates 50% of all work that we have to do. Okay? What in the actual fuck are the white collar employees, just specifically for example, supposed to do? What exactly are these people going to spend their time doing now that most of their work is completely elim",
+      "source": "Reddit",
+      "url": "https://reddit.com/r/artificial/comments/1ooekh3/can_literally_anyone_explain_how_a_future_with_ai/",
+      "timestamp": "2025-11-04T18:10:06Z",
+      "heat_score": 100.0,
+      "trend_direction": "stable",
+      "tags": [
+        "Reddit",
+        "r/artificial",
+        "discussion"
+      ],
+      "summary_cn": "未来AI在美国的发展可能导致大量工作消失，尤其是白领员工面临岗位减少，不知如何利用时间和技能。",
+      "summary_ja": "AIが進化し、仕事の50%がなくなった場合、ホワイトカラーの従業員は何をするのか理解できない。彼らの仕事が消える中で、時間をどう使うのか疑問が残る。",
+      "data_quality_score": 0.8,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "db5d27df-6a80-4802-abf4-0c9d6f718c3c",
+      "title": "Owning a business in Texas made me think differently about marriage",
+      "description": "Owning a business in Texas made me think differently about marriage\n\nI run a small design business here in Texas, nothing crazy but it’s finally doing well after a few rough years. The weird part is, the more it grows, the more I’ve started thinking about how tied up my personal life is with all of it.   \nI’ve seen friends lose half their business after a divorce, and it honestly freaked me out a bit. It’s not even about trust it’s just realizing how fast something you built from scratch can get",
+      "source": "Reddit",
+      "url": "https://reddit.com/r/Entrepreneur/comments/1oo6k1v/owning_a_business_in_texas_made_me_think/",
+      "timestamp": "2025-11-04T13:05:40Z",
+      "heat_score": 100.0,
+      "trend_direction": "stable",
+      "tags": [
+        "Reddit",
+        "r/entrepreneur",
+        "discussion"
+      ],
+      "summary_cn": "在德克萨斯经营小型设计公司让我重新思考婚姻，随着业务增长，我意识到个人生活与事业紧密相连，离婚可能导致失去一半的事业，令人不安。",
+      "summary_ja": "テキサスで小さなデザインビジネスを運営しているが、事業が成長するにつれて、私生活との関係を考えるようになった。友人が離婚でビジネスを失うのを見て、不安を感じている。信頼の問題ではなく、自分が築いたものが簡単に壊れる可能性に気づいた。",
+      "data_quality_score": 0.8,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "505314d7-3c62-4e96-8ea7-26df9df75df3",
+      "title": "[golang/go] encoding/json/v2",
+      "description": "encoding/json/v2\n\nThis is a discussion intended to lead to a formal proposal.\r\n\r\nThis was written with input from [@mvdan](https://github.com/mvdan), [@johanbrandhorst](https://github.com/johanbrandhorst), [@rogpeppe](https://github.com/rogpeppe), [@chrishines](https://github.com/chrishines), [@rsc](https://github.com/rsc).\r\n\r\n# Background\r\n\r\nThe widely-used \"encoding/json\" package is over a decade old and has serv",
+      "source": "GitHub Discussions",
+      "url": "https://github.com/golang/go/discussions/63397",
+      "timestamp": "2023-10-05T17:14:54Z",
+      "heat_score": 100.0,
+      "trend_direction": "stable",
+      "tags": [
+        "GitHub",
+        "golang/go",
+        "feature-request"
+      ],
+      "summary_cn": "\"encoding/json/v2\"讨论旨在提出对现有“encoding/json”包的改进建议，聚焦于更新和提升其功能以更好满足现代需求。",
+      "summary_ja": "「encoding/json」パッケージは10年以上使用されており、改善の必要があります。この議論は、公式提案に向けたもので、主要な開発者の意見を反映しています。核心機能の向上と新たな価値提案が目指されています。",
+      "data_quality_score": 0.9,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "a1639db5-05b3-4a6f-9a1d-6279df4d1f93",
+      "title": "[golang/go] memory regions",
+      "description": "memory regions\n\nI'm starting this discussion to collect early feedback on a draft design for a kind of [region-based memory management](https://en.wikipedia.org/wiki/Region-based_memory_management) in Go. There is no prototype yet, only a design and a preliminary evaluation.\r\n\r\n**Please read everything below before replying**, especially the design discussion section.\r\n\r\n(Feel free to skip the detailed design, un",
+      "source": "GitHub Discussions",
+      "url": "https://github.com/golang/go/discussions/70257",
+      "timestamp": "2024-11-08T18:21:27Z",
+      "heat_score": 100.0,
+      "trend_direction": "stable",
+      "tags": [
+        "GitHub",
+        "golang/go",
+        "feature-request"
+      ],
+      "summary_cn": "本文讨论了Go语言中基于区域的内存管理设计草案，旨在收集早期反馈。该设计尚无原型，主要关注内存管理的效率和简化。",
+      "summary_ja": "Goにおける領域ベースのメモリ管理の設計案について、初期のフィードバックを求めています。まだプロトタイプはなく、設計と評価のみが存在します。詳細設計は省略可能です。",
+      "data_quality_score": 0.9,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "9c2a015a-a695-49b8-894f-ab504922fbb8",
+      "title": "[golang/go] gonew: templates for new modules",
+      "description": "gonew: templates for new modules\n\nA common request we hear from users is some kind of 'go new' functionality to start a new module with some kind of basic template.\r\n\r\nIt seems like a tool along these lines should not be limited to templates provided by the Go team: it should be possible for anyone to define templates. That is, templates should just be ordinary modules. At that point the core job of 'go new' is mainly to download ",
+      "source": "GitHub Discussions",
+      "url": "https://github.com/golang/go/discussions/61669",
+      "timestamp": "2023-07-31T13:59:14Z",
+      "heat_score": 100.0,
+      "trend_direction": "stable",
+      "tags": [
+        "GitHub",
+        "golang/go",
+        "feature-request"
+      ],
+      "summary_cn": "用户希望有“go new”功能，能用基本模板快速创建新模块。建议任何人都能定义模板，使其成为普通模块，简化使用。",
+      "summary_ja": "ユーザーからの要望に応え、基本的なテンプレートを使って新しいモジュールを作成する「go new」機能が提案されています。この機能はGoチーム提供のテンプレートに限らず、誰でも定義可能な普通のモジュールとして機能します。主な役割は、テンプレートをダウンロードすることです。",
+      "data_quality_score": 0.9,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "2adcca40-ba2a-4218-9992-1c934b9fec72",
+      "title": "[golang/go] net/http: move HTTP/2 into the standard library",
+      "description": "net/http: move HTTP/2 into the standard library\n\n# Overview\r\n\r\nThis is a discussion to talk about a collection of proposals that collectively move the HTTP/2 client and server implementation currently located in [`golang.org/x/net/http2`](https://pkg.go.dev/golang.org/x/net/http2) into the standard library.\r\n\r\nThe change is split across a number of proposals which make various elements of HTTP/1 and HTTP/2 configuration more consistent, add the ",
+      "source": "GitHub Discussions",
+      "url": "https://github.com/golang/go/discussions/60746",
+      "timestamp": "2023-06-12T17:17:55Z",
+      "heat_score": 100.0,
+      "trend_direction": "stable",
+      "tags": [
+        "GitHub",
+        "golang/go",
+        "feature-request"
+      ],
+      "summary_cn": "讨论将当前位于`golang.org/x/net/http2`的HTTP/2客户端和服务器实现移入Go标准库，以提升HTTP/1和HTTP/2配置的一致性。",
+      "summary_ja": "HTTP/2のクライアントとサーバーの実装を、現在の`golang.org/x/net/http2`から標準ライブラリに移行する提案についての議論です。これにより、HTTP/1とHTTP/2の設定が一貫性を持ち、使いやすさが向上します。",
+      "data_quality_score": 0.9,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "0a968b45-8cb7-4dec-87de-48e45455194a",
+      "title": "[golang/go] math/rand/v2: a new API for math/rand and a first v2 for std",
+      "description": "math/rand/v2: a new API for math/rand and a first v2 for std\n\nBased on earlier discussions in #26263 and #21835 as well as discussions with @robpike, I suggest adding a new version of math/rand, imported as math/rand/v2, to the standard library. This GitHub Discussion is meant to gather feedback before moving to a [proposal](https://go.dev/s/proposal). \r\n\r\nThe math/rand/v2 API would use math/rand as a starting point and then make the following backwards inco",
+      "source": "GitHub Discussions",
+      "url": "https://github.com/golang/go/discussions/60751",
+      "timestamp": "2023-06-12T19:27:15Z",
+      "heat_score": 100.0,
+      "trend_direction": "stable",
+      "tags": [
+        "GitHub",
+        "golang/go",
+        "feature-request"
+      ],
+      "summary_cn": "建议在标准库中新增 math/rand/v2 版本，基于现有 math/rand，旨在改进API并征集反馈，为后续提案做准备。",
+      "summary_ja": "math/rand/v2は、標準ライブラリの新しいAPIで、従来のmath/randを基にしています。これにより、より良い機能を提供し、フィードバックを集めて提案を進めることを目的としています。",
+      "data_quality_score": 0.9,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "a17ac743-a21a-475a-9cc5-40f2c8efa691",
+      "title": "This New Artificial Muscle Could Let Humanoid Robots Lift 4,000 Times Their Own Weight",
+      "description": "This New Artificial Muscle Could Let Humanoid Robots Lift 4,000 Times Their Own Weight",
+      "source": "Reddit",
+      "url": "https://reddit.com/r/Futurology/comments/1oo3nuz/this_new_artificial_muscle_could_let_humanoid/",
+      "timestamp": "2025-11-04T10:10:33Z",
+      "heat_score": 98.30000000000001,
+      "trend_direction": "stable",
+      "tags": [
+        "Reddit",
+        "r/Futurology",
+        "discussion"
+      ],
+      "summary_cn": "这种新型人工肌肉使人形机器人能够举起自身重量的4000倍，显著提升了机器人的力量和灵活性，拓宽了其应用潜力。",
+      "summary_ja": "新しい人工筋肉は、ヒューマノイドロボットが自分の体重の4,000倍を持ち上げることを可能にします。この技術により、ロボットの力と柔軟性が劇的に向上し、さまざまな作業を効率的に行えるようになります。",
+      "data_quality_score": 0.8,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "20550505-7beb-4321-a2ff-239e2807e6f6",
+      "title": "Vaping overtakes smoking in Britain for first time. Number of vapers aged 16+ rose to 5.4m in 2024 compared to 4.9m smokers, according to ONS data",
+      "description": "Vaping overtakes smoking in Britain for first time. Number of vapers aged 16+ rose to 5.4m in 2024 compared to 4.9m smokers, according to ONS data",
+      "source": "Reddit",
+      "url": "https://reddit.com/r/Futurology/comments/1ooa6no/vaping_overtakes_smoking_in_britain_for_first/",
+      "timestamp": "2025-11-04T15:30:17Z",
+      "heat_score": 95.30000000000001,
+      "trend_direction": "stable",
+      "tags": [
+        "Reddit",
+        "r/Futurology",
+        "discussion"
+      ],
+      "summary_cn": "2024年，英国16岁以上的电子烟用户达540万，首次超过490万吸烟者，显示出吸烟人数下降，电子烟逐渐普及。",
+      "summary_ja": "2024年、イギリスで16歳以上の電子タバコ利用者が540万人に達し、初めて喫煙者の490万人を上回ったとONSのデータが示しています。これは新たな喫煙習慣の変化を表しています。",
+      "data_quality_score": 0.8,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "917fc2ce-10d6-4f46-95df-3f2935b44921",
+      "title": "World on course for catastrophic warming despite climate-fighting plans, UN warns",
+      "description": "World on course for catastrophic warming despite climate-fighting plans, UN warns",
+      "source": "Reddit",
+      "url": "https://reddit.com/r/Futurology/comments/1ooem1g/world_on_course_for_catastrophic_warming_despite/",
+      "timestamp": "2025-11-04T18:11:36Z",
+      "heat_score": 63.7,
+      "trend_direction": "stable",
+      "tags": [
+        "Reddit",
+        "r/Futurology",
+        "discussion"
+      ],
+      "summary_cn": "尽管各国制定了应对气候变化的计划，联合国警告全球仍在走向灾难性升温，亟需更有效的行动以避免气候危机。",
+      "summary_ja": "国連は、気候対策が進められているにもかかわらず、地球が深刻な温暖化の危機に直面していると警告しています。目標達成が不十分であり、対策を強化しなければ、未来は非常に厳しいものになる可能性があります。",
+      "data_quality_score": 0.8,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "a3555700-0f7e-4f55-a627-e03bd33c288a",
+      "title": "Ask HN: How to deal with long vibe-coded PRs?",
+      "description": "Ask HN: How to deal with long vibe-coded PRs?\n\nToday I came across a PR for a (in theory) relatively simple service.<p>It span across 9000 LOC, 63 new files, including a DSL parser and much more.<p>How would you go about reviewing a PR like this?",
+      "source": "Hacker News",
+      "url": "https://news.ycombinator.com/item?id=45744209",
+      "timestamp": "2025-10-29T08:37:36Z",
+      "heat_score": 100.0,
+      "trend_direction": "stable",
+      "tags": [
+        "Hacker News",
+        "ask_hn"
+      ],
+      "summary_cn": "如何处理长达9000行代码、包含63个新文件的PR？建议分阶段审查，关注核心功能和重要变更，确保代码质量与可维护性。",
+      "summary_ja": "長大なPR（9000行、63ファイル）をレビューする際、核心機能を理解し、価値を見極めることが重要です。複雑な要素を整理し、主要な変更点に焦点を当てて、段階的に確認する方法が推奨されます。",
+      "data_quality_score": 0.95,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "2924791c-9a1a-41b1-ab9f-f7b47257f178",
+      "title": "Ask HN: Who wants to be hired? (November 2025)",
+      "description": "Ask HN: Who wants to be hired? (November 2025)\n\nShare your information if you are looking for work. Please use this format:<p><pre><code>  Location:\n  Remote:\n  Willing to relocate:\n  Technologies:\n  Résumé&#x2F;CV:\n  Email:\n</code></pre>\nPlease only post if you are personally looking for work. Agencies, recruiters, job boards,\nand so on, are off topic here.<p>Readers: please only email these addresses to discuss work opportunities.<p>There&#x27;s a site for searching these posts at <a href=\"htt",
+      "source": "Hacker News",
+      "url": "https://news.ycombinator.com/item?id=45800464",
+      "timestamp": "2025-11-03T16:00:00Z",
+      "heat_score": 100.0,
+      "trend_direction": "stable",
+      "tags": [
+        "Hacker News",
+        "ask_hn",
+        "hiring"
+      ],
+      "summary_cn": "如果你在找工作，请分享你的信息，格式包括地点、远程工作意愿、搬迁意愿、技术、简历和邮箱。只限个人，代理和招聘公司请勿发布。",
+      "summary_ja": "仕事を探している方は、以下のフォーマットで情報を共有してください：  \n- 場所：  \n- リモート勤務：  \n- 転居可能：  \n- 技術：  \n- 履歴書/CV：  \n- メール：  \n個人の求職者のみ投稿可。エージェンシーや求人サイトは対象外。メールは仕事の機会についてのみ使用してください。",
+      "data_quality_score": 0.95,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "96daca26-eef9-411b-81b6-a1ab714e4b8a",
+      "title": "How to build a solar powered electric oven",
+      "description": "How to build a solar powered electric oven",
+      "source": "Hacker News",
+      "url": "https://solar.lowtechmagazine.com/2025/10/how-to-build-a-solar-powered-electric-oven/",
+      "timestamp": "2025-10-25T13:16:14Z",
+      "heat_score": 47.333333333333336,
+      "trend_direction": "stable",
+      "tags": [
+        "Hacker News",
+        "trending",
+        "build"
+      ],
+      "summary_cn": "太阳能电烤箱利用阳光加热食物，环保节能。通过反射镜聚焦阳光，设计简单，适合户外使用，省电且易于制作。",
+      "summary_ja": "太陽光発電の電気オーブンを作るには、太陽光を集めるパネルと熱を保つ断熱材を用意します。パネルで集めたエネルギーを利用し、オーブン内部を温めて料理をします。環境に優しく、電気代がかからないのが特徴です。",
+      "data_quality_score": 0.95,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "9f24b2b8-e9fe-423d-9e38-5bfefcc3c164",
+      "title": "OSS Alternative to Open WebUI – ChatGPT-Like UI, API and CLI",
+      "description": "OSS Alternative to Open WebUI – ChatGPT-Like UI, API and CLI",
+      "source": "Hacker News",
+      "url": "https://github.com/ServiceStack/llms",
+      "timestamp": "2025-11-03T12:05:28Z",
+      "heat_score": 36.333333333333336,
+      "trend_direction": "stable",
+      "tags": [
+        "Hacker News",
+        "trending",
+        "alternative to"
+      ],
+      "summary_cn": "OSS提供了一个开源替代方案，具备类似ChatGPT的用户界面、API和命令行工具，方便用户进行对话式交互和开发应用。",
+      "summary_ja": "ChatGPTのようなユーザーインターフェースを持つオープンソースの代替ツールです。APIやコマンドラインインターフェースを提供し、柔軟な利用が可能です。ユーザーは自分のニーズに合わせてカスタマイズでき、コミュニティによるサポートも受けられます。",
+      "data_quality_score": 0.95,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "4e2c7886-bbcf-43bc-85c6-571b1d3496a2",
+      "title": "We need more mods for this sub, please apply if you are capable",
+      "description": "We need more mods for this sub, please apply if you are capable\n\nDear community members, as our subreddit gains members and has increased activity, moderating the subreddit by myself is getting harder. And therefore, I am going to recruit new mods for this sub, and to start this process, I would like to know which members are interested in becoming a mod of this sub. And for that, please comment here with \\[Interested\\] in your message, and\n\n1. Explain why you're interested in becoming a mod.\n2.",
+      "source": "Reddit",
+      "url": "https://reddit.com/r/indiehackers/comments/1lry2ky/we_need_more_mods_for_this_sub_please_apply_if/",
+      "timestamp": "2025-07-05T01:03:45Z",
+      "heat_score": 24.7,
+      "trend_direction": "stable",
+      "tags": [
+        "Reddit",
+        "r/indiehackers",
+        "discussion"
+      ],
+      "summary_cn": "我们需要更多版主来管理这个子版块，请有能力的会员申请。请在评论中回复“有兴趣”，并说明你为何想成为版主。",
+      "summary_ja": "サブredditの活動が増え、1人での管理が難しくなっています。新しいモデレーターを募集します。興味がある方は「\\[Interested\\]」とコメントし、モデレーターになりたい理由を説明してください。",
+      "data_quality_score": 0.8,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "ce27b198-1a1e-4f34-a758-8e1f6f8870dd",
+      "title": "The Continual Learning Problem",
+      "description": "The Continual Learning Problem",
+      "source": "Hacker News",
+      "url": "https://jessylin.com/2025/10/20/continual-learning/",
+      "timestamp": "2025-10-25T06:45:20Z",
+      "heat_score": 21.166666666666668,
+      "trend_direction": "stable",
+      "tags": [
+        "Hacker News",
+        "trending",
+        "problem"
+      ],
+      "summary_cn": "持续学习问题是指AI系统在学习新知识时，如何避免遗忘旧知识。解决这一问题能提升AI的适应能力和长期表现。",
+      "summary_ja": "継続的学習の問題は、モデルが新しい情報を学ぶ際に、以前の知識を忘れずに保持することが難しい点です。この課題に対処することで、効率的に学習を重ね、柔軟に変化する環境に適応できる能力が向上します。",
+      "data_quality_score": 0.95,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "784bbd3b-7373-4697-ae89-11cec5e8aedd",
+      "title": "[anthropics/anthropic-sdk-python] Feedback wanted: Tool helpers",
+      "description": "Feedback wanted: Tool helpers\n\nAs of `0.68.0`, tool use helpers are available in beta in the SDK, which:\r\n\r\n- Let you define tools using a function decorator with Pydantic input schemas and docstring descriptions\r\n- Have the SDK automatically call your functions and send tool results back\r\n- Give you an agentic \"tool loop\" out of the box\r\n- Let you customize conversation state and tool handling flexibly however you need (e.g. t",
+      "source": "GitHub Discussions",
+      "url": "https://github.com/anthropics/anthropic-sdk-python/discussions/1036",
+      "timestamp": "2025-09-18T15:19:59Z",
+      "heat_score": 12.727272727272727,
+      "trend_direction": "stable",
+      "tags": [
+        "GitHub",
+        "anthropics/anthropic-sdk-python",
+        "feature-request"
+      ],
+      "summary_cn": "`0.68.0`版本的SDK引入了工具助手，支持用Pydantic定义工具，自动调用函数并返回结果，提供灵活的对话状态和工具处理。",
+      "summary_ja": "`0.68.0`から、SDKでツール使用ヘルパーがベータ版として利用可能になりました。これにより、Pydanticの入力スキーマと説明付きの関数デコレーターでツールを定義でき、自動で関数を呼び出し結果を返します。会話の状態やツールの処理を柔軟にカスタマイズできます。",
+      "data_quality_score": 0.9,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "f1d22cc7-d1b5-4ade-a9d5-8df0b755a871",
+      "title": "~4 months free with savings, want to build something. What would you do?",
+      "description": "~4 months free with savings, want to build something. What would you do?\n\nHi all. I want to be 100% direct and honest in stating where I am and what I want to do. I'm early 20s, STEM student at a decent school. I'm currently taking a leave due to a distressing external situation, but honestly it's been the first time in a while where I can actually breathe and think about what I want to do.\n\nI've got about 3-4 months before I go back to finish my degree. II have a good amount saved (in the 100-2",
+      "source": "Reddit",
+      "url": "https://reddit.com/r/indiehackers/comments/1ooki3i/4_months_free_with_savings_want_to_build/",
+      "timestamp": "2025-11-04T21:52:21Z",
+      "heat_score": 4.7,
+      "trend_direction": "stable",
+      "tags": [
+        "Reddit",
+        "r/indiehackers",
+        "discussion"
+      ],
+      "summary_cn": "一位20多岁的STEM学生因外部困扰请假，拥有3-4个月的空档时间和一定存款，想利用这段时间创造一些有价值的项目。",
+      "summary_ja": "20代前半のSTEM学生で、現在は外的な理由で休学中。約3～4ヶ月の自由な時間があり、貯金もあるため、自分のやりたいことを考え、何かを作りたいと思っている。",
+      "data_quality_score": 0.8,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    }
+  ],
+  "pain_points": [
+    {
+      "id": "a94d652f-5814-41bb-b4a9-57d52f32c6f6",
+      "original_text": "Sora 2 megathread (part 3)\n\nThe last one hit the post limit of 100,000 comments.\n\n# Do not try to buy codes. You will get scammed.\n\n# Do not try to sell codes. You will get permanently banned.\n\nWe have a bot set up to distribute invite codes [in the Discord](https://discord.gg/k55eH4aq) so join if you can't find codes in the comments here. Check the #sora-invite-codes channel.\n\n## [The Discord](https://discord.gg/k55eH4aq) has dozens of invite codes available, with more being posted constantly!\n",
+      "context_title": "Sora 2 megathread (part 3)",
+      "extracted_keywords": [
+        "codes",
+        "scammed",
+        "banned",
+        "invite codes",
+        "Discord",
+        "distribution",
+        "post limit"
+      ],
+      "source": "Reddit",
+      "url": "https://reddit.com/r/OpenAI/comments/1o8kmg9/sora_2_megathread_part_3/",
+      "timestamp": "2025-11-05T02:05:48.899461Z",
+      "engagement_score": 50.0,
+      "confidence_score": 0.8,
+      "tags": [
+        "user-safety",
+        "community-management",
+        "code-distribution"
+      ],
+      "summary_cn": "用户在评论中表达了对购买和销售代码的风险，提醒大家避免受骗和被封禁，同时提供了获取邀请码的渠道，显示出对安全和便利的需求。",
+      "summary_ja": "ユーザーはコードの購入と販売のリスクについて言及し、詐欺や禁止を避けるよう警告しています。また、招待コードを取得するためのチャネルを提供しており、安全性と利便性のニーズを示しています。",
+      "data_quality_score": 0.77,
+      "schema_version": "1.1",
+      "author_metadata": null
+    }
+  ],
+  "opportunities": [
+    {
+      "id": "5d86bc07-3c62-4ea2-8f25-58ea778c00b8",
+      "pain_point_id": "a94d652f-5814-41bb-b4a9-57d52f32c6f6",
+      "related_topics": [
+        "aca7625f-ffa5-42b8-8852-1c38962f8114",
+        "73ddfb77-6af7-44c4-aa45-9434906a9c10",
+        "19aa0e62-e68b-423f-b53b-538a53aa55e6"
+      ],
+      "opportunity_score": 88.0,
+      "mvp_suggestion_cn": "核心功能：1) 提供安全的邀请码分发平台，用户无需担心被诈骗或封禁；2) 实时更新和通知功能，确保用户获取最新邀请码；3) 社区互动功能，用户可以分享经验和信息，增强安全感；4) 交易监控系统，检测并阻止不当行为，保护用户权益。目标用户：对Sora 2感兴趣的游戏玩家，尤其是新手用户和社区活跃用户，年龄范围在18-35岁，主要使用社交平台（如Discord）获取信息。变现方式：免费增值模式，基础功能免费，提供高级会员服务（如无广告、优先访问邀请码等），建议价格为$4.99/月，$49.99/年。",
+      "mvp_suggestion_ja": "核心機能：1) 安全な招待コード配布プラットフォームを提供し、ユーザーが詐欺や禁止を心配する必要がない；2) リアルタイム更新と通知機能を持ち、ユーザーが最新の招待コードを取得できる；3) コミュニティインタラクション機能を通じて、ユーザーが経験や情報を共有し、安全感を高める；4) 不正行為を監視するシステムを導入し、ユーザーの権利を保護する。ターゲットユーザー：Sora 2に興味があるゲームプレイヤー、特に初心者やコミュニティのアクティブユーザー、年齢層は18-35歳、主にソーシャルプラットフォーム（Discordなど）を使用して情報を取得。収益モデル：フリーミアムモデル、基本機能は無料、高度な会員サービス（広告なし、招待コードの優先アクセスなど）を提供し、価格は月額$4.99、年額$49.99を推奨。",
+      "timestamp": "2025-11-05T02:07:46.073699",
+      "tags": [
+        "r/OpenAI",
+        "Reddit",
+        "discussion",
+        "community-management",
+        "user-safety",
+        "code-distribution",
+        "r/artificial"
+      ],
+      "data_quality_score": 0.8,
+      "schema_version": "1.2"
+    }
+  ]
+}
