@@ -13,7 +13,7 @@ import os
 import sqlite3
 from datetime import datetime, timezone, timedelta
 from typing import Optional, Dict, Any, List
-from src.database.connection import get_connection
+from src.database.connection import get_connection, convert_placeholder
 from src.utils.logger import default_logger
 
 
@@ -62,14 +62,12 @@ class ReferralManager:
             cursor = conn.cursor()
 
             # 1. 查找推荐关系记录
-            cursor.execute(
-                """
+            query = convert_placeholder("""
                 SELECT id, reward_status
                 FROM referrals
                 WHERE referrer_email = ? AND referee_email = ?
-                """,
-                (referrer_email, referee_email),
-            )
+                """)
+            cursor.execute(query, (referrer_email, referee_email))
 
             referral = cursor.fetchone()
 
@@ -80,8 +78,13 @@ class ReferralManager:
                     "message": f"未找到推荐关系记录：{referrer_email} -> {referee_email}",
                 }
 
-            referral_id = referral[0]
-            reward_status = referral[1]
+            # 兼容SQLite (tuple/Row) 和 PostgreSQL (dict)
+            if isinstance(referral, dict):
+                referral_id = referral['id']
+                reward_status = referral['reward_status']
+            else:
+                referral_id = referral[0]
+                reward_status = referral[1]
 
             # 2. 验证奖励尚未发放
             if reward_status == "granted":
@@ -92,14 +95,12 @@ class ReferralManager:
                 }
 
             # 3. 查询推荐人当前的免费使用期
-            cursor.execute(
-                """
+            query = convert_placeholder("""
                 SELECT free_until
                 FROM users
                 WHERE email = ?
-                """,
-                (referrer_email,),
-            )
+                """)
+            cursor.execute(query, (referrer_email,))
 
             user = cursor.fetchone()
 
@@ -110,7 +111,8 @@ class ReferralManager:
                     "message": f"推荐人不存在: {referrer_email}",
                 }
 
-            current_free_until = user[0]
+            # 兼容SQLite (tuple/Row) 和 PostgreSQL (dict)
+            current_free_until = user['free_until'] if isinstance(user, dict) else user[0]
 
             # 计算新的免费使用期
             if current_free_until:
@@ -130,25 +132,21 @@ class ReferralManager:
             new_free_until = new_free_until_dt.isoformat()
 
             # 4. 更新推荐人的免费使用期
-            cursor.execute(
-                """
+            query = convert_placeholder("""
                 UPDATE users
                 SET free_until = ?, updated_at = ?
                 WHERE email = ?
-                """,
-                (new_free_until, datetime.now(timezone.utc).isoformat(), referrer_email),
-            )
+                """)
+            cursor.execute(query, (new_free_until, datetime.now(timezone.utc).isoformat(), referrer_email))
 
             # 5. 更新推荐关系的奖励状态
-            cursor.execute(
-                """
+            query = convert_placeholder("""
                 UPDATE referrals
                 SET reward_status = 'granted',
                     reward_granted_at = ?
                 WHERE id = ?
-                """,
-                (datetime.now(timezone.utc).isoformat(), referral_id),
-            )
+                """)
+            cursor.execute(query, (datetime.now(timezone.utc).isoformat(), referral_id))
 
             conn.commit()
             conn.close()
@@ -204,36 +202,43 @@ class ReferralManager:
 
             if role == "referrer":
                 # 查询我推荐了谁
-                cursor.execute(
-                    """
+                query = convert_placeholder("""
                     SELECT id, referrer_email, referee_email, invite_code,
                            reward_status, reward_granted_at, created_at
                     FROM referrals
                     WHERE referrer_email = ?
                     ORDER BY created_at DESC
-                    """,
-                    (email,),
-                )
+                    """)
+                cursor.execute(query, (email,))
             else:
                 # 查询谁推荐了我
-                cursor.execute(
-                    """
+                query = convert_placeholder("""
                     SELECT id, referrer_email, referee_email, invite_code,
                            reward_status, reward_granted_at, created_at
                     FROM referrals
                     WHERE referee_email = ?
                     ORDER BY created_at DESC
-                    """,
-                    (email,),
-                )
+                    """)
+                cursor.execute(query, (email,))
 
             rows = cursor.fetchall()
             conn.close()
 
             referrals = []
             for row in rows:
-                referrals.append(
-                    {
+                # 兼容SQLite (tuple/Row) 和 PostgreSQL (dict)
+                if isinstance(row, dict):
+                    referrals.append({
+                        "id": row['id'],
+                        "referrer_email": row['referrer_email'],
+                        "referee_email": row['referee_email'],
+                        "invite_code": row['invite_code'],
+                        "reward_status": row['reward_status'],
+                        "reward_granted_at": row['reward_granted_at'],
+                        "created_at": row['created_at'],
+                    })
+                else:
+                    referrals.append({
                         "id": row[0],
                         "referrer_email": row[1],
                         "referee_email": row[2],
@@ -241,8 +246,7 @@ class ReferralManager:
                         "reward_status": row[4],
                         "reward_granted_at": row[5],
                         "created_at": row[6],
-                    }
-                )
+                    })
 
             return referrals
 
@@ -275,22 +279,27 @@ class ReferralManager:
             cursor = conn.cursor()
 
             # 查询推荐总数和各状态数量
-            cursor.execute(
-                """
+            query = convert_placeholder("""
                 SELECT
                     COUNT(*) as total,
                     SUM(CASE WHEN reward_status = 'pending' THEN 1 ELSE 0 END) as pending,
                     SUM(CASE WHEN reward_status = 'granted' THEN 1 ELSE 0 END) as granted
                 FROM referrals
                 WHERE referrer_email = ?
-                """,
-                (email,),
-            )
+                """)
+            cursor.execute(query, (email,))
 
             row = cursor.fetchone()
-            total_referrals = row[0] or 0
-            pending_rewards = row[1] or 0
-            granted_rewards = row[2] or 0
+
+            # 兼容SQLite (tuple/Row) 和 PostgreSQL (dict)
+            if isinstance(row, dict):
+                total_referrals = row['total'] or 0
+                pending_rewards = row['pending'] or 0
+                granted_rewards = row['granted'] or 0
+            else:
+                total_referrals = row[0] or 0
+                pending_rewards = row[1] or 0
+                granted_rewards = row[2] or 0
 
             # 计算累计获得的奖励天数
             total_reward_days = granted_rewards * self.REFERRAL_REWARD_DAYS
@@ -389,13 +398,12 @@ class ReferralManager:
             cursor = conn.cursor()
 
             # 查询所有待处理的推荐奖励
-            cursor.execute(
-                """
+            query = convert_placeholder("""
                 SELECT referrer_email, referee_email
                 FROM referrals
                 WHERE reward_status = 'pending'
-                """
-            )
+                """)
+            cursor.execute(query)
 
             pending_referrals = cursor.fetchall()
             conn.close()
@@ -404,7 +412,15 @@ class ReferralManager:
             granted = 0
             failed = 0
 
-            for referrer_email, referee_email in pending_referrals:
+            for row in pending_referrals:
+                # 兼容SQLite (tuple/Row) 和 PostgreSQL (dict)
+                if isinstance(row, dict):
+                    referrer_email = row['referrer_email']
+                    referee_email = row['referee_email']
+                else:
+                    referrer_email = row[0]
+                    referee_email = row[1]
+
                 processed += 1
 
                 result = self.grant_referral_reward(referrer_email, referee_email)

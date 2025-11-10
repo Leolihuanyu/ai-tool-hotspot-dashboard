@@ -15,7 +15,7 @@ import hashlib
 import sqlite3
 from datetime import datetime, timezone
 from typing import Optional, Dict, Any, List
-from src.database.connection import get_connection
+from src.database.connection import get_connection, convert_placeholder
 from src.utils.logger import default_logger
 
 
@@ -62,7 +62,8 @@ class UserManager:
             cursor = conn.cursor()
 
             # 检查用户是否已存在
-            cursor.execute("SELECT id FROM users WHERE email = ?", (email,))
+            query = convert_placeholder("SELECT id FROM users WHERE email = ?")
+            cursor.execute(query, (email,))
             existing_user = cursor.fetchone()
             if existing_user:
                 return {
@@ -73,49 +74,43 @@ class UserManager:
             # 获取推荐人ID（如果提供了推荐人邮箱）
             referrer_id = None
             if referrer_email:
-                cursor.execute(
-                    "SELECT id FROM users WHERE email = ?", (referrer_email,)
-                )
+                query = convert_placeholder("SELECT id FROM users WHERE email = ?")
+                cursor.execute(query, (referrer_email,))
                 referrer = cursor.fetchone()
                 if referrer:
-                    referrer_id = referrer[0]
+                    # 兼容SQLite (tuple/Row) 和 PostgreSQL (dict)
+                    referrer_id = referrer['id'] if isinstance(referrer, dict) else referrer[0]
 
             # 插入新用户
-            cursor.execute(
-                """
+            query = convert_placeholder("""
                 INSERT INTO users (
                     email, subscription_type, subscription_status,
                     invite_code, referrer_id
                 )
                 VALUES (?, ?, 'active', ?, ?)
-                """,
-                (email, subscription_type, invite_code, referrer_id),
-            )
+                """)
+            cursor.execute(query, (email, subscription_type, invite_code, referrer_id))
 
             user_id = cursor.lastrowid
 
             # 如果使用了邀请码，更新邀请码使用次数
             if invite_code:
-                cursor.execute(
-                    """
+                query = convert_placeholder("""
                     UPDATE invite_codes
                     SET current_uses = current_uses + 1
                     WHERE code = ?
-                    """,
-                    (invite_code,),
-                )
+                    """)
+                cursor.execute(query, (invite_code,))
 
             # 如果有推荐人，创建推荐关系记录
             if referrer_id and invite_code:
-                cursor.execute(
-                    """
+                query = convert_placeholder("""
                     INSERT INTO referrals (
                         referrer_email, referee_email, invite_code
                     )
                     VALUES (?, ?, ?)
-                    """,
-                    (referrer_email, email, invite_code),
-                )
+                    """)
+                cursor.execute(query, (referrer_email, email, invite_code))
 
             conn.commit()
             conn.close()
@@ -157,17 +152,15 @@ class UserManager:
             conn = get_connection(self.database_path)
             cursor = conn.cursor()
 
-            cursor.execute(
-                """
+            query = convert_placeholder("""
                 SELECT id, email, subscription_type, subscription_status,
                        invite_code, referrer_id, free_until,
                        stripe_customer_id, stripe_subscription_id,
                        created_at, updated_at, last_accessed_at
                 FROM users
                 WHERE email = ?
-                """,
-                (email,),
-            )
+                """)
+            cursor.execute(query, (email,))
 
             row = cursor.fetchone()
             conn.close()
@@ -175,20 +168,37 @@ class UserManager:
             if not row:
                 return None
 
-            return {
-                "id": row[0],
-                "email": row[1],
-                "subscription_type": row[2],
-                "subscription_status": row[3],
-                "invite_code": row[4],
-                "referrer_id": row[5],
-                "free_until": row[6],
-                "stripe_customer_id": row[7],
-                "stripe_subscription_id": row[8],
-                "created_at": row[9],
-                "updated_at": row[10],
-                "last_accessed_at": row[11],
-            }
+            # 兼容SQLite (tuple/Row) 和 PostgreSQL (dict)
+            if isinstance(row, dict):
+                return {
+                    "id": row['id'],
+                    "email": row['email'],
+                    "subscription_type": row['subscription_type'],
+                    "subscription_status": row['subscription_status'],
+                    "invite_code": row['invite_code'],
+                    "referrer_id": row['referrer_id'],
+                    "free_until": row['free_until'],
+                    "stripe_customer_id": row['stripe_customer_id'],
+                    "stripe_subscription_id": row['stripe_subscription_id'],
+                    "created_at": row['created_at'],
+                    "updated_at": row['updated_at'],
+                    "last_accessed_at": row['last_accessed_at'],
+                }
+            else:
+                return {
+                    "id": row[0],
+                    "email": row[1],
+                    "subscription_type": row[2],
+                    "subscription_status": row[3],
+                    "invite_code": row[4],
+                    "referrer_id": row[5],
+                    "free_until": row[6],
+                    "stripe_customer_id": row[7],
+                    "stripe_subscription_id": row[8],
+                    "created_at": row[9],
+                    "updated_at": row[10],
+                    "last_accessed_at": row[11],
+                }
 
         except Exception as e:
             default_logger.error(
@@ -253,6 +263,7 @@ class UserManager:
                 SET {', '.join(update_fields)}
                 WHERE email = ?
             """
+            query = convert_placeholder(query)
 
             cursor.execute(query, params)
             conn.commit()
@@ -310,27 +321,23 @@ class UserManager:
             token_hash = hashlib.sha256(token.encode()).hexdigest()
 
             # 插入访问日志
-            cursor.execute(
-                """
+            query = convert_placeholder("""
                 INSERT INTO access_logs (
                     email, token_hash, ip_address, user_agent,
                     access_result, error_message
                 )
                 VALUES (?, ?, ?, ?, ?, ?)
-                """,
-                (email, token_hash, ip_address, user_agent, access_result, error_message),
-            )
+                """)
+            cursor.execute(query, (email, token_hash, ip_address, user_agent, access_result, error_message))
 
             # 如果访问成功，更新用户的last_accessed_at
             if access_result == "success":
-                cursor.execute(
-                    """
+                query = convert_placeholder("""
                     UPDATE users
                     SET last_accessed_at = ?
                     WHERE email = ?
-                    """,
-                    (datetime.now(timezone.utc).isoformat(), email),
-                )
+                    """)
+                cursor.execute(query, (datetime.now(timezone.utc).isoformat(), email))
 
             conn.commit()
             conn.close()
@@ -362,36 +369,44 @@ class UserManager:
             cursor = conn.cursor()
 
             if email:
-                cursor.execute(
-                    """
+                query = convert_placeholder("""
                     SELECT id, email, token_hash, accessed_at, ip_address,
                            user_agent, access_result, error_message
                     FROM access_logs
                     WHERE email = ?
                     ORDER BY accessed_at DESC
                     LIMIT ?
-                    """,
-                    (email, limit),
-                )
+                    """)
+                cursor.execute(query, (email, limit))
             else:
-                cursor.execute(
-                    """
+                query = convert_placeholder("""
                     SELECT id, email, token_hash, accessed_at, ip_address,
                            user_agent, access_result, error_message
                     FROM access_logs
                     ORDER BY accessed_at DESC
                     LIMIT ?
-                    """,
-                    (limit,),
-                )
+                    """)
+                cursor.execute(query, (limit,))
 
             rows = cursor.fetchall()
             conn.close()
 
             logs = []
             for row in rows:
-                logs.append(
-                    {
+                # 兼容SQLite (tuple/Row) 和 PostgreSQL (dict)
+                if isinstance(row, dict):
+                    logs.append({
+                        "id": row['id'],
+                        "email": row['email'],
+                        "token_hash": row['token_hash'],
+                        "accessed_at": row['accessed_at'],
+                        "ip_address": row['ip_address'],
+                        "user_agent": row['user_agent'],
+                        "access_result": row['access_result'],
+                        "error_message": row['error_message'],
+                    })
+                else:
+                    logs.append({
                         "id": row[0],
                         "email": row[1],
                         "token_hash": row[2],
@@ -400,8 +415,7 @@ class UserManager:
                         "user_agent": row[5],
                         "access_result": row[6],
                         "error_message": row[7],
-                    }
-                )
+                    })
 
             return logs
 
@@ -423,23 +437,33 @@ class UserManager:
             conn = get_connection(self.database_path)
             cursor = conn.cursor()
 
-            cursor.execute(
-                """
+            query = convert_placeholder("""
                 SELECT id, email, subscription_type, free_until
                 FROM users
                 WHERE subscription_status = 'active'
                   AND subscription_type IN ('beta', 'paid')
                 ORDER BY created_at DESC
-                """
-            )
+                """)
+            cursor.execute(query)
 
             rows = cursor.fetchall()
             conn.close()
 
             users = []
             for row in rows:
+                # 兼容SQLite (tuple/Row) 和 PostgreSQL (dict)
+                if isinstance(row, dict):
+                    user_id = row['id']
+                    email = row['email']
+                    subscription_type = row['subscription_type']
+                    free_until = row['free_until']
+                else:
+                    user_id = row[0]
+                    email = row[1]
+                    subscription_type = row[2]
+                    free_until = row[3]
+
                 # 检查免费期是否过期
-                free_until = row[3]
                 is_valid = True
 
                 if free_until:
@@ -450,13 +474,11 @@ class UserManager:
                         is_valid = False
 
                 if is_valid:
-                    users.append(
-                        {
-                            "id": row[0],
-                            "email": row[1],
-                            "subscription_type": row[2],
-                        }
-                    )
+                    users.append({
+                        "id": user_id,
+                        "email": email,
+                        "subscription_type": subscription_type,
+                    })
 
             return users
 

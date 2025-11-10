@@ -16,7 +16,7 @@ import string
 import sqlite3
 from datetime import datetime, timezone, timedelta
 from typing import Optional, Dict, Any, List
-from src.database.connection import get_connection
+from src.database.connection import get_connection, convert_placeholder
 from src.utils.logger import default_logger
 
 
@@ -76,9 +76,8 @@ class InviteManager:
             cursor = conn.cursor()
 
             # 检查邀请码是否已存在
-            cursor.execute(
-                "SELECT code FROM invite_codes WHERE code = ?", (code,)
-            )
+            query = convert_placeholder("SELECT code FROM invite_codes WHERE code = ?")
+            cursor.execute(query, (code,))
             if cursor.fetchone():
                 conn.close()
                 return {
@@ -87,15 +86,13 @@ class InviteManager:
                 }
 
             # 插入邀请码
-            cursor.execute(
-                """
+            query = convert_placeholder("""
                 INSERT INTO invite_codes (
                     code, code_type, max_uses, created_by, expires_at
                 )
                 VALUES (?, ?, ?, ?, ?)
-                """,
-                (code, code_type, max_uses, created_by, expires_at),
-            )
+                """)
+            cursor.execute(query, (code, code_type, max_uses, created_by, expires_at))
 
             conn.commit()
             code_id = cursor.lastrowid
@@ -213,15 +210,13 @@ class InviteManager:
             cursor = conn.cursor()
 
             # 查询邀请码信息
-            cursor.execute(
-                """
+            query = convert_placeholder("""
                 SELECT id, code, code_type, max_uses, current_uses,
                        created_by, expires_at, created_at, is_active
                 FROM invite_codes
                 WHERE code = ?
-                """,
-                (code,),
-            )
+                """)
+            cursor.execute(query, (code,))
 
             row = cursor.fetchone()
             conn.close()
@@ -233,17 +228,31 @@ class InviteManager:
                     "reason": "邀请码不存在",
                 }
 
-            code_info = {
-                "id": row[0],
-                "code": row[1],
-                "code_type": row[2],
-                "max_uses": row[3],
-                "current_uses": row[4],
-                "created_by": row[5],
-                "expires_at": row[6],
-                "created_at": row[7],
-                "is_active": row[8],
-            }
+            # 兼容SQLite (tuple/Row) 和 PostgreSQL (dict)
+            if isinstance(row, dict):
+                code_info = {
+                    "id": row['id'],
+                    "code": row['code'],
+                    "code_type": row['code_type'],
+                    "max_uses": row['max_uses'],
+                    "current_uses": row['current_uses'],
+                    "created_by": row['created_by'],
+                    "expires_at": row['expires_at'],
+                    "created_at": row['created_at'],
+                    "is_active": row['is_active'],
+                }
+            else:
+                code_info = {
+                    "id": row[0],
+                    "code": row[1],
+                    "code_type": row[2],
+                    "max_uses": row[3],
+                    "current_uses": row[4],
+                    "created_by": row[5],
+                    "expires_at": row[6],
+                    "created_at": row[7],
+                    "is_active": row[8],
+                }
 
             # 邀请码未激活
             if not code_info["is_active"]:
@@ -308,15 +317,13 @@ class InviteManager:
             conn = get_connection(self.database_path)
             cursor = conn.cursor()
 
-            cursor.execute(
-                """
+            query = convert_placeholder("""
                 SELECT id, code, code_type, max_uses, current_uses,
                        created_by, expires_at, created_at, is_active
                 FROM invite_codes
                 WHERE code = ?
-                """,
-                (code,),
-            )
+                """)
+            cursor.execute(query, (code,))
 
             row = cursor.fetchone()
             conn.close()
@@ -324,17 +331,31 @@ class InviteManager:
             if not row:
                 return None
 
-            return {
-                "id": row[0],
-                "code": row[1],
-                "code_type": row[2],
-                "max_uses": row[3],
-                "current_uses": row[4],
-                "created_by": row[5],
-                "expires_at": row[6],
-                "created_at": row[7],
-                "is_active": row[8],
-            }
+            # 兼容SQLite (tuple/Row) 和 PostgreSQL (dict)
+            if isinstance(row, dict):
+                return {
+                    "id": row['id'],
+                    "code": row['code'],
+                    "code_type": row['code_type'],
+                    "max_uses": row['max_uses'],
+                    "current_uses": row['current_uses'],
+                    "created_by": row['created_by'],
+                    "expires_at": row['expires_at'],
+                    "created_at": row['created_at'],
+                    "is_active": row['is_active'],
+                }
+            else:
+                return {
+                    "id": row[0],
+                    "code": row[1],
+                    "code_type": row[2],
+                    "max_uses": row[3],
+                    "current_uses": row[4],
+                    "created_by": row[5],
+                    "expires_at": row[6],
+                    "created_at": row[7],
+                    "is_active": row[8],
+                }
 
         except Exception as e:
             default_logger.error(
@@ -388,6 +409,7 @@ class InviteManager:
                 ORDER BY created_at DESC
                 LIMIT ?
             """
+            query = convert_placeholder(query)
 
             params.append(limit)
             cursor.execute(query, params)
@@ -397,8 +419,21 @@ class InviteManager:
 
             codes = []
             for row in rows:
-                codes.append(
-                    {
+                # 兼容SQLite (tuple/Row) 和 PostgreSQL (dict)
+                if isinstance(row, dict):
+                    codes.append({
+                        "id": row['id'],
+                        "code": row['code'],
+                        "code_type": row['code_type'],
+                        "max_uses": row['max_uses'],
+                        "current_uses": row['current_uses'],
+                        "created_by": row['created_by'],
+                        "expires_at": row['expires_at'],
+                        "created_at": row['created_at'],
+                        "is_active": row['is_active'],
+                    })
+                else:
+                    codes.append({
                         "id": row[0],
                         "code": row[1],
                         "code_type": row[2],
@@ -408,8 +443,7 @@ class InviteManager:
                         "expires_at": row[6],
                         "created_at": row[7],
                         "is_active": row[8],
-                    }
-                )
+                    })
 
             return codes
 
@@ -459,14 +493,12 @@ class InviteManager:
             conn = get_connection(self.database_path)
             cursor = conn.cursor()
 
-            cursor.execute(
-                """
+            query = convert_placeholder("""
                 UPDATE invite_codes
                 SET is_active = ?
                 WHERE code = ?
-                """,
-                (1 if is_active else 0, code),
-            )
+                """)
+            cursor.execute(query, (1 if is_active else 0, code))
 
             conn.commit()
             rows_affected = cursor.rowcount

@@ -323,7 +323,7 @@ def register_routes(app):
             from src.user.invite_manager import InviteManager
             invite_manager = InviteManager()
 
-            verify_result = invite_manager.verify_invite_code(invite_code, email)
+            verify_result = invite_manager.validate_code(invite_code)
             if not verify_result.get('valid'):
                 return jsonify({
                     "success": False,

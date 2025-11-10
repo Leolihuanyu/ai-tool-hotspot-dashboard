@@ -48,3 +48,5 @@ mypy>=1.5.0  # 类型检查
 
 # === 数据库 ===
 # SQLite是Python标准库的一部分，无需额外安装
+# PostgreSQL驱动（用于Supabase等云数据库）
+psycopg2-binary>=2.9.0  # PostgreSQL适配器
