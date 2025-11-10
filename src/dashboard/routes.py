@@ -6,8 +6,9 @@ Dashboard Web界面的所有路由。
 import json
 import os
 import time
-from flask import render_template, jsonify, request
+from flask import render_template, jsonify, request, make_response
 from src.utils.logger import get_logger
+from src.dashboard.auth_middleware import require_auth, optional_auth, verify_token_from_request
 
 logger = get_logger(__name__)
 
@@ -326,4 +327,115 @@ def register_routes(app):
             'service': 'ai-tool-hotspot-dashboard'
         })
 
-    logger.info("路由注册完成")
+    # === 认证相关路由 ===
+
+    @app.route('/api/verify-token', methods=['POST', 'GET'])
+    def api_verify_token():
+        """
+        API: 验证访问token的有效性
+
+        请求参数（URL参数或JSON body）：
+            token: 访问token
+            email: 用户邮箱（可选）
+
+        返回：
+            {
+                "success": True/False,
+                "valid": True/False,
+                "email": "user@example.com",
+                "subscription_type": "beta/paid",
+                "error": "错误信息"
+            }
+        """
+        try:
+            result = verify_token_from_request()
+
+            return jsonify({
+                "success": True,
+                **result
+            })
+
+        except Exception as e:
+            logger.error(f"Token验证失败: {e}")
+            return jsonify({
+                "success": False,
+                "valid": False,
+                "error": str(e)
+            }), 500
+
+    @app.route('/access-expired')
+    def access_expired():
+        """
+        访问过期/无效提示页面
+
+        URL参数：
+            error: 错误信息
+        """
+        error_message = request.args.get('error', '访问链接已过期或无效')
+
+        # 判断错误类型，显示不同的提示
+        if "过期" in error_message:
+            title = "访问链接已过期"
+            suggestion = "请重新获取最新的访问链接，或订阅以获得持续访问权限。"
+        elif "IP地址" in error_message or "转发" in error_message:
+            title = "安全验证失败"
+            suggestion = "检测到您的访问来自不同的IP地址，可能是链接被转发。请使用原始邮件中的链接访问。"
+        else:
+            title = "访问被拒绝"
+            suggestion = "您的访问链接无效或已被篡改。请联系管理员或重新订阅。"
+
+        return render_template(
+            'access_expired.html',
+            title=title,
+            error_message=error_message,
+            suggestion=suggestion
+        ), 401
+
+    @app.route('/api/data')
+    @require_auth
+    def api_data():
+        """
+        API: 获取完整数据（需要认证）
+
+        返回：
+            {
+                "success": True,
+                "user_email": "user@example.com",
+                "data": {
+                    "ai_tools": [...],
+                    "trending_topics": [...],
+                    "opportunities": [...]
+                }
+            }
+        """
+        try:
+            data = load_latest_data()
+
+            # Enrichment opportunities数据
+            enriched_opps = enrich_opportunities(
+                opportunities=data.get('opportunities', []),
+                pain_points=data.get('pain_points', []),
+                ai_tools=data.get('ai_tools', []),
+                trending_topics=data.get('trending_topics', [])
+            )
+
+            return jsonify({
+                "success": True,
+                "user_email": request.user_email,
+                "subscription_type": request.subscription_type,
+                "data": {
+                    "ai_tools": data.get('ai_tools', []),
+                    "trending_topics": data.get('trending_topics', []),
+                    "pain_points": data.get('pain_points', []),
+                    "opportunities": enriched_opps
+                }
+            })
+
+        except Exception as e:
+            logger.error(f"获取数据失败: {e}")
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            }), 500
+
+    logger.info("路由注册完成（包含认证路由）")

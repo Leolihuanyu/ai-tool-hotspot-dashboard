@@ -112,6 +112,81 @@ CREATE INDEX IF NOT EXISTS idx_scraping_logs_status ON scraping_logs(status);
 CREATE INDEX IF NOT EXISTS idx_scraping_logs_timestamp ON scraping_logs(timestamp DESC);
 CREATE INDEX IF NOT EXISTS idx_scraping_logs_created_at ON scraping_logs(created_at DESC);
 
+-- 用户表（访问控制）
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT UNIQUE NOT NULL,
+    subscription_type TEXT NOT NULL CHECK(subscription_type IN ('beta', 'paid', 'free')),
+    subscription_status TEXT DEFAULT 'active' CHECK(subscription_status IN ('active', 'cancelled', 'expired')),
+    invite_code TEXT UNIQUE,  -- 用户使用的邀请码
+    referrer_id INTEGER,  -- 推荐人ID（用于推荐奖励）
+    free_until TEXT,  -- 免费使用截止时间（推荐奖励）
+    stripe_customer_id TEXT,  -- Stripe客户ID
+    stripe_subscription_id TEXT,  -- Stripe订阅ID
+    created_at TEXT DEFAULT (datetime('now')),
+    updated_at TEXT DEFAULT (datetime('now')),
+    last_accessed_at TEXT,
+    FOREIGN KEY (referrer_id) REFERENCES users(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_users_subscription_type ON users(subscription_type);
+CREATE INDEX IF NOT EXISTS idx_users_invite_code ON users(invite_code);
+CREATE INDEX IF NOT EXISTS idx_users_referrer_id ON users(referrer_id);
+
+-- 访问日志表（安全审计）
+CREATE TABLE IF NOT EXISTS access_logs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL,
+    token_hash TEXT NOT NULL,  -- token的SHA256哈希值（隐私保护）
+    accessed_at TEXT DEFAULT (datetime('now')),
+    ip_address TEXT,  -- 访问IP地址
+    user_agent TEXT,  -- 浏览器User Agent
+    access_result TEXT NOT NULL CHECK(access_result IN ('success', 'expired', 'invalid', 'ip_mismatch')),
+    error_message TEXT,  -- 如果验证失败，记录错误信息
+    FOREIGN KEY (email) REFERENCES users(email)
+);
+
+CREATE INDEX IF NOT EXISTS idx_access_logs_email ON access_logs(email);
+CREATE INDEX IF NOT EXISTS idx_access_logs_accessed_at ON access_logs(accessed_at DESC);
+CREATE INDEX IF NOT EXISTS idx_access_logs_access_result ON access_logs(access_result);
+
+-- 推荐关系表（用于推荐奖励）
+CREATE TABLE IF NOT EXISTS referrals (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    referrer_email TEXT NOT NULL,  -- 推荐人邮箱
+    referee_email TEXT NOT NULL,  -- 被推荐人邮箱
+    invite_code TEXT NOT NULL,  -- 使用的邀请码
+    reward_status TEXT DEFAULT 'pending' CHECK(reward_status IN ('pending', 'granted', 'expired')),
+    reward_granted_at TEXT,  -- 奖励发放时间
+    created_at TEXT DEFAULT (datetime('now')),
+    FOREIGN KEY (referrer_email) REFERENCES users(email),
+    FOREIGN KEY (referee_email) REFERENCES users(email),
+    UNIQUE(referrer_email, referee_email)  -- 防止重复推荐
+);
+
+CREATE INDEX IF NOT EXISTS idx_referrals_referrer_email ON referrals(referrer_email);
+CREATE INDEX IF NOT EXISTS idx_referrals_referee_email ON referrals(referee_email);
+CREATE INDEX IF NOT EXISTS idx_referrals_reward_status ON referrals(reward_status);
+
+-- 邀请码表（管理邀请码生成与使用）
+CREATE TABLE IF NOT EXISTS invite_codes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    code TEXT UNIQUE NOT NULL,  -- 邀请码
+    code_type TEXT NOT NULL CHECK(code_type IN ('beta', 'referral', 'partner')),
+    max_uses INTEGER DEFAULT 1,  -- 最大使用次数（-1表示无限）
+    current_uses INTEGER DEFAULT 0,  -- 当前使用次数
+    created_by TEXT,  -- 创建人邮箱（如果是referral类型）
+    expires_at TEXT,  -- 过期时间（可选）
+    created_at TEXT DEFAULT (datetime('now')),
+    is_active INTEGER DEFAULT 1 CHECK(is_active IN (0, 1)),  -- 是否激活
+    FOREIGN KEY (created_by) REFERENCES users(email)
+);
+
+CREATE INDEX IF NOT EXISTS idx_invite_codes_code ON invite_codes(code);
+CREATE INDEX IF NOT EXISTS idx_invite_codes_code_type ON invite_codes(code_type);
+CREATE INDEX IF NOT EXISTS idx_invite_codes_is_active ON invite_codes(is_active);
+
 -- 版本信息表
 CREATE TABLE IF NOT EXISTS schema_version (
     version TEXT PRIMARY KEY,
@@ -121,3 +196,4 @@ CREATE TABLE IF NOT EXISTS schema_version (
 
 -- 插入当前版本
 INSERT OR IGNORE INTO schema_version (version, description) VALUES ('1.1', 'Initial schema with v1.1 enhancements');
+INSERT OR IGNORE INTO schema_version (version, description) VALUES ('1.2', 'Added user management and access control tables');

@@ -1,0 +1,259 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 自定义全局样式 */
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white min-h-screen;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    /* 防止iOS自动缩放字体 */
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  * {
+    @apply border-slate-700;
+  }
+
+  /* 移动端优化：防止长按选择文字时出现蓝色背景 */
+  input, textarea, button {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer components {
+  /* 玻璃态效果卡片 */
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl shadow-xl;
+  }
+
+  /* 渐变按钮 */
+  .btn-gradient {
+    @apply bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600
+           text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300
+           shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+  }
+
+  /* 发光效果 */
+  .glow {
+    @apply shadow-[0_0_20px_rgba(59,130,246,0.5)];
+  }
+
+  /* 悬浮卡片效果 */
+  .hover-lift {
+    @apply transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl;
+  }
+
+  /* 表格横向滚动容器 */
+  .table-scroll-container {
+    @apply overflow-x-auto -mx-4 px-4;
+    /* 隐藏滚动条但保持功能（移动端友好） */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 触控友好按钮（最小44x44px） */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px] relative inline-flex items-center justify-center;
+  }
+
+  /* 触摸反馈效果 */
+  .touch-feedback {
+    @apply active:scale-95 transition-transform duration-100;
+  }
+
+  /* 浏览器窗口预览框 - 简约玻璃态风格 */
+  .browser-window-preview {
+    @apply relative rounded-2xl overflow-hidden;
+    /* 玻璃态背景 */
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.08) 0%,
+      rgba(255, 255, 255, 0.02) 100%
+    );
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    /* 边框和阴影 */
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow:
+      0 20px 70px rgba(0, 0, 0, 0.4),
+      0 10px 30px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    /* 平滑过渡 */
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .browser-window-preview:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow:
+      0 30px 90px rgba(0, 0, 0, 0.5),
+      0 15px 40px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    transform: translateY(-4px) scale(1.005);
+  }
+
+  /* 浏览器标题栏 */
+  .browser-header {
+    @apply flex items-center justify-between px-5 py-4;
+    background: linear-gradient(
+      180deg,
+      rgba(51, 65, 85, 0.6) 0%,
+      rgba(30, 41, 59, 0.6) 100%
+    );
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  /* 内容区域 */
+  .browser-content {
+    @apply p-8 md:p-12;
+    background: linear-gradient(
+      180deg,
+      rgba(15, 23, 42, 0.3) 0%,
+      rgba(15, 23, 42, 0.5) 100%
+    );
+    /* 内部柔和发光 */
+    box-shadow: inset 0 1px 3px rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.7);
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  /* 移动端字体大小微调 */
+  body {
+    font-size: 14px;
+  }
+
+  /* 卡片间距优化 */
+  .glass-card {
+    border-radius: 0.5rem;
+  }
+
+  /* 减少移动端padding */
+  .space-y-6 > * + * {
+    margin-top: 1rem !important;
+  }
+
+  /* 网格布局在小屏幕上单列显示 */
+  .grid.grid-cols-2,
+  .grid.grid-cols-3,
+  .grid[class*="md:grid-cols"],
+  .grid[class*="lg:grid-cols"] {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  /* 移动端卡片hover效果移除 */
+  .hover-lift:hover {
+    transform: none;
+  }
+
+  /* 浏览器窗口预览 - 移动端优化 */
+  .browser-window-preview {
+    @apply rounded-xl;
+  }
+
+  .browser-window-preview:hover {
+    transform: none;
+  }
+
+  .browser-header {
+    @apply px-4 py-3;
+  }
+
+  .browser-content {
+    @apply p-4;
+  }
+
+  /* 移动端表格样式优化 */
+  table {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  /* 横向滚动提示 */
+  .table-scroll-container::after {
+    content: '← 滑动查看更多 →';
+    display: block;
+    text-align: center;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    color: rgb(100 116 139);
+    margin-top: 0.5rem;
+  }
+}
+
+/* 触摸设备专用样式（移除hover效果） */
+@media (hover: none) and (pointer: coarse) {
+  .hover-lift:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  /* 保留active状态的反馈 */
+  button:active,
+  a:active,
+  .touch-feedback:active {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+}
+
+/* 小屏幕（手机） */
+@media (max-width: 640px) {
+  /* 更紧凑的间距 */
+  .space-y-6 > * + * {
+    margin-top: 1rem;
+  }
+
+  /* 标题字体缩小 */
+  h1 {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+
+  /* 按钮全宽显示 */
+  .btn-gradient {
+    width: 100%;
+  }
+
+  /* 隐藏部分装饰元素以减少视觉噪音 */
+  .hidden-mobile {
+    display: none;
+  }
+}
+
+/* 中等屏幕（平板） */
+@media (min-width: 640px) and (max-width: 1024px) {
+  /* 两列网格 */
+  .grid[class*="lg:grid-cols-3"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

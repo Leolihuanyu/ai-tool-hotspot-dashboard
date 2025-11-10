@@ -1,0 +1,415 @@
+{
+  "nav": {
+    "home": "首页",
+    "tools": "AI工具榜",
+    "trends": "热点榜",
+    "opportunities": "机会榜",
+    "pricing": "定价",
+    "brand": "AI 热点"
+  },
+  "mobile": {
+    "home": "首页",
+    "tools": "工具",
+    "trends": "热点",
+    "opportunities": "机会",
+    "backToTop": "返回顶部"
+  },
+  "common": {
+    "loading": "加载中...",
+    "loadError": "加载数据失败:",
+    "viewAll": "查看全部",
+    "prev": "上一页",
+    "next": "下一页",
+    "page": "第",
+    "of": "/",
+    "pageUnit": "页",
+    "noResults": "未找到匹配的结果",
+    "processing": "处理中...",
+    "clear": "清除",
+    "filters": "过滤器",
+    "selected": "已选择",
+    "found": "找到",
+    "results": "个结果",
+    "filtersActive": "过滤器已启用",
+    "quality": "质量:",
+    "score": "评分:",
+    "tags": "标签",
+    "contactSupport": "联系技术支持",
+    "backHome": "返回首页",
+    "seconds": "秒后自动跳转到首页..."
+  },
+  "landing": {
+    "badge": "每日更新 · AI驱动分析",
+    "hero": {
+      "title1": "发现下一个",
+      "title2": "AI创业机会",
+      "subtitle": "每天为您精选最有价值的AI工具痛点，智能匹配创业机会，让您快人一步抓住市场先机",
+      "ctaPrimary": "立即订阅",
+      "ctaSecondary": "申请Beta邀请",
+      "dashboardPreview": "Dashboard预览",
+      "dashboardPreviewAlt": "Dashboard 预览"
+    },
+    "preview": {
+      "title": "今日AI热点分析",
+      "subtitle": "每日更新的精选数据，助您抢占市场先机",
+      "loading": "正在加载最新数据...",
+      "live": "实时",
+      "browserTitle": "Dashboard 每日精选预览",
+      "stats": {
+        "tools": "AI工具",
+        "trends": "热点话题",
+        "opportunities": "商业机会"
+      },
+      "sections": {
+        "topTools": "今日热门AI工具",
+        "topTrends": "热点趋势 Top3",
+        "topOpportunity": "精选创业机会"
+      },
+      "opportunityTitle": "AI创业机会",
+      "score": "评分",
+      "aiGenerated": "由AI分析生成",
+      "cta": "查看完整Dashboard",
+      "ctaSubtext": "访问更多洞察和详细分析"
+    },
+    "features": {
+      "title": "为什么选择我们？",
+      "subtitle": "强大的AI驱动功能，让您专注于创造价值",
+      "multiSource": {
+        "title": "多数据源聚合",
+        "desc": "整合ProductHunt、Reddit、HackerNews、GitHub等10+高质量数据源，覆盖全球AI工具动态"
+      },
+      "llmFilter": {
+        "title": "LLM智能过滤",
+        "desc": "使用先进的LLM模型深度分析和过滤，确保70%+的痛点都是真实有价值的创业机会"
+      },
+      "smartMatch": {
+        "title": "痛点智能匹配",
+        "desc": "自动识别用户痛点，智能评分排序,精准匹配市场机会，节省您90%的市场调研时间"
+      },
+      "autoUpdate": {
+        "title": "每日自动更新",
+        "desc": "自动化流水线每天抓取最新数据，凌晨更新Dashboard，让您第一时间掌握市场动态"
+      }
+    },
+    "pricing": {
+      "title": "简单透明的定价",
+      "subtitle": "选择最适合您的计划，随时可以取消",
+      "monthly": {
+        "title": "月付计划",
+        "desc": "灵活订阅，随时取消",
+        "feature1": "完整功能访问",
+        "feature2": "每日数据更新",
+        "feature3": "无限查看机会",
+        "feature4": "邮件推送",
+        "cta": "开始订阅"
+      },
+      "yearly": {
+        "title": "年付计划",
+        "desc": "节省$12，20% off",
+        "feature1": "完整功能访问",
+        "feature2": "每日数据更新",
+        "feature3": "无限查看机会",
+        "feature4": "优先客户支持",
+        "badge": "推荐",
+        "cta": "开始订阅"
+      }
+    },
+    "stats": {
+      "sources": "数据源",
+      "opportunities": "每日机会",
+      "quality": "高质量占比",
+      "updates": "自动更新"
+    },
+    "faq": {
+      "title": "常见问题",
+      "q1": {
+        "q": "数据来源是什么？",
+        "a": "我们整合了ProductHunt、Reddit、HackerNews、GitHub、YouTube等10+高质量数据源，确保覆盖全球AI工具动态和用户痛点。"
+      },
+      "q2": {
+        "q": "更新频率是多少？",
+        "a": "我们的自动化流水线每天凌晨运行，抓取最新的AI工具和痛点数据，确保您每天都能看到最新的市场机会。"
+      },
+      "q3": {
+        "q": "如何保证数据质量？",
+        "a": "我们使用先进的LLM模型进行深度分析和过滤，采用数据源分级权重系统，并通过反射机制过滤无价值内容，确保70%+的痛点都是真实有价值的。"
+      },
+      "q4": {
+        "q": "可以随时取消订阅吗？",
+        "a": "是的，您可以随时在Stripe客户门户中取消订阅，不需要任何理由。取消后订阅将在当前计费周期结束时停止。"
+      },
+      "q5": {
+        "q": "Beta版和付费版有什么区别？",
+        "a": "Beta版和付费版功能完全相同，都可以访问完整的Dashboard和所有数据。Beta版是我们的早期测试计划，通过邀请码免费获得。"
+      }
+    },
+    "footer": {
+      "title": "AI工具热点Dashboard",
+      "subtitle": "每日为您精选最有价值的AI工具痛点和创业机会",
+      "links": {
+        "title": "快速链接",
+        "pricing": "定价",
+        "beta": "申请Beta",
+        "contact": "联系我们"
+      },
+      "copyright": "© 2025 AI 工具热点 Dashboard. 数据每日自动更新。"
+    }
+  },
+  "home": {
+    "title": "AI 工具热点 Dashboard",
+    "subtitle": "发现最新的 AI 工具、热点话题和机会洞察",
+    "stats": {
+      "tools": "AI 工具",
+      "toolsCount": "个工具",
+      "topics": "热点话题",
+      "topicsCount": "个话题",
+      "opportunities": "机会洞察",
+      "opportunitiesCount": "个机会"
+    },
+    "sections": {
+      "latestTools": "最新 AI 工具",
+      "latestTopics": "最新热点话题"
+    },
+    "placeholders": {
+      "unnamed": "未命名工具",
+      "unnamedTopic": "未命名话题",
+      "noDescription": "暂无描述",
+      "engagement": "互动量"
+    }
+  },
+  "tools": {
+    "title": "AI 工具榜",
+    "subtitle": "发现最新最热门的 AI 工具",
+    "search": "搜索工具名称、描述、标签或摘要...",
+    "noResults": "未找到匹配的工具",
+    "unnamed": "未命名工具",
+    "tags": "标签",
+    "summaryCN": "🇨🇳 中文摘要",
+    "summaryJA": "🇯🇵 日本語要约"
+  },
+  "trends": {
+    "title": "热点榜",
+    "subtitle": "追踪最热门的 AI 话题和趋势",
+    "search": "搜索话题标题、描述、标签或摘要...",
+    "noResults": "未找到匹配的话题",
+    "unnamedTopic": "未命名话题",
+    "direction": {
+      "rising": "上升",
+      "falling": "下降",
+      "stable": "稳定"
+    },
+    "metrics": {
+      "heat": "热度",
+      "velocity": "速度",
+      "heatIndicator": "热度指标"
+    },
+    "labels": {
+      "tags": "标签",
+      "platforms": "平台"
+    },
+    "summaryCN": "🇨🇳 中文摘要",
+    "summaryJA": "🇯🇵 日本語要约"
+  },
+  "opportunities": {
+    "title": "机会榜",
+    "subtitle": "发现 AI 领域的机会和痛点洞察",
+    "search": "搜索痛点、MVP建议、关键词或标签...",
+    "noResults": "未找到匹配的机会，请尝试调整过滤条件",
+    "opportunity": "机会",
+    "painPoint": {
+      "title": "用户痛点",
+      "context": "上下文:",
+      "confidence": "置信度:"
+    },
+    "mvp": {
+      "title": "MVP 建议",
+      "cn": "🇨🇳 中文建议",
+      "ja": "🇯🇵 日本語提案"
+    },
+    "related": {
+      "title": "相关资源",
+      "tools": "相关 AI 工具",
+      "trends": "相关热点",
+      "source": "来源:",
+      "heat": "热度:"
+    },
+    "scoreDetails": "评分详情",
+    "dataQuality": "数据质量:"
+  },
+  "pricing": {
+    "title": "选择您的计划",
+    "subtitle": "每天为您精选最有价值的AI工具痛点，发现下一个创业机会",
+    "monthly": {
+      "title": "月付计划",
+      "desc": "灵活订阅，随时取消",
+      "feature1": "每日AI工具热点分析",
+      "feature2": "痛点机会智能匹配",
+      "feature3": "LLM深度过滤",
+      "feature4": "多数据源聚合",
+      "cta": "开始月付订阅"
+    },
+    "yearly": {
+      "title": "年付计划",
+      "desc": "节省$12，20% off",
+      "badge": "推荐",
+      "cta": "开始年付订阅"
+    },
+    "features": {
+      "allFeatures": "所有计划均包含完整功能访问",
+      "securePayment": "安全支付由 Stripe 提供支持",
+      "cancelAnytime": "支持随时取消"
+    },
+    "error": "订阅失败:"
+  },
+  "invite": {
+    "validating": {
+      "title": "验证邀请码中...",
+      "message": "请稍候，我们正在验证您的邀请码"
+    },
+    "invalid": {
+      "title": "邀请码无效",
+      "reasons": "可能的原因：",
+      "reason1": "邀请码已过期",
+      "reason2": "邀请码已被使用完毕",
+      "reason3": "邀请码已被停用",
+      "reason4": "邀请码拼写错误"
+    },
+    "success": {
+      "title": "注册成功！",
+      "nextSteps": "接下来：",
+      "step1": "检查您的邮箱",
+      "step2": "找到来自 AI工具热点Dashboard 的欢迎邮件",
+      "step3": "点击邮件中的访问链接即可进入Dashboard",
+      "step4": "每天我们都会发送最新的AI工具热点分析",
+      "cta": "打开邮箱"
+    },
+    "form": {
+      "title": "欢迎加入 Beta 测试！",
+      "subtitle": "您的邀请码有效，请填写邮箱完成注册",
+      "codeLabel": "邀请码：",
+      "typeLabel": "类型：",
+      "types": {
+        "beta": "Beta测试",
+        "partner": "合作伙伴",
+        "referral": "推荐"
+      },
+      "expiresLabel": "有效期至：",
+      "emailLabel": "邮箱地址",
+      "emailHelp": "我们将向此邮箱发送每日AI工具热点分析",
+      "submit": "完成注册",
+      "submitting": "注册中...",
+      "terms": "注册即表示您同意接收我们的每日邮件通知",
+      "privacy": "我们尊重您的隐私，您可以随时取消订阅",
+      "hasAccount": "💡 已有账号？"
+    }
+  },
+  "inviteInput": {
+    "title": "使用邀请码注册",
+    "subtitle": "请输入您的Beta测试邀请码",
+    "codeLabel": "邀请码",
+    "placeholder": "例如: BETA2025",
+    "hint": "邀请码通常包含字母和数字，不区分大小写",
+    "errors": {
+      "required": "请输入邀请码",
+      "invalid": "邀请码格式不正确"
+    },
+    "submit": "继续注册",
+    "help": {
+      "title": "如何获取邀请码？",
+      "tip1": "如果您收到了邀请邮件，邀请码会在邮件中",
+      "tip2": "您的朋友推荐时会分享给您邀请码",
+      "tip3": "关注我们的社交媒体可能会发放限量邀请码"
+    },
+    "noCode": {
+      "title": "没有邀请码？",
+      "cta": "联系我们申请"
+    }
+  },
+  "expired": {
+    "title": "访问链接已过期或无效",
+    "errors": {
+      "expired": {
+        "title": "访问链接已过期",
+        "message": "您的访问链接有效期为24小时。请查收最新的每日邮件，或订阅以获得持续访问权限。"
+      },
+      "ipMismatch": {
+        "title": "安全验证失败",
+        "message": "检测到您的访问来自不同的IP地址，可能是链接被转发。请使用原始邮件中的链接访问。"
+      },
+      "noToken": {
+        "title": "需要访问权限",
+        "message": "请通过邮件中的专属链接访问Dashboard，或联系我们获取访问权限。"
+      },
+      "invalid": {
+        "title": "访问被拒绝",
+        "message": "您的访问链接无效或已被篡改。请检查邮件中的链接是否完整。"
+      }
+    },
+    "actions": {
+      "showDetails": "查看详细错误信息",
+      "useInviteCode": "🎫 使用邀请码注册",
+      "subscribe": "立即订阅获取访问权限"
+    },
+    "tip": "💡 提示：访问链接仅限单人使用，请勿转发给他人",
+    "help": {
+      "title": "如何获取有效访问链接？",
+      "step1": "检查您的邮箱，查找来自 AI工具热点Dashboard 的每日邮件",
+      "step2": "点击邮件中的「查看完整Dashboard」按钮",
+      "step3": "链接有效期为24小时，过期后需使用新邮件中的链接",
+      "step4": "如需持续访问，请考虑订阅我们的服务"
+    }
+  },
+  "checkoutSuccess": {
+    "title": "订阅成功！",
+    "message": "感谢您订阅AI工具热点Dashboard！",
+    "emailSent": "我们已向您的邮箱发送了欢迎邮件。",
+    "orderId": "订单ID",
+    "nextSteps": {
+      "title": "接下来的步骤：",
+      "step1": "查看您的邮箱获取访问链接",
+      "step2": "点击邮件中的链接访问Dashboard",
+      "step3": "开始探索AI工具热点趋势"
+    },
+    "cta": "立即前往首页",
+    "support": {
+      "title": "联系客服",
+      "message": "如有任何问题，请联系我们的客服团队"
+    }
+  },
+  "checkoutCancelled": {
+    "title": "订阅已取消",
+    "message": "您已取消订阅流程。",
+    "comeback": "如果您改变主意，随时可以重新订阅。",
+    "why": {
+      "title": "为什么选择AI工具热点Dashboard？",
+      "reason1": "每日更新最新AI工具热点",
+      "reason2": "多源聚合深度分析",
+      "reason3": "LLM智能总结痛点",
+      "reason4": "个性化Dashboard访问"
+    },
+    "actions": {
+      "pricing": "重新查看订阅计划",
+      "home": "返回首页",
+      "support": "有疑问？联系客服"
+    },
+    "welcome": "我们随时欢迎您回来"
+  },
+  "search": {
+    "placeholder": "搜索关键词...",
+    "filters": {
+      "source": "数据来源",
+      "sourcesCount": "个来源",
+      "tags": "标签",
+      "tagsHint": "（显示前20个热门标签）",
+      "tagsCount": "个标签",
+      "pricing": "定价模式",
+      "timeRange": "时间范围",
+      "timeRanges": {
+        "all": "全部",
+        "7days": "最近7天",
+        "30days": "最近30天",
+        "90days": "最近90天"
+      }
+    }
+  }
+}
