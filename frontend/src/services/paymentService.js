@@ -4,7 +4,10 @@
 
 import { getAuthToken } from '../utils/auth';
 
-const API_BASE_URL = '/api/payment';
+// 使用环境变量配置API基础URL
+// 开发环境: 通过 Vite proxy 代理到本地 Flask (http://127.0.0.1:8010)
+// 生产环境: 直接请求 Render.com 后端
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 /**
  * 创建Stripe Checkout Session

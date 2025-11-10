@@ -3,6 +3,9 @@
  * 用于处理Dashboard访问Token的验证和管理
  */
 
+// 使用环境变量配置API基础URL
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+
 const TOKEN_STORAGE_KEY = 'access_token';
 const EMAIL_STORAGE_KEY = 'user_email';
 const SUBSCRIPTION_TYPE_STORAGE_KEY = 'subscription_type';
@@ -110,7 +113,7 @@ export function clearToken() {
  */
 export async function verifyToken(token) {
   try {
-    const response = await fetch(`/api/verify-token?token=${encodeURIComponent(token)}`, {
+    const response = await fetch(`${API_BASE_URL}/verify-token?token=${encodeURIComponent(token)}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'

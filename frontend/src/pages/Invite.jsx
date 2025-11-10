@@ -3,6 +3,9 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { CheckCircle, XCircle, Mail, Loader2, UserPlus, Gift, Clock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
+// 使用环境变量配置API基础URL
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+
 /**
  * 邀请注册页面
  * 用户通过邀请码注册Beta账号
@@ -34,7 +37,7 @@ export default function Invite() {
   // 验证邀请码的API调用
   const validateInviteCode = async (code) => {
     try {
-      const response = await fetch(`/api/invite/validate?code=${encodeURIComponent(code)}`);
+      const response = await fetch(`${API_BASE_URL}/invite/validate?code=${encodeURIComponent(code)}`);
       const data = await response.json();
 
       if (data.valid) {
@@ -65,7 +68,7 @@ export default function Invite() {
     setErrorMessage('');
 
     try {
-      const response = await fetch('/api/invite/register', {
+      const response = await fetch(`${API_BASE_URL}/invite/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
