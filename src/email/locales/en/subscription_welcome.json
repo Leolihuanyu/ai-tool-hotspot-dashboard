@@ -1,0 +1,19 @@
+{
+  "subject": "🎉 Welcome to AI Tool Hotspot Dashboard!",
+  "title": "🎉 Subscription Successful!",
+  "greeting": "Hello,",
+  "intro_p1": "Thank you for subscribing to <strong>AI Tool Hotspot Dashboard</strong>! Your subscription has been successfully activated.",
+  "intro_p2": "We curate the most valuable AI tools and pain point opportunities daily, helping you discover your next startup idea.",
+  "features_title": "✨ What You Can Enjoy Now",
+  "features": [
+    "Daily AI tool pain point discovery",
+    "Multi-source data aggregation and analysis",
+    "LLM-powered intelligent filtering",
+    "Personalized Dashboard access"
+  ],
+  "cta_button": "🚀 Access Dashboard Now",
+  "access_notice": "Access links are valid for 24 hours. Each email we send will include a new access link.",
+  "support": "If you have any questions, feel free to reply to this email!",
+  "footer_copyright": "© 2025 AI Tool Hotspot Dashboard",
+  "footer_thanks": "Enjoy using our service!"
+}

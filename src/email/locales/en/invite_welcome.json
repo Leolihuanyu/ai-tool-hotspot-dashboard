@@ -1,0 +1,25 @@
+{
+  "subject": "Welcome to AI Tool Hotspot Dashboard Beta!",
+  "title": "🎉 Welcome to Beta Testing!",
+  "greeting": "Hello,",
+  "intro_p1": "Thank you for joining the <strong>AI Tool Hotspot Dashboard</strong> Beta testing program!",
+  "intro_p2": "We curate the most valuable AI tools and pain point opportunities daily, helping you discover your next startup idea.",
+  "features_title": "✨ Beta Testing Benefits",
+  "features": [
+    "Daily AI tool hotspot analysis updates",
+    "Exclusive access to product opportunity Dashboard",
+    "Priority access to new features",
+    "Free access to all core features"
+  ],
+  "cta_button": "🚀 Access Dashboard Now",
+  "usage_title": "📋 How to Use",
+  "usage_steps": [
+    "Click the button above to access the Dashboard",
+    "We'll send you daily hotspot analysis emails",
+    "Access links are valid for 24 hours",
+    "Feel free to contact us with any questions"
+  ],
+  "feedback": "If you have any suggestions or feedback about the product, please reply to this email!",
+  "footer_copyright": "© 2025 AI Tool Hotspot Dashboard | Beta Version",
+  "footer_notice": "Access links are for your personal use only. Please do not share with others"
+}

@@ -1,0 +1,19 @@
+{
+  "subject": "🎉 欢迎订阅AI工具热点Dashboard！",
+  "title": "🎉 欢迎订阅成功！",
+  "greeting": "您好，",
+  "intro_p1": "感谢您订阅 <strong>AI工具热点Dashboard</strong>！您的订阅已成功激活。",
+  "intro_p2": "我们每天为您精选最有价值的AI工具和痛点机会，帮助您发现下一个创业方向。",
+  "features_title": "✨ 您现在可以享受",
+  "features": [
+    "每日AI工具痛点发现",
+    "多数据源聚合分析",
+    "LLM智能过滤",
+    "个性化Dashboard访问"
+  ],
+  "cta_button": "🚀 立即访问Dashboard",
+  "access_notice": "访问链接有效期为24小时。每次我们发送的邮件都会包含新的访问链接。",
+  "support": "如有任何问题，欢迎直接回复此邮件！",
+  "footer_copyright": "© 2025 AI工具热点Dashboard",
+  "footer_thanks": "祝您使用愉快！"
+}

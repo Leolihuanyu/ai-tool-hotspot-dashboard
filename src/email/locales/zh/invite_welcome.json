@@ -1,0 +1,25 @@
+{
+  "subject": "欢迎加入 AI工具热点Dashboard Beta测试！",
+  "title": "🎉 欢迎加入 Beta 测试！",
+  "greeting": "您好，",
+  "intro_p1": "感谢您加入 <strong>AI工具热点Dashboard</strong> Beta测试计划！",
+  "intro_p2": "我们每天为您精选最有价值的AI工具和痛点机会，帮助您发现下一个创业方向。",
+  "features_title": "✨ Beta测试特权",
+  "features": [
+    "每日推送最新AI工具热点分析",
+    "独家访问产品机会Dashboard",
+    "优先体验新功能",
+    "免费使用所有核心功能"
+  ],
+  "cta_button": "🚀 立即访问Dashboard",
+  "usage_title": "📋 使用说明",
+  "usage_steps": [
+    "点击上方按钮访问Dashboard",
+    "每天我们会发送最新的热点分析邮件",
+    "邮件中的访问链接有效期为24小时",
+    "如有任何问题，请随时联系我们"
+  ],
+  "feedback": "如果您对产品有任何建议或反馈，欢迎直接回复此邮件！",
+  "footer_copyright": "© 2025 AI工具热点Dashboard | Beta测试版",
+  "footer_notice": "访问链接仅限您个人使用，请勿转发给他人"
+}

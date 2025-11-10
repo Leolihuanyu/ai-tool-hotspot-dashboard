@@ -212,6 +212,7 @@ __marimo__/
 # 数据文件（忽略数据库和临时文件，但保留JSON输出）
 data/*.sqlite
 data/*.db
+data/*.db.backup
 data/*.sqlite-journal
 data/temp/
 data/cache/
@@ -233,7 +234,9 @@ logs/
 # macOS
 .DS_Store
 
-# 临时文件
+# 临时文件和调试脚本
 *.tmp
 *.swp
 *.bak
+debug_*.py
+quick_*.py

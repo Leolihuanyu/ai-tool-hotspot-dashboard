@@ -1,0 +1,943 @@
+{
+  "schema_version": "1.1",
+  "generated_at": "2025-11-07T18:49:52.191329",
+  "ai_tools": [
+    {
+      "id": "ea5e7fda-eddb-47d5-a496-9519219015f2",
+      "name": "BlogBowl",
+      "description": "Keyword‑driven AI articles auto‑posted to your blogDiscussion|Link",
+      "source": "ProductHunt",
+      "url": "https://www.producthunt.com/products/blogbowl-4",
+      "timestamp": "2025-10-31T21:22:17Z",
+      "tags": [],
+      "features": [
+        "text-to-image"
+      ],
+      "pricing_model": "freemium",
+      "summary_cn": "自动将关键词驱动的AI文章发布到博客，简化内容创作流程，提高效率，让您轻松维护博客更新，无需手动操作，节省时间和精力。",
+      "summary_ja": "AIを活用して、キーワードに基づいた記事を自動でブログに投稿する機能です。これにより、手間をかけずに定期的なコンテンツ更新が可能になり、ブログの維持管理が簡単になります。",
+      "data_quality_score": 0.94,
+      "schema_version": "1.1"
+    },
+    {
+      "id": "f3b0fe8b-ed03-408b-8222-0b94cc2502e6",
+      "name": "Wagoo Voice Assistant",
+      "description": "Never lift a finger again. Voice AI for email & calendarDiscussion|Link",
+      "source": "ProductHunt",
+      "url": "https://www.producthunt.com/products/wagoo",
+      "timestamp": "2025-11-06T03:09:57Z",
+      "tags": [],
+      "features": [
+        "voice-synthesis"
+      ],
+      "pricing_model": "freemium",
+      "summary_cn": "语音AI让你无需动手即可管理电子邮件和日历，提升日常效率，轻松安排和查看日程，是现代生活的智能助手。",
+      "summary_ja": "音声AIを使用して、メールやカレンダーの操作を簡単にします。手を使わずに音声で指示を出すことで、効率的にタスクを管理できるのが特徴です。",
+      "data_quality_score": 0.94,
+      "schema_version": "1.1"
+    },
+    {
+      "id": "dae04a77-cc56-4000-bcf4-d20a8a1c34ce",
+      "name": "Taskade Genesis",
+      "description": "Your workspace, alive with memory, intelligence, and motion.Discussion|Link",
+      "source": "ProductHunt",
+      "url": "https://www.producthunt.com/products/taskade",
+      "timestamp": "2025-11-05T09:41:49Z",
+      "tags": [],
+      "features": [
+        "ai-tool"
+      ],
+      "pricing_model": "freemium",
+      "summary_cn": "一个充满记忆、智能和动态的工作空间，旨在提升协作效率和信息管理，让团队更流畅地交流和行动。",
+      "summary_ja": "記憶、知能、動きを備えたワークスペースが提供されています。これにより、効率的な作業環境が実現し、個々のニーズに合わせて最適化されたサポートが受けられます。ユーザーは快適な作業体験を得られます。",
+      "data_quality_score": 0.94,
+      "schema_version": "1.1"
+    },
+    {
+      "id": "f3563ca3-edfd-425c-8e55-a7a579ff67ad",
+      "name": "Fusion 1.0",
+      "description": "The first AI agent for product, design, and codeDiscussion|Link",
+      "source": "ProductHunt",
+      "url": "https://www.producthunt.com/products/builder-io",
+      "timestamp": "2025-11-06T08:56:09Z",
+      "tags": [],
+      "features": [
+        "code-generation"
+      ],
+      "pricing_model": "freemium",
+      "summary_cn": "这是一个为产品、设计和代码提供支持的AI工具，核心功能是自动化任务，提高工作效率，帮助用户快速实现创意和优化项目流程。",
+      "summary_ja": "AIエージェントは、製品開発、デザイン、コード作成を効率化するためのツールです。これにより、ユーザーは迅速にプロトタイプを作成し、デザインやコードの品質を向上させることができます。",
+      "data_quality_score": 0.94,
+      "schema_version": "1.1"
+    },
+    {
+      "id": "9ccff90b-9843-4694-8bde-779094a62398",
+      "name": "Groodles",
+      "description": "Art therapy app with Apple Health that unlocks a better youDiscussion|Link",
+      "source": "ProductHunt",
+      "url": "https://www.producthunt.com/products/groodles-art-therapy-app",
+      "timestamp": "2025-11-06T10:38:21Z",
+      "tags": [],
+      "features": [
+        "ai-tool"
+      ],
+      "pricing_model": "freemium",
+      "summary_cn": "这款艺术疗愈应用结合Apple Health，通过创作艺术帮助用户提高心理健康，释放压力，增强自我认知，支持用户实现更好的自我。",
+      "summary_ja": "Apple Healthと連携したアートセラピーアプリは、ユーザーが自己改善を目指すための支援を提供します。アートを通じて心の健康を促進し、ストレスを軽減することを目的としています。",
+      "data_quality_score": 1.0,
+      "schema_version": "1.1"
+    },
+    {
+      "id": "fdcad794-359e-44ea-a125-c661078ef4e0",
+      "name": "Kimi K2 Thinking",
+      "description": "The 1T Parameters Open-Source Thinking Agent ModelDiscussion|Link",
+      "source": "ProductHunt",
+      "url": "https://www.producthunt.com/products/kimi-ai-assistant",
+      "timestamp": "2025-11-07T01:41:52Z",
+      "tags": [],
+      "features": [
+        "ai-tool"
+      ],
+      "pricing_model": "freemium",
+      "summary_cn": "1T参数开源思维代理模型通过开放源代码，提升人工智能的思考能力和可解释性，帮助开发者更好地理解和应用AI技术。",
+      "summary_ja": "1T Parameters Open-Source Thinking Agent Modelは、オープンソースの思考エージェントモデルで、膨大なパラメータを活用して高度な意思決定と問題解決を支援します。ユーザーは自由に利用・改良でき、様々な分野での応用が期待されます。",
+      "data_quality_score": 1.0,
+      "schema_version": "1.1"
+    },
+    {
+      "id": "e5b71f2f-2216-4d21-a649-a4e3ac60ec32",
+      "name": "NocoBase 2.0",
+      "description": "Model your data, then build apps with blocks and actionsDiscussion|Link",
+      "source": "ProductHunt",
+      "url": "https://www.producthunt.com/products/nocobase",
+      "timestamp": "2025-11-04T08:41:03Z",
+      "tags": [],
+      "features": [
+        "data-analysis"
+      ],
+      "pricing_model": "freemium",
+      "summary_cn": "通过数据建模，再用模块和操作构建应用。此方法简化了应用开发流程，让开发者更容易创建和管理功能强大的应用程序。",
+      "summary_ja": "データをモデル化し、そのモデルを使ってアプリを作成する方法を説明しています。ブロックとアクションを組み合わせて、効率的にアプリを構築し、ユーザーが直感的に操作できるようにすることが目的です。",
+      "data_quality_score": 0.94,
+      "schema_version": "1.1"
+    },
+    {
+      "id": "b3168053-14fc-4935-a129-c687979f68b0",
+      "name": "Sourmize",
+      "description": "Automatic UTMs with AI + Intelligent AnalyticsDiscussion|Link",
+      "source": "ProductHunt",
+      "url": "https://www.producthunt.com/products/sourmize",
+      "timestamp": "2025-11-06T08:20:10Z",
+      "tags": [],
+      "features": [
+        "data-analysis"
+      ],
+      "pricing_model": "freemium",
+      "summary_cn": "自动UTM使用AI和智能分析，简化追踪管理，提高数据准确性和决策效率。它能自动生成和管理UTM参数，帮助用户更好地分析流量来源和优化营销策略。",
+      "summary_ja": "AIとインテリジェント分析を活用した自動UTMシステムは、トラッキングコードを自動生成し、データ分析を効率化します。これにより、マーケティングキャンペーンの効果を正確に測定し、戦略の調整を容易にします。",
+      "data_quality_score": 0.94,
+      "schema_version": "1.1"
+    },
+    {
+      "id": "2410fd0a-b6c0-4b27-85e0-7286d41897b2",
+      "name": "Sendr",
+      "description": "Your complete GTM stack, powered by AIDiscussion|Link",
+      "source": "ProductHunt",
+      "url": "https://www.producthunt.com/products/sendr",
+      "timestamp": "2025-04-10T15:58:32Z",
+      "tags": [],
+      "features": [
+        "ai-tool"
+      ],
+      "pricing_model": "freemium",
+      "summary_cn": "AIDiscussion提供完整的GTM解决方案，帮助企业通过数据驱动的策略优化市场进入，提升销售效率，加速增长。其核心在于智能分析与自动化工具的应用。",
+      "summary_ja": "AIDiscussion|Linkは、GTM（Go-to-Market）プロセスを支援するツールです。AI技術を活用して、効率的な市場進出をサポートし、ビジネスの成長を促進します。マーケティング用語を避け、分かりやすい言葉でユーザーに必要な情報を提供します。",
+      "data_quality_score": 0.94,
+      "schema_version": "1.1"
+    },
+    {
+      "id": "826c839f-89d7-4ade-be87-0467ef055699",
+      "name": "Secure MCP Framework by Arcade.dev",
+      "description": "Skip migration and launch MCP with built-in AuthDiscussion|Link",
+      "source": "ProductHunt",
+      "url": "https://www.producthunt.com/products/secure-mcp-framework",
+      "timestamp": "2025-10-23T16:31:45Z",
+      "tags": [],
+      "features": [
+        "ai-tool"
+      ],
+      "pricing_model": "freemium",
+      "summary_cn": "MCP直接启动，无需迁移，内置身份验证功能，简化用户认证过程，提升安全性和便捷性。",
+      "summary_ja": "MCPを導入する際、データ移行を省略し、内蔵の認証機能を活用することで、設定が簡単で安全性が向上します。これにより、スムーズな利用開始が可能となり、ユーザーの利便性が高まります。",
+      "data_quality_score": 0.94,
+      "schema_version": "1.1"
+    }
+  ],
+  "trending_topics": [
+    {
+      "id": "3d179f99-6087-49e2-bab0-2ba06dad4cb4",
+      "title": "What are you building this weekend? Promote your website",
+      "description": "What are you building this weekend? Promote your website",
+      "source": "Reddit",
+      "url": "https://reddit.com/r/SideProject/comments/1ojfs7f/what_are_you_building_this_weekend_promote_your/",
+      "timestamp": "2025-10-29T20:33:28Z",
+      "heat_score": 100.0,
+      "trend_direction": "stable",
+      "tags": [
+        "Reddit",
+        "r/SideProject",
+        "discussion"
+      ],
+      "summary_cn": "本周末你在建什么？推广你的网站。核心功能是展示和宣传个人或企业的网站，价值在于提升在线曝光和吸引更多访问者。",
+      "summary_ja": "この週末に何を作りますか？ウェブサイトを宣伝しましょう。核心機能や価値を強調し、簡潔で分かりやすく伝えます。マーケティング用語は避け、200文字以内で説明します。",
+      "data_quality_score": 0.8,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "79a7bdbd-a0c3-4c22-90d9-14efa732fd11",
+      "title": "I build an app so my wife never loses her phone again",
+      "description": "I build an app so my wife never loses her phone again\n\nhttps://preview.redd.it/mil8kxe77nzf1.jpg?width=1536&format=pjpg&auto=webp&s=f96f2d6d98736419095218a2bccf7f26e72bbb78\n\nMy wife is extremely forgetful and constantly misplaces her phone around the house. And of course, it's ALWAYS on silent mode.\n\nI got so fed up with this that I built RingIt a simple app that makes her phone ring loudly for 30 seconds, even when it's on silent, DND, or sleep mode\n\nThe app is free on the App Store & Google Pl",
+      "source": "Reddit",
+      "url": "https://reddit.com/r/SideProject/comments/1opzkjh/i_build_an_app_so_my_wife_never_loses_her_phone/",
+      "timestamp": "2025-11-06T13:55:54Z",
+      "heat_score": 100.0,
+      "trend_direction": "stable",
+      "tags": [
+        "Reddit",
+        "r/SideProject",
+        "discussion"
+      ],
+      "summary_cn": "我为我健忘的妻子开发了RingIt应用，让她手机即使在静音、勿扰或睡眠模式下也能响铃30秒，以便她能轻松找到手机。应用在App Store和Google Play免费提供。",
+      "summary_ja": "妻が家でよくスマホをなくすため、音量が小さくても30秒間大音量で鳴るアプリ「RingIt」を開発しました。このアプリは無料でApp StoreとGoogle Playで利用可能です。",
+      "data_quality_score": 0.8,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "cbe75512-c3f3-431a-b4db-1955b1133f68",
+      "title": "[golang/go] gonew: templates for new modules",
+      "description": "gonew: templates for new modules\n\nA common request we hear from users is some kind of 'go new' functionality to start a new module with some kind of basic template.\r\n\r\nIt seems like a tool along these lines should not be limited to templates provided by the Go team: it should be possible for anyone to define templates. That is, templates should just be ordinary modules. At that point the core job of 'go new' is mainly to download ",
+      "source": "GitHub Discussions",
+      "url": "https://github.com/golang/go/discussions/61669",
+      "timestamp": "2023-07-31T13:59:14Z",
+      "heat_score": 100.0,
+      "trend_direction": "stable",
+      "tags": [
+        "GitHub",
+        "golang/go",
+        "feature-request"
+      ],
+      "summary_cn": "\"go new\"功能允许用户使用基础模板创建新模块，任何人都能定义模板，这些模板本质上是普通模块，核心在于下载并应用模板。",
+      "summary_ja": "「go new」は、新しいモジュールを基本テンプレートで開始する機能です。Goチーム提供のテンプレートに限定せず、誰でもテンプレートを作成可能にします。主な役割はテンプレートモジュールのダウンロードです。",
+      "data_quality_score": 0.9,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "78707c2f-c98b-4c10-aa2c-f8aab99dee26",
+      "title": "Promote your business, week of November 3, 2025 (",
+      "description": "Promote your business, week of November 3, 2025 (\n\nPost business promotion messages here including special offers especially if you cater to small business.  \n\n**Be considerate. Make your message concise.**    \n\n**Note:** To prevent your messages from being flagged by the autofilter, don't use shortened URLs.",
+      "source": "Reddit",
+      "url": "https://reddit.com/r/smallbusiness/comments/1omzb75/promote_your_business_week_of_november_3_2025/",
+      "timestamp": "2025-11-03T01:47:28Z",
+      "heat_score": 82.8,
+      "trend_direction": "stable",
+      "tags": [
+        "Reddit",
+        "r/smallbusiness",
+        "discussion"
+      ],
+      "summary_cn": "在11月3日这周推广您的业务，发布特别优惠信息，尤其针对小企业。请保持信息简洁，不使用短网址，以免被自动过滤标记。",
+      "summary_ja": "11月3日週のビジネスプロモーションを投稿し、特に小規模ビジネス向けの特別オファーを紹介してください。メッセージは簡潔で分かりやすくし、短縮URLの使用を避けてください。",
+      "data_quality_score": 0.8,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "c23edaa3-203b-4c84-a423-43698d98e915",
+      "title": "Starting a new job in consulting? Post here for questions about new hire advice, where to live, what to buy, loyalty program decisions, and other topics you're too embarrassed to ask your coworkers (Q",
+      "description": "Starting a new job in consulting? Post here for questions about new hire advice, where to live, what to buy, loyalty program decisions, and other topics you're too embarrassed to ask your coworkers (Q3/Q4 2025)\n\nAs per the title, post anything related to starting a new job / internship in here. PM mods if you don't get an answer after a few days and we'll try to fill in the gaps or nudge a regular to answer for you.\n\nTrolling in the sticky will result in an immediate ban.\n\n**Wiki Highlights**\n\nT",
+      "source": "Reddit",
+      "url": "https://reddit.com/r/consulting/comments/1lzbmnh/starting_a_new_job_in_consulting_post_here_for/",
+      "timestamp": "2025-07-14T03:07:40Z",
+      "heat_score": 72.1,
+      "trend_direction": "stable",
+      "tags": [
+        "Reddit",
+        "r/consulting",
+        "discussion"
+      ],
+      "summary_cn": "在这里发布关于咨询新工作的任何问题，如新员工建议、居住地选择、购买清单、忠诚计划等。若几天没答复，可私信版主。恶意捣乱者将被立即禁言。",
+      "summary_ja": "新しいコンサルティングの仕事を始める人向けの質問掲示板です。住む場所や買うべきもの、ロイヤリティプログラムの選択など、同僚に聞きにくいことを投稿できます。数日内に回答がない場合、モデレーターに連絡すれば対応します。荒らし行為は即座に禁止されます。",
+      "data_quality_score": 0.8,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "29ffdce6-b4c5-4b2c-b232-4111a476af56",
+      "title": "Gave notice, instant counter. Do I take it?",
+      "description": "Gave notice, instant counter. Do I take it?\n\nI’ve been at a small data analytics consultancy for nearly 5 years at $93k base. Just accepted a F500 offer for $126k + better benefits (extra PTO week, better 401k match, cheaper insurance) in their Finance department. Signed the offer letter.\n\n15 minutes after giving notice, my manager called back almost frantic saying they’d match my range ($120-130k) and oh by the way, I was “being considered” for Senior Consultant this cycle.\n\nHere’s the kicker: ",
+      "source": "Reddit",
+      "url": "https://reddit.com/r/consulting/comments/1oq0lxr/gave_notice_instant_counter_do_i_take_it/",
+      "timestamp": "2025-11-06T14:37:50Z",
+      "heat_score": 70.8,
+      "trend_direction": "stable",
+      "tags": [
+        "Reddit",
+        "r/consulting",
+        "discussion"
+      ],
+      "summary_cn": "在小型数据分析公司工作近5年，年薪$93k。接受F500财务部门年薪$126k的工作，福利更好。辞职后经理急忙匹配$120-130k，并称正考虑晋升为高级顾问。",
+      "summary_ja": "小さなデータ分析コンサルタント会社で5年働き、年収93kドル。F500の企業から年収126kドル＋良い福利厚生のオファーを受け、契約書にサイン。退職を伝えると、上司が慌てて同等の給与を提示し、シニアコンサルタント候補だと言われた。",
+      "data_quality_score": 0.8,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "54af2c09-8425-4989-876f-e083c94a435f",
+      "title": "In this post, share your small business experience, successes, failures, AMAS, and lessons learned.",
+      "description": "In this post, share your small business experience, successes, failures, AMAS, and lessons learned.\n\nThis post welcomes and is dedicated to:\n\n* Your business successes\n* Small business anecdotes\n* Lessons learned\n* Unfortunate events\n* Unofficial AMAs\n* Links to outstanding educational materials (with explanations and/or an extract of the content)\n\nIn this post, share your small business experience, successes, failures, AMAs, and lessons learned. Week of December 9, 2019 \n/r/smallbusiness is one",
+      "source": "Reddit",
+      "url": "https://reddit.com/r/smallbusiness/comments/1ltkg12/in_this_post_share_your_small_business_experience/",
+      "timestamp": "2025-07-07T03:56:16Z",
+      "heat_score": 70.5,
+      "trend_direction": "stable",
+      "tags": [
+        "Reddit",
+        "r/smallbusiness",
+        "discussion"
+      ],
+      "summary_cn": "分享小企业经验，包括成功、失败、教训和故事。欢迎分享教育资源链接。核心是交流经验，彼此学习，共同进步。适用于2019年12月9日这一周的讨论。",
+      "summary_ja": "この投稿では、小規模ビジネスの経験、成功、失敗、および教訓を共有します。ビジネス成功談、失敗談、学んだ教訓、不幸な出来事、非公式のAMA、優れた教育資料のリンクと説明を歓迎します。2019年12月9週の投稿です。",
+      "data_quality_score": 0.8,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "909fcbd3-97e3-4ea6-8705-d43499603aeb",
+      "title": "My store doing well but fraud is lowkey killing my soul",
+      "description": "My store doing well but fraud is lowkey killing my soul\n\nSo my lil online store finally started making real money this year. Sales going up, traffic solid, I was actually starting to feel proud.\n\nThen outta nowhere boom. Random chargebacks.  \nPeople saying never ordered this. Didn’t authorize. Bro you literally confirmed shipping, tracked it, signed for it. Like what.\n\nNow every new order I’m half excited, half terrified it’s another fake one. Feels like I’m playing roulette with my own income.\n",
+      "source": "Reddit",
+      "url": "https://reddit.com/r/ecommerce/comments/1opy9rr/my_store_doing_well_but_fraud_is_lowkey_killing/",
+      "timestamp": "2025-11-06T13:00:33Z",
+      "heat_score": 50.400000000000006,
+      "trend_direction": "stable",
+      "tags": [
+        "Reddit",
+        "r/ecommerce",
+        "discussion"
+      ],
+      "summary_cn": "我的小网店开始盈利，销量和流量都不错，但频繁的退单让我心力交瘁。每次新订单我都既期待又害怕，因为不知是否又是个欺诈订单。",
+      "summary_ja": "オンラインストアの売上が今年から好調になったが、詐欺によるチャージバックが発生し始めた。商品を受け取ったにもかかわらず、注文していないと主張する人々がいる。新しい注文が入るたびに、喜びと詐欺の不安が入り混じり、自分の収入が危険にさらされていると感じる。",
+      "data_quality_score": 0.8,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "a02fe86f-ff2d-4ceb-be44-0b027380fa49",
+      "title": "My SaaS boilerplate crossed 800+ users in last 3 months",
+      "description": "My SaaS boilerplate crossed 800+ users in last 3 months\n\nMy SaaS boilerplate \"Indie Kit\" just crossed 800+ users, and people are actually loving it.\n\nI started my boilerplate this year and I started improving it everyday, This month, I even launched support of nextjs 16 and there was a major update to add support of credits just like we have in AI apps.\n\nYou can search \"Indie Kit\" on google and you'll find it.\n\nI'm that much confident that if you will search \"shipfast alternative\" or \"makerkit a",
+      "source": "Reddit",
+      "url": "https://reddit.com/r/microsaas/comments/1opzk53/my_saas_boilerplate_crossed_800_users_in_last_3/",
+      "timestamp": "2025-11-06T13:55:24Z",
+      "heat_score": 39.2,
+      "trend_direction": "stable",
+      "tags": [
+        "Reddit",
+        "r/microsaas",
+        "discussion"
+      ],
+      "summary_cn": "我的SaaS模板“Indie Kit”在过去三个月内用户已超800人。我不断改进功能，最近增加了nextjs 16支持和类似AI应用中的积分系统。搜索“Indie Kit”即可找到。",
+      "summary_ja": "SaaSボイラープレート「Indie Kit」が800人以上のユーザーに支持されています。今年開始し、日々改善を重ね、今月はNext.js 16のサポートとAIアプリのようなクレジット機能を追加しました。「Indie Kit」や「shipfast alternative」で検索可能です。",
+      "data_quality_score": 0.8,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "31e2ee6f-011a-4468-baa2-367b6d2545cb",
+      "title": "No notice, no talks, Just got email contract paused.",
+      "description": "No notice, no talks, Just got email contract paused.\n\nHey, I was working with X, a US-based company.  \n  \nI worked there for around 5 months, and they recently (3 weeks ago) raised my pay without even asking because I was doing good work.  \n  \nI worked until the 28th; everything was going fine. On the 27th, something critical broke, and the person who was handling that was not available. Then I got to know from the manager that X no longer works with us, so please fix it. I got it fixed ASAP.  \n",
+      "source": "Reddit",
+      "url": "https://reddit.com/r/freelance/comments/1ok0w2m/no_notice_no_talks_just_got_email_contract_paused/",
+      "timestamp": "2025-10-30T14:15:11Z",
+      "heat_score": 32.0,
+      "trend_direction": "stable",
+      "tags": [
+        "Reddit",
+        "r/freelance",
+        "discussion"
+      ],
+      "summary_cn": "我在美国公司X工作5个月，表现好，3周前加薪。28号发现合同暂停，27号修复关键问题时得知负责人员已离职，经理要求我尽快修复。",
+      "summary_ja": "X社で約5ヶ月間勤務し、3週間前に昇給しました。27日に重要な問題が発生し、担当者が不在だったため、マネージャーからX社との契約終了を告げられ、自分で迅速に修正しました。その後、通知や協議もなく契約がメールで一時停止されました。",
+      "data_quality_score": 0.8,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "bacdb244-6a47-406a-a044-a063753fdeaf",
+      "title": "Monthly Getting Started / Web Dev Career Thread",
+      "description": "Monthly Getting Started / Web Dev Career Thread\n\nDue to a growing influx of questions on this topic, it has been decided to commit a monthly thread dedicated to this topic to reduce the number of repeat posts on this topic. These types of posts will no longer be allowed in the main thread.\n\nMany of these questions are also addressed in the sub FAQ or may have been asked in [previous monthly career threads](/r/webdev/search?q=flair%3AMonthlyCareerThread&restrict_sr=on&sort=new&t=all).\n\nSubs dedic",
+      "source": "Reddit",
+      "url": "https://reddit.com/r/webdev/comments/1nv68pq/monthly_getting_started_web_dev_career_thread/",
+      "timestamp": "2025-10-01T12:00:35Z",
+      "heat_score": 30.5,
+      "trend_direction": "stable",
+      "tags": [
+        "Reddit",
+        "r/webdev",
+        "discussion"
+      ],
+      "summary_cn": "为减少重复帖子，设立每月专帖讨论Web开发入门和职业问题。相关问题可查看FAQ或往期帖子，主贴中不再允许此类问题。",
+      "summary_ja": "毎月、Web開発キャリアに関する質問専用のスレッドを設け、同じ質問の投稿を減らすことにしました。メインスレッドではこれらの投稿は許可されません。多くの質問はFAQや過去のスレッドでも既に答えられています。",
+      "data_quality_score": 0.8,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "cd5b3703-d21e-4f11-a023-eafb060202fa",
+      "title": "Show HN: I scraped 3B Goodreads reviews to train a better recommendation model",
+      "description": "Show HN: I scraped 3B Goodreads reviews to train a better recommendation model\n\nHi everyone,<p>For the past couple months I&#x27;ve been working on a website with two main features:<p>- <a href=\"https:&#x2F;&#x2F;book.sv\" rel=\"nofollow\">https:&#x2F;&#x2F;book.sv</a> - put in a list of books and get recommendations on what to read next from a model trained on over a billion reviews<p>- <a href=\"https:&#x2F;&#x2F;book.sv&#x2F;intersect\" rel=\"nofollow\">https:&#x2F;&#x2F;book.sv&#x2F;intersect</a> -",
+      "source": "Hacker News",
+      "url": "https://book.sv/",
+      "timestamp": "2025-11-05T17:50:45Z",
+      "heat_score": 100.0,
+      "trend_direction": "stable",
+      "tags": [
+        "Hacker News",
+        "show_hn"
+      ],
+      "summary_cn": "我开发了一个网站，输入书单即可获得推荐，基于超十亿条Goodreads评论训练的模型；另有功能可查看书籍交集，帮助更好地选择下本书。",
+      "summary_ja": "私はGoodreadsの30億件のレビューを集め、優れた推薦モデルを開発しました。このモデルを用いたウェブサイトでは、好きな本のリストを入力すると次に読むべき本を推薦します。また、類似性を調べる機能も提供しています。",
+      "data_quality_score": 0.95,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "cf4e91ff-629a-4383-9cfd-d94f73734014",
+      "title": "LLMs encode how difficult problems are",
+      "description": "LLMs encode how difficult problems are",
+      "source": "Hacker News",
+      "url": "https://arxiv.org/abs/2510.18147",
+      "timestamp": "2025-11-06T18:29:03Z",
+      "heat_score": 42.166666666666664,
+      "trend_direction": "stable",
+      "tags": [
+        "Hacker News",
+        "trending",
+        "problem"
+      ],
+      "summary_cn": "LLMs能理解问题难度，帮助解决复杂任务。通过分析数据，它们识别并处理不同层次的难题，提高决策效率和准确性。",
+      "summary_ja": "LLMは問題の難易度を解析してエンコードします。これにより、問題解決のための適切なアプローチやリソース配分が可能になります。分かりやすく問題を整理し、効率的な解決を支援します。",
+      "data_quality_score": 0.95,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "c0f34ff1-a02e-46b8-b16b-100e89dcda60",
+      "title": "Looking for better ways to automate tasks in old Windows software from web apps",
+      "description": "Looking for better ways to automate tasks in old Windows software from web apps\n\nHey folks, I work with teams in healthcare and finance where we have modern web interfaces but still rely on these ancient desktop programs for things like entering patient records or updating inventory. Right now, we use scripts or basic RPA tools to bridge the gap, but they break all the time if a popup shows up or the UI changes a bit. Its slow, costs a ton to maintain, and not reliable.  \n  \nI've tried a few ope",
+      "source": "Reddit",
+      "url": "https://reddit.com/r/webdev/comments/1oqlsje/looking_for_better_ways_to_automate_tasks_in_old/",
+      "timestamp": "2025-11-07T05:12:59Z",
+      "heat_score": 14.600000000000001,
+      "trend_direction": "stable",
+      "tags": [
+        "Reddit",
+        "r/webdev",
+        "discussion"
+      ],
+      "summary_cn": "在医疗和金融领域，我们用现代网页界面，但仍需老旧桌面程序。现用脚本或RPA工具自动化，但易出错、维护成本高且不可靠，需更好的自动化解决方案。",
+      "summary_ja": "医療や金融の現場では、古いデスクトップソフトと最新のウェブアプリを併用しており、患者記録や在庫更新に苦労しています。現行のスクリプトやRPAはポップアップやUI変更で頻繁に不具合が起こり、維持費用が高く信頼性に欠けます。",
+      "data_quality_score": 0.8,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "cd40ac83-d605-45cf-a17f-ea42c6796cc3",
+      "title": "Want to make a post? Read this first!",
+      "description": "Want to make a post? Read this first!\n\n#Read the [WIKI](https://www.reddit.com/r/digitalnomad/wiki/index) before posting\n\n9 times out of 10 it will have the answers you are looking for. \n\n## Where is my post?\n\n**Why isn't my post showing up?**\n\nIf you are new to reddit, posting with a new account, or posting with an account that has not been widely used your post will be flagged as it either looks like spam, or is highly likely to be an FAQ covered in the wiki above. We ask that you please spend",
+      "source": "Reddit",
+      "url": "https://reddit.com/r/digitalnomad/comments/vpcdi2/want_to_make_a_post_read_this_first/",
+      "timestamp": "2022-07-01T22:07:28Z",
+      "heat_score": 8.0,
+      "trend_direction": "stable",
+      "tags": [
+        "Reddit",
+        "r/digitalnomad",
+        "discussion"
+      ],
+      "summary_cn": "发帖前请先阅读WIKI，90%问题都能找到答案。新账号发帖可能被标记为垃圾或常见问题，因此请先熟悉论坛规则再发帖。",
+      "summary_ja": "投稿する前に、まず[WIKI](https://www.reddit.com/r/digitalnomad/wiki/index)を読んでください。ほとんどの疑問はここで解決できます。新しいアカウントや未使用のアカウントからの投稿は、スパムと見なされるか、WIKIにあるFAQの可能性が高く、非表示になることがあります。",
+      "data_quality_score": 0.8,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "268e74c1-59a1-4ed8-9426-571e5bd4e7e8",
+      "title": "Launched on Product Hunt… it was quieter than I hoped. Looking for honest feedback, not upvotes.",
+      "description": "Launched on Product Hunt… it was quieter than I hoped. Looking for honest feedback, not upvotes.\n\nHello Everyone!\n\nI launched my product on Product Hunt recently. I wasn’t expecting fireworks, but—if I’m honest—it was quieter than I imagined.\n\nI’m not here to beg for upvotes or “you got this!” comments. I’d genuinely like honest, even uncomfortable feedback from builders who’ve been through this or have opinions on the product itself.\n\n\n\nWhat we built:\n\nA tool that lets you share a file with an ",
+      "source": "Reddit",
+      "url": "https://reddit.com/r/SaaS/comments/1oqnsra/launched_on_product_hunt_it_was_quieter_than_i/",
+      "timestamp": "2025-11-07T07:10:03Z",
+      "heat_score": 5.0,
+      "trend_direction": "stable",
+      "tags": [
+        "Reddit",
+        "r/SaaS",
+        "discussion"
+      ],
+      "summary_cn": "我在Product Hunt上发布了一个工具，可让用户分享文件。希望得到诚恳的反馈，而非投票或鼓励，希望了解产品改进空间。",
+      "summary_ja": "製品をProduct Huntで発表しましたが、反応が予想より静かでした。求めているのは率直なフィードバックです。私たちの製品は、ファイルを共有するためのツールです。経験のある方や製品に意見を持つ方の正直な意見を伺いたいです。",
+      "data_quality_score": 0.8,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "de572580-1988-4a2b-bf25-1be5e74804f7",
+      "title": "Solo non-tech founder built $330K revenue in 6 months — looking for a Tech cofounder",
+      "description": "Solo non-tech founder built $330K revenue in 6 months — looking for a Tech cofounder\n\nHey everyone, I started building a company earlier this year to solve one of the hardest and most ignored problems in AI — creating high-quality niche data. Most companies struggle with this silently, and we’re fixing that by sourcing and managing expert-level data labellers who can deliver precise, custom datasets at scale.\n\nSo far, I’ve partnered with 4 YC companies, made around $40K profits by October, and o",
+      "source": "Reddit",
+      "url": "https://reddit.com/r/indiehackers/comments/1oqq1wk/solo_nontech_founder_built_330k_revenue_in_6/",
+      "timestamp": "2025-11-07T09:35:20Z",
+      "heat_score": 0.1,
+      "trend_direction": "stable",
+      "tags": [
+        "Reddit",
+        "r/indiehackers",
+        "discussion"
+      ],
+      "summary_cn": "非技术创始人在6个月内实现33万美元营收，寻找技术合伙人。他的公司专注于解决AI领域创建高质量小众数据的问题，通过组织专家级数据标注人员提供定制数据集，已与4家YC公司合作。",
+      "summary_ja": "AI分野で高品質のニッチデータを提供する企業を立ち上げ、専門的なデータラベラーを管理してカスタムデータセットを大量に提供しています。6ヶ月で330Kドルの収益を上げ、4社のYC企業と提携しました。現在、技術共同創業者を探しています。",
+      "data_quality_score": 0.8,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "2e4cd4ce-cc3d-414e-8812-a5dd4db48cbd",
+      "title": "Cool AI Tools You Didnâ    t Know You Needed! | #shorts #shortsfeed #viralshorts",
+      "description": "Transform Your Home with These Cool Tools! 🔧 #shorts #gadgets\" \n\nWelcome to our latest video where we explore an array of cutting-edge gadgets, versatile utensils, and must-have tools that are transforming everyday life. Whether you're looking for innovative solutions for your home, kitchen, or daily routines, we've got you covered with the coolest and most practical items available in 2024.\n\nIn this video, you'll discover\n- Revolutionary gadgets that simplify tasks and boost productivity\n- Vers",
+      "source": "YouTube",
+      "url": "https://www.youtube.com/shorts/Ys9i2yQNk3g",
+      "timestamp": "2025-11-06T01:30:34Z",
+      "heat_score": 1.0838,
+      "trend_direction": "stable",
+      "tags": [
+        "YouTube",
+        "Shorts"
+      ],
+      "summary_cn": "视频介绍了2024年最新家用工具和小器具，这些工具能简化家务，提高效率，适合家庭和厨房使用，是日常生活中的实用助手。",
+      "summary_ja": "最新の動画では、家庭や日常生活を変える画期的なガジェットとツールを紹介します。便利で革新的なアイテムが揃い、作業を簡単にし、効率を高める方法を発見できます。家やキッチンでの活用に最適な2024年の最新アイテムをお見逃しなく。",
+      "data_quality_score": 0.9,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "6dd66f2a-e419-4072-92d7-c39de1c8052a",
+      "title": "Solve Team Problems: AI Automation Strategies for Success #shorts",
+      "description": "Tired of team inefficiencies? Discover how to identify and solve painful, repetitive problems with AI. Learn to listen for key frustrations, research solutions, and pick the right target for maximum impact. Automate workflows and boost team productivity. #AIAutomation #TeamProductivity #WorkflowSolutions #EfficiencyHacks",
+      "source": "YouTube",
+      "url": "https://www.youtube.com/shorts/kjSKbZtDleo",
+      "timestamp": "2025-10-15T09:58:37Z",
+      "heat_score": 0.0847,
+      "trend_direction": "stable",
+      "tags": [
+        "YouTube",
+        "Shorts"
+      ],
+      "summary_cn": "用AI识别并解决团队重复问题，听取关键痛点，研究解决方案，选择最佳目标，自动化流程，提高团队效率。",
+      "summary_ja": "AIを用いてチームの非効率を改善し、繰り返しの問題を特定・解決します。主要な不満を聞き取り、適切な対策を選んで大きな効果を狙います。ワークフローを自動化し、生産性を向上させます。",
+      "data_quality_score": 0.9,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    },
+    {
+      "id": "e4af25d1-5fc2-4a4d-ae40-dd2e84b26767",
+      "title": "Webinar Problems: Behind the Scenes of Automated Email Chaos #shorts",
+      "description": "Don't assume automated reminders and webinar prep run themselves. Every detail demands your focus, from email timing to system component checks. Small oversights can create big problems. #Automation #EmailMarketing #Webinars #Productivity",
+      "source": "YouTube",
+      "url": "https://www.youtube.com/shorts/fFCwFgWnLPI",
+      "timestamp": "2025-10-22T16:28:24Z",
+      "heat_score": 0.01005,
+      "trend_direction": "stable",
+      "tags": [
+        "YouTube",
+        "Shorts"
+      ],
+      "summary_cn": "自动提醒和网络研讨会准备需细心关注每个细节，确保邮件时间和系统检查无误。小疏忽可能带来大问题。专注细节提高效率。",
+      "summary_ja": "自動リマインダーやウェビナー準備は細部が重要です。メールのタイミングやシステムのチェックなど、些細な見落としが大きな問題を引き起こす可能性があります。常に注意を払いましょう。",
+      "data_quality_score": 0.9,
+      "schema_version": "1.1",
+      "platforms": null,
+      "trend_velocity": null
+    }
+  ],
+  "pain_points": [
+    {
+      "id": "9e3e3e92-69ed-48da-93e0-bbebc3056497",
+      "original_text": "Looking for better ways to automate tasks in old Windows software from web apps\n\nHey folks, I work with teams in healthcare and finance where we have modern web interfaces but still rely on these ancient desktop programs for things like entering patient records or updating inventory. Right now, we use scripts or basic RPA tools to bridge the gap, but they break all the time if a popup shows up or the UI changes a bit. Its slow, costs a ton to maintain, and not reliable.  \n  \nI've tried a few ope",
+      "context_title": "Looking for better ways to automate tasks in old Windows software from web apps",
+      "extracted_keywords": [
+        "automation",
+        "old Windows software",
+        "web apps",
+        "RPA tools",
+        "popups",
+        "UI changes",
+        "maintenance cost",
+        "reliability",
+        "healthcare",
+        "finance"
+      ],
+      "source": "Reddit",
+      "url": "https://reddit.com/r/webdev/comments/1oqlsje/looking_for_better_ways_to_automate_tasks_in_old/",
+      "timestamp": "2025-11-07T09:46:37.532984Z",
+      "engagement_score": 50.0,
+      "confidence_score": 0.95,
+      "tags": [
+        "automation",
+        "legacy systems",
+        "RPA",
+        "software maintenance",
+        "workflow optimization"
+      ],
+      "summary_cn": "用户在医疗和金融领域使用现代网页界面，但仍依赖旧版Windows软件。现有自动化脚本和RPA工具不稳定，维护成本高且不可靠。",
+      "summary_ja": "ユーザーは医療と金融分野で現代のウェブインターフェースを使用していますが、古いWindowsソフトウェアにも依存しています。現在の自動化スクリプトとRPAツールは不安定で、維持費が高く信頼性が低いです。",
+      "data_quality_score": 0.77,
+      "schema_version": "1.1",
+      "author_metadata": null
+    },
+    {
+      "id": "7cd4606c-6100-486e-aa9f-ef6e394a3b7f",
+      "original_text": "Want to make a post? Read this first!\n\n#Read the [WIKI](https://www.reddit.com/r/digitalnomad/wiki/index) before posting\n\n9 times out of 10 it will have the answers you are looking for. \n\n## Where is my post?\n\n**Why isn't my post showing up?**\n\nIf you are new to reddit, posting with a new account, or posting with an account that has not been widely used your post will be flagged as it either looks like spam, or is highly likely to be an FAQ covered in the wiki above. We ask that you please spend",
+      "context_title": "Want to make a post? Read this first!",
+      "extracted_keywords": [
+        "post visibility",
+        "new account",
+        "spam flag",
+        "FAQ",
+        "wiki",
+        "reddit",
+        "posting issues",
+        "account usage",
+        "post not showing",
+        "digital nomad"
+      ],
+      "source": "Reddit",
+      "url": "https://reddit.com/r/digitalnomad/comments/vpcdi2/want_to_make_a_post_read_this_first/",
+      "timestamp": "2025-11-07T09:46:44.700515Z",
+      "engagement_score": 50.0,
+      "confidence_score": 0.85,
+      "tags": [
+        "user-experience",
+        "community-management",
+        "content-moderation"
+      ],
+      "summary_cn": "用户抱怨新账户或不常用账户的帖子被标记为垃圾邮件或常见问题，导致帖子无法显示。",
+      "summary_ja": "ユーザーは、新しいアカウントやあまり使用されていないアカウントで投稿すると、スパムやFAQとしてフラグが立てられ、投稿が表示されないことに不満を持っています。",
+      "data_quality_score": 0.77,
+      "schema_version": "1.1",
+      "author_metadata": null
+    },
+    {
+      "id": "a499309c-fac3-4901-a57a-29bd545fb8b0",
+      "original_text": "Launched on Product Hunt… it was quieter than I hoped. Looking for honest feedback, not upvotes.\n\nHello Everyone!\n\nI launched my product on Product Hunt recently. I wasn’t expecting fireworks, but—if I’m honest—it was quieter than I imagined.\n\nI’m not here to beg for upvotes or “you got this!” comments. I’d genuinely like honest, even uncomfortable feedback from builders who’ve been through this or have opinions on the product itself.\n\n\n\nWhat we built:\n\nA tool that lets you share a file with an ",
+      "context_title": "Launched on Product Hunt… it was quieter than I hoped. Looking for honest feedback, not upvotes.",
+      "extracted_keywords": [
+        "Product Hunt",
+        "launch",
+        "feedback",
+        "product",
+        "honest feedback",
+        "quiet launch",
+        "builders",
+        "opinions"
+      ],
+      "source": "Reddit",
+      "url": "https://reddit.com/r/SaaS/comments/1oqnsra/launched_on_product_hunt_it_was_quieter_than_i/",
+      "timestamp": "2025-11-07T09:46:49.294277Z",
+      "engagement_score": 50.0,
+      "confidence_score": 0.85,
+      "tags": [
+        "product-launch",
+        "feedback",
+        "user-engagement"
+      ],
+      "summary_cn": "用户在Product Hunt上发布产品后反响平淡，希望获得诚恳的反馈以改进产品，而不是简单的点赞或鼓励。",
+      "summary_ja": "ユーザーはProduct Huntで製品をローンチしたが、反応が鈍かったため、単なる賛辞や投票ではなく、率直なフィードバックを求めている。",
+      "data_quality_score": 0.77,
+      "schema_version": "1.1",
+      "author_metadata": null
+    },
+    {
+      "id": "0962d24b-350d-4a2e-a08b-48c51e702d89",
+      "original_text": "Solo non-tech founder built $330K revenue in 6 months — looking for a Tech cofounder\n\nHey everyone, I started building a company earlier this year to solve one of the hardest and most ignored problems in AI — creating high-quality niche data. Most companies struggle with this silently, and we’re fixing that by sourcing and managing expert-level data labellers who can deliver precise, custom datasets at scale.\n\nSo far, I’ve partnered with 4 YC companies, made around $40K profits by October, and o",
+      "context_title": "Solo non-tech founder built $330K revenue in 6 months — looking for a Tech cofounder",
+      "extracted_keywords": [
+        "non-tech founder",
+        "high-quality niche data",
+        "AI",
+        "expert-level data labellers",
+        "custom datasets",
+        "YC companies",
+        "tech cofounder",
+        "revenue",
+        "profits",
+        "data sourcing"
+      ],
+      "source": "Reddit",
+      "url": "https://reddit.com/r/indiehackers/comments/1oqq1wk/solo_nontech_founder_built_330k_revenue_in_6/",
+      "timestamp": "2025-11-07T09:46:51.896085Z",
+      "engagement_score": 50.0,
+      "confidence_score": 0.85,
+      "tags": [
+        "data-management",
+        "AI",
+        "startup",
+        "collaboration",
+        "business-development"
+      ],
+      "summary_cn": "非技术创始人创建公司以解决AI领域高质量数据的问题，已与多家公司合作并盈利，现寻求技术合伙人。",
+      "summary_ja": "非技術系創業者がAI分野の高品質データ問題を解決するための会社を設立し、複数の企業と提携して利益を上げ、技術共同創業者を探しています。",
+      "data_quality_score": 0.77,
+      "schema_version": "1.1",
+      "author_metadata": null
+    },
+    {
+      "id": "a6cb3545-0ad9-44dd-920c-f0546ec37d96",
+      "original_text": "Tired of team inefficiencies? Discover how to identify and solve painful, repetitive problems with AI. Learn to listen for key frustrations, research solutions, and pick the right target for maximum impact. Automate workflows and boost team productivity. #AIAutomation #TeamProductivity #WorkflowSolutions #EfficiencyHacks",
+      "context_title": "Solve Team Problems: AI Automation Strategies for Success #shorts",
+      "extracted_keywords": [
+        "team inefficiencies",
+        "AI automation",
+        "repetitive problems",
+        "workflow solutions",
+        "productivity"
+      ],
+      "source": "YouTube",
+      "url": "https://www.youtube.com/shorts/kjSKbZtDleo",
+      "timestamp": "2025-11-07T09:47:08.590682Z",
+      "engagement_score": 50.0,
+      "confidence_score": 0.85,
+      "tags": [
+        "automation",
+        "team productivity",
+        "workflow optimization",
+        "AI solutions",
+        "efficiency"
+      ],
+      "summary_cn": "用户表达了对团队低效的不满，并希望通过AI自动化来解决重复性问题，提高工作流程和生产力。",
+      "summary_ja": "ユーザーはチームの非効率性に不満を表明し、AI自動化を通じて反復的な問題を解決し、ワークフローと生産性を向上させたいと考えています。",
+      "data_quality_score": 0.69,
+      "schema_version": "1.1",
+      "author_metadata": null
+    },
+    {
+      "id": "8fbf4b08-461c-45d2-a67a-381a0bab8141",
+      "original_text": "gonew: templates for new modules\n\nA common request we hear from users is some kind of 'go new' functionality to start a new module with some kind of basic template.\r\n\r\nIt seems like a tool along these lines should not be limited to templates provided by the Go team: it should be possible for anyone to define templates. That is, templates should just be ordinary modules. At that point the core job of 'go new' is mainly to download ",
+      "context_title": "[golang/go] gonew: templates for new modules",
+      "extracted_keywords": [
+        "go new",
+        "templates",
+        "new modules",
+        "user request",
+        "define templates",
+        "ordinary modules",
+        "download"
+      ],
+      "source": "GitHub Discussions",
+      "url": "https://github.com/golang/go/discussions/61669",
+      "timestamp": "2025-11-07T09:47:12.273692Z",
+      "engagement_score": 50.0,
+      "confidence_score": 0.85,
+      "tags": [
+        "automation",
+        "software-development",
+        "tooling",
+        "module-creation"
+      ],
+      "summary_cn": "用户希望有一个'go new'功能来创建新模块，并且支持用户自定义模板，而不仅限于Go团队提供的模板。",
+      "summary_ja": "ユーザーは、新しいモジュールを作成するための「go new」機能を求めており、Goチームが提供するテンプレートに限定されず、ユーザーがテンプレートを定義できることを望んでいます。",
+      "data_quality_score": 0.69,
+      "schema_version": "1.1",
+      "author_metadata": null
+    }
+  ],
+  "opportunities": [
+    {
+      "id": "22d81f10-8cfa-4239-8612-3cc423eec704",
+      "pain_point_id": "a6cb3545-0ad9-44dd-920c-f0546ec37d96",
+      "related_topics": [
+        "3d179f99-6087-49e2-bab0-2ba06dad4cb4",
+        "79a7bdbd-a0c3-4c22-90d9-14efa732fd11",
+        "cbe75512-c3f3-431a-b4db-1955b1133f68"
+      ],
+      "opportunity_score": 91.0,
+      "mvp_suggestion_cn": "核心功能：1) 利用AI分析团队沟通数据，自动识别低效模式，2) 提供个性化工作流程自动化建议，3) 实时监控并报告生产力提升效果，4) 提供可视化的操作指引和反馈，5) 支持跨平台集成。目标用户群：中小型企业的管理层和团队领导，特别是希望提升工作流效率和生产力的团队。变现方式建议：订阅制，基础版$49/月，专业版$199/月。",
+      "mvp_suggestion_ja": "核心機能：1) AIを使用してチームのコミュニケーションデータを分析し、非効率的なパターンを自動的に特定します。2) 個別化されたワークフロー自動化の提案を提供します。3) 生産性向上の効果をリアルタイムで監視し報告します。4) 視覚的なガイドとフィードバックを提供します。5) クロスプラットフォーム統合をサポートします。対象ユーザー：中小企業の管理層およびチームリーダー、特にワークフローの効率と生産性を向上させたいと考えているチーム。マネタイズ方法の提案：サブスクリプションモデル、ベーシック版$49/月、プロフェッショナル版$199/月。",
+      "timestamp": "2025-11-07T18:49:47.466310",
+      "tags": [
+        "feature-request",
+        "team productivity",
+        "Reddit",
+        "workflow optimization",
+        "efficiency",
+        "golang/go",
+        "GitHub",
+        "discussion",
+        "r/SideProject",
+        "AI solutions",
+        "automation"
+      ],
+      "data_quality_score": 0.85,
+      "schema_version": "1.2"
+    },
+    {
+      "id": "054624a3-9cc6-4958-8b6c-5177be23abce",
+      "pain_point_id": "8fbf4b08-461c-45d2-a67a-381a0bab8141",
+      "related_topics": [
+        "cbe75512-c3f3-431a-b4db-1955b1133f68",
+        "3d179f99-6087-49e2-bab0-2ba06dad4cb4",
+        "79a7bdbd-a0c3-4c22-90d9-14efa732fd11"
+      ],
+      "opportunity_score": 91.0,
+      "mvp_suggestion_cn": "核心功能：1) 提供'go new'功能，创建新模块并支持自定义模板，2) 模块模板库开放，允许用户共享和下载模板，3) 自动化模板配置和依赖管理。目标用户群：Go语言开发者、软件工程师、技术创业者，特别是在快速开发和原型设计场景中。变现方式建议：免费增值模式，基础功能免费，高级模板库和定制服务订阅制，每月$5-15，或专业版一次性付费$49。",
+      "mvp_suggestion_ja": "核心機能：1) 'go new'機能を提供し、新しいモジュールを作成しカスタムテンプレートをサポート、2) モジュールテンプレートライブラリを開放し、ユーザーがテンプレートを共有・ダウンロード可能、3) テンプレート設定と依存管理を自動化。対象ユーザー群：Go言語開発者、ソフトウェアエンジニア、技術系起業家、特に迅速な開発やプロトタイピングの場面で。収益化方式提案：フリーミアムモデル、基本機能は無料、プレミアムテンプレートライブラリとカスタマイズサービスはサブスクリプション制、月額$5-15、またはプロフェッショナル版は一回払い$49。",
+      "timestamp": "2025-11-07T18:49:52.189365",
+      "tags": [
+        "feature-request",
+        "module-creation",
+        "Reddit",
+        "tooling",
+        "golang/go",
+        "GitHub",
+        "software-development",
+        "discussion",
+        "r/SideProject",
+        "automation"
+      ],
+      "data_quality_score": 0.85,
+      "schema_version": "1.2"
+    },
+    {
+      "id": "39eda825-8a40-45bc-87e9-290ad0fb479f",
+      "pain_point_id": "7cd4606c-6100-486e-aa9f-ef6e394a3b7f",
+      "related_topics": [
+        "3d179f99-6087-49e2-bab0-2ba06dad4cb4",
+        "79a7bdbd-a0c3-4c22-90d9-14efa732fd11",
+        "78707c2f-c98b-4c10-aa2c-f8aab99dee26"
+      ],
+      "opportunity_score": 88.70666666666668,
+      "mvp_suggestion_cn": "核心功能：1) 提供智能化的帖子审核和发布管理工具，2) 实时检测并提醒用户潜在的垃圾邮件标记，3) 提供个性化的发帖建议和常见问题解答。目标用户：Reddit新手用户、数字游民、社区管理者。变现方式：免费增值，基础功能免费，高级功能订阅制，$5/月。",
+      "mvp_suggestion_ja": "核心機能：1) インテリジェントな投稿レビューと公開管理ツールを提供、2) スパムフラグの可能性をリアルタイムで検出しユーザーに通知、3) パーソナライズされた投稿の提案とFAQの解決策を提供。ターゲットユーザー：Reddit初心者、デジタルノマド、コミュニティ管理者。収益化方法：フリーミアム、基本機能は無料、プレミアム機能はサブスクリプション制で、月額5ドル。",
+      "timestamp": "2025-11-07T18:49:27.698572",
+      "tags": [
+        "content-moderation",
+        "Reddit",
+        "r/smallbusiness",
+        "discussion",
+        "r/SideProject",
+        "user-experience",
+        "community-management"
+      ],
+      "data_quality_score": 0.85,
+      "schema_version": "1.2"
+    },
+    {
+      "id": "389974e0-4886-4c8b-9e80-1ab90fcc81b5",
+      "pain_point_id": "9e3e3e92-69ed-48da-93e0-bbebc3056497",
+      "related_topics": [
+        "6dd66f2a-e419-4072-92d7-c39de1c8052a",
+        "3d179f99-6087-49e2-bab0-2ba06dad4cb4",
+        "79a7bdbd-a0c3-4c22-90d9-14efa732fd11"
+      ],
+      "opportunity_score": 83.67796,
+      "mvp_suggestion_cn": "核心功能：1) 使用AI驱动的智能RPA工具自动化旧版Windows软件任务，2) 实时检测并适应UI变化，3) 通过集成的错误处理功能提高稳定性，4) 提供可视化的自动化流程编辑器，5) 支持与现代web应用的无缝连接。目标用户群：医疗和金融行业的技术支持人员、IT管理员、业务流程优化专家。变现方式建议：订阅制，基础版每月$49，专业版每月$199，提供企业定制服务。",
+      "mvp_suggestion_ja": "核心機能：1) AI駆動のスマートRPAツールで旧Windowsソフトウェアのタスクを自動化、2) リアルタイムでUIの変化を検出し適応、3) 統合されたエラーハンドリング機能で安定性を向上、4) 視覚的な自動化プロセスエディタを提供、5) 現代のWebアプリとのシームレスな連携をサポート。対象ユーザー：医療および金融業界の技術サポート担当者、IT管理者、業務プロセス最適化専門家。収益化方法の提案：サブスクリプション制、ベーシックプラン月額49ドル、プロフェッショナルプラン月額199ドル、企業向けカスタムサービスを提供。",
+      "timestamp": "2025-11-07T18:49:22.666794",
+      "tags": [
+        "RPA",
+        "software maintenance",
+        "legacy systems",
+        "YouTube",
+        "Shorts",
+        "Reddit",
+        "workflow optimization",
+        "discussion",
+        "r/SideProject",
+        "automation"
+      ],
+      "data_quality_score": 0.95,
+      "schema_version": "1.2"
+    },
+    {
+      "id": "b817865d-f04d-4d22-a49d-85ec48ce0437",
+      "pain_point_id": "a499309c-fac3-4901-a57a-29bd545fb8b0",
+      "related_topics": [
+        "268e74c1-59a1-4ed8-9426-571e5bd4e7e8",
+        "3d179f99-6087-49e2-bab0-2ba06dad4cb4",
+        "79a7bdbd-a0c3-4c22-90d9-14efa732fd11"
+      ],
+      "opportunity_score": 78.33333333333333,
+      "mvp_suggestion_cn": "核心功能：1) 提供一个平台，聚合并自动分析来自Product Hunt和其他社交平台的用户反馈，2) 使用AI技术对反馈进行情感分析和优先级排序，3) 自动生成改进建议和用户体验报告。目标用户群：产品发布初期的独立开发者、初创公司创始人、产品经理，特别是在科技、软件开发和数字产品行业。变现方式建议：订阅制，基础版$19/月，提供基本分析和报告；专业版$59/月，提供高级分析、个性化建议和优先支持。",
+      "mvp_suggestion_ja": "核心機能：1) Product Huntや他のソーシャルプラットフォームからのユーザーフィードバックを統合し自動分析するプラットフォームを提供、2) AI技術を用いてフィードバックの感情分析と優先順位付けを行う、3) 改善提案とユーザーエクスペリエンスレポートを自動生成。ターゲットユーザー：製品発表初期の独立開発者、スタートアップ創業者、プロダクトマネージャー、特にテクノロジー、ソフトウェア開発、デジタル製品業界で活動する人々。マネタイズ方法提案：サブスクリプションモデル、ベーシックプランは月額19ドルで基本的な分析とレポートを提供、プロプランは月額59ドルで高度な分析、パーソナライズされた提案、優先サポートを提供。",
+      "timestamp": "2025-11-07T18:49:33.696920",
+      "tags": [
+        "feedback",
+        "user-engagement",
+        "r/SaaS",
+        "Reddit",
+        "discussion",
+        "r/SideProject",
+        "product-launch"
+      ],
+      "data_quality_score": 0.85,
+      "schema_version": "1.2"
+    },
+    {
+      "id": "0519cd79-e0ea-45eb-a1d4-a8e4ab9fdad4",
+      "pain_point_id": "0962d24b-350d-4a2e-a08b-48c51e702d89",
+      "related_topics": [
+        "de572580-1988-4a2b-bf25-1be5e74804f7",
+        "3d179f99-6087-49e2-bab0-2ba06dad4cb4",
+        "79a7bdbd-a0c3-4c22-90d9-14efa732fd11"
+      ],
+      "opportunity_score": 77.68,
+      "mvp_suggestion_cn": "核心功能：1) 提供高质量定制数据集的平台，2) 连接专家级数据标注人员和AI公司，3) 实时数据需求匹配和管理，4) 数据质量自动评估和反馈。目标用户：AI公司、数据科学家、产品经理。用户画像：科技公司、数据分析部门、项目负责人。变现方式：订阅制，基础版每月$199，企业版每月$499。",
+      "mvp_suggestion_ja": "核心機能：1) 高品質なカスタムデータセットを提供するプラットフォーム、2) 専門家レベルのデータラベラーとAI企業を繋ぐ、3) リアルタイムのデータニーズマッチングと管理、4) データ品質の自動評価とフィードバック。ターゲットユーザー：AI企業、データサイエンティスト、プロダクトマネージャー。ユーザー画像：テクノロジー企業、データ分析部門、プロジェクトリーダー。収益化方法：サブスクリプション型、ベーシック月額199ドル、エンタープライズ月額499ドル。",
+      "timestamp": "2025-11-07T18:49:39.957559",
+      "tags": [
+        "r/indiehackers",
+        "data-management",
+        "collaboration",
+        "Reddit",
+        "business-development",
+        "discussion",
+        "r/SideProject",
+        "AI",
+        "startup"
+      ],
+      "data_quality_score": 0.85,
+      "schema_version": "1.2"
+    }
+  ]
+}
