@@ -313,6 +313,17 @@ def register_routes(app):
             invite_code = data.get('invite_code')
             language = data.get('language', 'zh')
 
+            # 获取timezone，如果未提供则根据language推断默认值
+            timezone = data.get('timezone')
+            if not timezone:
+                # 根据语言推断时区
+                timezone_map = {
+                    'zh': 'Asia/Shanghai',
+                    'ja': 'Asia/Tokyo',
+                    'en': 'UTC'
+                }
+                timezone = timezone_map.get(language, 'UTC')
+
             if not email or not invite_code:
                 return jsonify({
                     "success": False,
@@ -337,7 +348,9 @@ def register_routes(app):
             user_result = user_manager.create_user(
                 email=email,
                 subscription_type='beta',
-                invite_code=invite_code
+                invite_code=invite_code,
+                language=language,
+                timezone=timezone
             )
 
             if not user_result.get('success'):
@@ -482,6 +495,17 @@ def register_routes(app):
             plan = data.get('plan', 'monthly')
             language = data.get('language', 'zh')
 
+            # 获取timezone，如果未提供则根据language推断默认值
+            timezone = data.get('timezone')
+            if not timezone:
+                # 根据语言推断时区
+                timezone_map = {
+                    'zh': 'Asia/Shanghai',
+                    'ja': 'Asia/Tokyo',
+                    'en': 'UTC'
+                }
+                timezone = timezone_map.get(language, 'UTC')
+
             if not email:
                 return jsonify({
                     "success": False,
@@ -494,7 +518,8 @@ def register_routes(app):
             result = stripe_service.create_checkout_session(
                 email=email,
                 plan=plan,
-                language=language
+                language=language,
+                timezone=timezone
             )
 
             if result.get('success'):

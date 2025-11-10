@@ -39,6 +39,8 @@ class UserManager:
         subscription_type: str = "beta",
         invite_code: Optional[str] = None,
         referrer_email: Optional[str] = None,
+        language: str = "zh",
+        timezone: str = "UTC",
     ) -> Dict[str, Any]:
         """
         创建新用户
@@ -48,6 +50,8 @@ class UserManager:
             subscription_type: 订阅类型（beta/paid/free）
             invite_code: 使用的邀请码
             referrer_email: 推荐人邮箱（用于推荐奖励）
+            language: 用户语言偏好（zh/en/ja）
+            timezone: 用户时区（如 Asia/Shanghai）
 
         Returns:
             Dict: 创建结果
@@ -92,12 +96,12 @@ class UserManager:
             query = convert_placeholder("""
                 INSERT INTO users (
                     email, subscription_type, subscription_status,
-                    invite_code, referrer_id, free_until
+                    invite_code, referrer_id, free_until, language, timezone
                 )
-                VALUES (?, ?, 'active', ?, ?, ?)
+                VALUES (?, ?, 'active', ?, ?, ?, ?, ?)
                 RETURNING id
                 """)
-            cursor.execute(query, (email, subscription_type, invite_code, referrer_id, free_until))
+            cursor.execute(query, (email, subscription_type, invite_code, referrer_id, free_until, language, timezone))
 
             # 获取新用户ID（兼容PostgreSQL和SQLite）
             result = cursor.fetchone()
@@ -132,6 +136,8 @@ class UserManager:
                         "user_id": user_id,
                         "subscription_type": subscription_type,
                         "free_until": free_until,
+                        "language": language,
+                        "timezone": timezone,
                     }
                 },
             )
@@ -168,7 +174,8 @@ class UserManager:
                 SELECT id, email, subscription_type, subscription_status,
                        invite_code, referrer_id, free_until,
                        stripe_customer_id, stripe_subscription_id,
-                       created_at, updated_at, last_accessed_at
+                       created_at, updated_at, last_accessed_at,
+                       language, timezone
                 FROM users
                 WHERE email = ?
                 """)
@@ -195,6 +202,8 @@ class UserManager:
                     "created_at": row['created_at'],
                     "updated_at": row['updated_at'],
                     "last_accessed_at": row['last_accessed_at'],
+                    "language": row['language'],
+                    "timezone": row['timezone'],
                 }
             else:
                 return {
@@ -210,6 +219,8 @@ class UserManager:
                     "created_at": row[9],
                     "updated_at": row[10],
                     "last_accessed_at": row[11],
+                    "language": row[12],
+                    "timezone": row[13],
                 }
 
         except Exception as e:
@@ -226,6 +237,8 @@ class UserManager:
         subscription_status: Optional[str] = None,
         stripe_customer_id: Optional[str] = None,
         stripe_subscription_id: Optional[str] = None,
+        language: Optional[str] = None,
+        timezone: Optional[str] = None,
     ) -> bool:
         """
         更新用户信息
@@ -236,6 +249,8 @@ class UserManager:
             subscription_status: 新的订阅状态
             stripe_customer_id: Stripe客户ID
             stripe_subscription_id: Stripe订阅ID
+            language: 用户语言偏好（zh/en/ja）
+            timezone: 用户时区（如 Asia/Shanghai）
 
         Returns:
             bool: 是否更新成功
@@ -264,9 +279,18 @@ class UserManager:
                 update_fields.append("stripe_subscription_id = ?")
                 params.append(stripe_subscription_id)
 
+            if language:
+                update_fields.append("language = ?")
+                params.append(language)
+
+            if timezone:
+                update_fields.append("timezone = ?")
+                params.append(timezone)
+
             # 总是更新updated_at
+            from datetime import timezone as tz
             update_fields.append("updated_at = ?")
-            params.append(datetime.now(timezone.utc).isoformat())
+            params.append(datetime.now(tz.utc).isoformat())
 
             params.append(email)
 

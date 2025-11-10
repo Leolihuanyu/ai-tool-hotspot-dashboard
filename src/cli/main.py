@@ -449,17 +449,26 @@ def cmd_check_expiry(args):
 
         service = ExpiryReminderService()
 
+        # 获取时区过滤参数
+        use_timezone = getattr(args, 'use_timezone', False)
+        target_hour = getattr(args, 'target_hour', 9)
+
         # 如果指定了天数，只发送特定天数的提醒
         if args.days:
             if args.days not in [1, 7, 14]:
                 print(f"❌ 错误: --days 必须是 1, 7 或 14")
                 return 1
 
-            print(f"\n📧 发送 {args.days} 天过期提醒...")
-            users = service.get_expiring_users(args.days)
+            timezone_msg = f" (按时区过滤，目标时间: {target_hour}:00)" if use_timezone else ""
+            print(f"\n📧 发送 {args.days} 天过期提醒{timezone_msg}...")
+            users = service.get_expiring_users(
+                args.days,
+                filter_by_timezone=use_timezone,
+                target_hour=target_hour
+            )
 
             if not users:
-                print(f"✅ 没有找到即将在 {args.days} 天后过期的用户")
+                print(f"✅ 没有找到即将在 {args.days} 天后过期的用户{timezone_msg}")
                 return 0
 
             print(f"找到 {len(users)} 个用户")
@@ -467,7 +476,7 @@ def cmd_check_expiry(args):
             failed = 0
 
             for user in users:
-                language = args.language or "zh"
+                language = args.language or None  # None 表示从用户数据中获取
                 if service.send_expiry_reminder(user, args.days, language):
                     sent += 1
                 else:
@@ -478,8 +487,12 @@ def cmd_check_expiry(args):
 
         else:
             # 运行完整的每日检查（14天、7天、1天）
-            print("\n📧 运行每日过期提醒检查（14天、7天、1天）...")
-            result = service.run_daily_check()
+            timezone_msg = f" (按时区过滤，目标时间: {target_hour}:00)" if use_timezone else ""
+            print(f"\n📧 运行过期提醒检查（14天、7天、1天）{timezone_msg}...")
+            result = service.run_daily_check(
+                use_timezone_filter=use_timezone,
+                target_hour=target_hour
+            )
 
             if result.get("success"):
                 print(f"\n✅ 检查完成!")
@@ -561,6 +574,8 @@ def main():
     parser_expiry = subparsers.add_parser("check-expiry", help="检查并发送过期提醒邮件")
     parser_expiry.add_argument("--days", type=int, choices=[1, 7, 14], help="仅检查指定天数的过期提醒(1/7/14)")
     parser_expiry.add_argument("--language", type=str, choices=["zh", "en", "ja"], help="邮件语言(默认zh)")
+    parser_expiry.add_argument("--use-timezone", action="store_true", help="按用户时区过滤（仅在当地上午9点发送）")
+    parser_expiry.add_argument("--target-hour", type=int, default=9, help="目标小时（默认9点，配合--use-timezone使用）")
     parser_expiry.set_defaults(func=cmd_check_expiry)
 
     # reproduce命令

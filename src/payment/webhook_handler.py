@@ -145,6 +145,11 @@ class StripeWebhookHandler:
                 default_logger.error("无法获取用户邮箱")
                 return {"success": False, "message": "无法获取用户邮箱"}
 
+            # 从 session metadata 获取语言和时区
+            metadata = session.get("metadata", {})
+            language = metadata.get("language", "zh")
+            timezone = metadata.get("timezone", "UTC")
+
             # 更新用户订阅状态
             user = self.user_manager.get_user(customer_email)
             if not user:
@@ -152,7 +157,9 @@ class StripeWebhookHandler:
                 # 创建新用户（付费订阅）
                 result = self.user_manager.create_user(
                     email=customer_email,
-                    subscription_type="paid"
+                    subscription_type="paid",
+                    language=language,
+                    timezone=timezone
                 )
                 if not result.get("success"):
                     return {"success": False, "message": "创建用户失败"}

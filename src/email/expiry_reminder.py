@@ -31,12 +31,19 @@ class ExpiryReminderService:
         self.email_sender = SMTPEmailSender()
         self.template_manager = EmailTemplateManager()
 
-    def get_expiring_users(self, days_until_expiry: int) -> List[Dict[str, Any]]:
+    def get_expiring_users(
+        self,
+        days_until_expiry: int,
+        filter_by_timezone: bool = False,
+        target_hour: int = 9
+    ) -> List[Dict[str, Any]]:
         """
         获取距离过期还有指定天数的用户
 
         Args:
             days_until_expiry: 距离过期的天数（14/7/1）
+            filter_by_timezone: 是否按时区过滤（仅返回当地时间在目标小时的用户）
+            target_hour: 目标小时（默认9点，仅在filter_by_timezone=True时有效）
 
         Returns:
             List[Dict]: 即将过期的用户列表
@@ -52,9 +59,9 @@ class ExpiryReminderService:
             target_date_start = target_date_center - timedelta(hours=12)
             target_date_end = target_date_center + timedelta(hours=12)
 
-            # 查询即将过期的Beta用户
+            # 查询即将过期的Beta用户（包含timezone字段）
             query = convert_placeholder("""
-                SELECT id, email, subscription_type, free_until, created_at
+                SELECT id, email, subscription_type, free_until, created_at, timezone, language
                 FROM users
                 WHERE subscription_type = 'beta'
                   AND subscription_status = 'active'
@@ -75,24 +82,36 @@ class ExpiryReminderService:
             for row in rows:
                 # 兼容SQLite (tuple/Row) 和 PostgreSQL (dict)
                 if isinstance(row, dict):
-                    users.append({
+                    user_data = {
                         "id": row['id'],
                         "email": row['email'],
                         "subscription_type": row['subscription_type'],
                         "free_until": row['free_until'],
                         "created_at": row['created_at'],
-                    })
+                        "timezone": row.get('timezone', 'UTC'),
+                        "language": row.get('language', 'zh'),
+                    }
                 else:
-                    users.append({
+                    user_data = {
                         "id": row[0],
                         "email": row[1],
                         "subscription_type": row[2],
                         "free_until": row[3],
                         "created_at": row[4],
-                    })
+                        "timezone": row[5] if len(row) > 5 else 'UTC',
+                        "language": row[6] if len(row) > 6 else 'zh',
+                    }
+
+                # 如果需要按时区过滤
+                if filter_by_timezone:
+                    if self._is_user_in_target_hour(user_data['timezone'], target_hour):
+                        users.append(user_data)
+                else:
+                    users.append(user_data)
 
             logger.info(
                 f"找到 {len(users)} 个将在 {days_until_expiry} 天后过期的用户"
+                f"{' (已按时区过滤)' if filter_by_timezone else ''}"
             )
             return users
 
@@ -100,19 +119,47 @@ class ExpiryReminderService:
             logger.error(f"获取即将过期用户失败: {str(e)}")
             return []
 
+    def _is_user_in_target_hour(self, user_timezone: str, target_hour: int) -> bool:
+        """
+        检查用户当地时间是否在目标小时内
+
+        Args:
+            user_timezone: 用户时区（如 Asia/Shanghai）
+            target_hour: 目标小时（0-23）
+
+        Returns:
+            bool: 是否在目标小时内
+        """
+        try:
+            from zoneinfo import ZoneInfo
+
+            # 获取当前UTC时间
+            now_utc = datetime.now(timezone.utc)
+
+            # 转换到用户时区
+            user_tz = ZoneInfo(user_timezone)
+            now_user_tz = now_utc.astimezone(user_tz)
+
+            # 检查当前小时是否为目标小时
+            return now_user_tz.hour == target_hour
+
+        except Exception as e:
+            logger.warning(f"时区转换失败 ({user_timezone}): {str(e)}，跳过该用户")
+            return False
+
     def send_expiry_reminder(
         self,
         user: Dict[str, Any],
         days_until_expiry: int,
-        language: str = "zh"
+        language: str = None
     ) -> bool:
         """
         发送过期提醒邮件
 
         Args:
-            user: 用户信息
+            user: 用户信息（应包含 language 字段）
             days_until_expiry: 距离过期天数（14/7/1）
-            language: 语言（zh/en/ja）
+            language: 语言（zh/en/ja），如果为None则从用户数据中获取
 
         Returns:
             bool: 是否发送成功
@@ -124,6 +171,10 @@ class ExpiryReminderService:
             if not free_until:
                 logger.warning(f"用户 {email} 没有 free_until 信息，跳过")
                 return False
+
+            # 如果未提供language参数，从用户数据中获取
+            if language is None:
+                language = user.get('language', 'zh')
 
             # 解析过期时间（可能是字符串或 datetime 对象）
             if isinstance(free_until, str):
@@ -318,14 +369,21 @@ class ExpiryReminderService:
 
         return html
 
-    def run_daily_check(self) -> Dict[str, Any]:
+    def run_daily_check(self, use_timezone_filter: bool = True, target_hour: int = 9) -> Dict[str, Any]:
         """
         执行每日过期检查和提醒
+
+        Args:
+            use_timezone_filter: 是否按用户时区过滤（仅在当地上午9点发送）
+            target_hour: 目标小时（默认9点）
 
         Returns:
             Dict: 执行结果统计
         """
-        logger.info("开始执行每日过期提醒检查...")
+        logger.info(
+            f"开始执行过期提醒检查... "
+            f"{'(按时区过滤，目标时间: ' + str(target_hour) + ':00)' if use_timezone_filter else '(不过滤时区)'}"
+        )
 
         results = {
             "14_days": {"sent": 0, "failed": 0},
@@ -334,29 +392,38 @@ class ExpiryReminderService:
         }
 
         # 检查并发送 14 天提醒
-        users_14days = self.get_expiring_users(14)
+        users_14days = self.get_expiring_users(
+            14,
+            filter_by_timezone=use_timezone_filter,
+            target_hour=target_hour
+        )
         for user in users_14days:
-            # TODO: 获取用户语言偏好
-            language = "zh"  # 默认中文
-            if self.send_expiry_reminder(user, 14, language):
+            # 从用户数据中获取语言偏好
+            if self.send_expiry_reminder(user, 14):
                 results["14_days"]["sent"] += 1
             else:
                 results["14_days"]["failed"] += 1
 
         # 检查并发送 7 天提醒
-        users_7days = self.get_expiring_users(7)
+        users_7days = self.get_expiring_users(
+            7,
+            filter_by_timezone=use_timezone_filter,
+            target_hour=target_hour
+        )
         for user in users_7days:
-            language = "zh"
-            if self.send_expiry_reminder(user, 7, language):
+            if self.send_expiry_reminder(user, 7):
                 results["7_days"]["sent"] += 1
             else:
                 results["7_days"]["failed"] += 1
 
         # 检查并发送 1 天提醒
-        users_1day = self.get_expiring_users(1)
+        users_1day = self.get_expiring_users(
+            1,
+            filter_by_timezone=use_timezone_filter,
+            target_hour=target_hour
+        )
         for user in users_1day:
-            language = "zh"
-            if self.send_expiry_reminder(user, 1, language):
+            if self.send_expiry_reminder(user, 1):
                 results["1_day"]["sent"] += 1
             else:
                 results["1_day"]["failed"] += 1
@@ -365,7 +432,7 @@ class ExpiryReminderService:
         total_failed = sum(r["failed"] for r in results.values())
 
         logger.info(
-            f"每日过期提醒检查完成: 成功 {total_sent}, 失败 {total_failed}",
+            f"过期提醒检查完成: 成功 {total_sent}, 失败 {total_failed}",
             extra={"extra_fields": results}
         )
 

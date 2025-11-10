@@ -1,0 +1,120 @@
+name: 每日过期提醒检查
+
+on:
+  # 每天 UTC 01:00 运行（北京时间早上9点）
+  schedule:
+    - cron: '0 1 * * *'
+
+  # 支持手动触发
+  workflow_dispatch:
+
+jobs:
+  check-expiry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置Python环境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: 安装依赖
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 运行过期提醒检查
+        env:
+          # 数据库配置（PostgreSQL - Supabase）
+          DB_TYPE: postgresql
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+          # SMTP配置
+          EMAIL_PROVIDER: smtp
+          SMTP_SERVER: ${{ secrets.SMTP_SERVER || 'smtp.gmail.com' }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT || '587' }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          SMTP_USE_TLS: true
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+
+          # Dashboard URL（用于邮件中的链接）
+          DASHBOARD_URL: ${{ secrets.DASHBOARD_URL || 'https://ai-tool-hotspot-dashboard.vercel.app' }}
+          UPGRADE_URL: ${{ secrets.UPGRADE_URL || 'https://ai-tool-hotspot-dashboard.vercel.app/upgrade' }}
+
+          # Beta试用期配置
+          BETA_TRIAL_DAYS: 60
+        run: |
+          echo "=========================================="
+          echo "过期提醒检查"
+          echo "=========================================="
+          echo "时间: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+          echo ""
+
+          # 运行过期提醒检查（14天、7天、1天）
+          python -m src.cli.main check-expiry
+
+          echo ""
+          echo "✓ 过期提醒检查完成"
+
+      - name: 检查结果
+        if: always()
+        run: |
+          echo "=========================================="
+          echo "任务完成"
+          echo "=========================================="
+          echo ""
+          echo "说明："
+          echo "- 自动检查即将过期的Beta用户（14天、7天、1天）"
+          echo "- 发送多语言过期提醒邮件（zh/en/ja）"
+          echo "- 每天 UTC 01:00 运行（北京时间早上9点）"
+          echo ""
+          echo "所需配置（GitHub Secrets）："
+          echo "- DATABASE_URL: Supabase PostgreSQL连接URL"
+          echo "- SMTP_USERNAME: Gmail邮箱地址"
+          echo "- SMTP_PASSWORD: Gmail应用专用密码"
+          echo "- EMAIL_FROM: 发件人邮箱"
+          echo ""
+          echo "可选配置："
+          echo "- DASHBOARD_URL: Dashboard访问URL"
+          echo "- UPGRADE_URL: 升级页面URL"
+
+# 配置说明：
+#
+# 1. 必需的 GitHub Secrets：
+#    - DATABASE_URL: PostgreSQL数据库连接字符串
+#      格式: postgresql://user:password@host:5432/database
+#
+#    - SMTP_USERNAME: SMTP用户名（Gmail邮箱）
+#    - SMTP_PASSWORD: SMTP密码（Gmail应用专用密码）
+#    - EMAIL_FROM: 发件人邮箱地址
+#
+# 2. 可选的 GitHub Secrets：
+#    - SMTP_SERVER: SMTP服务器（默认: smtp.gmail.com）
+#    - SMTP_PORT: SMTP端口（默认: 587）
+#    - DASHBOARD_URL: Dashboard URL
+#    - UPGRADE_URL: 升级页面URL
+#
+# 3. 如何配置 GitHub Secrets：
+#    - 进入仓库: Settings > Secrets and variables > Actions
+#    - 点击 "New repository secret"
+#    - 添加上述配置
+#
+# 4. Gmail应用专用密码设置：
+#    - 启用两步验证: https://myaccount.google.com/security
+#    - 生成应用专用密码: https://myaccount.google.com/apppasswords
+#    - 将生成的16位密码（去掉空格）设置为 SMTP_PASSWORD
+#
+# 5. 手动触发：
+#    - 在 GitHub Actions 页面点击 "Run workflow" 按钮
+#
+# 6. 时区说明：
+#    - cron '0 1 * * *' = UTC 01:00
+#    - 对应北京时间上午 09:00
+#    - 对应东京时间上午 10:00
+#    - 对应美国东部时间晚上 21:00（前一天）

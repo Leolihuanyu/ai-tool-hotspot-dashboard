@@ -120,8 +120,11 @@ class StripeService:
         self,
         email: Optional[str] = None,
         price_type: str = "monthly",
+        plan: Optional[str] = None,
         success_url: Optional[str] = None,
-        cancel_url: Optional[str] = None
+        cancel_url: Optional[str] = None,
+        language: str = "zh",
+        timezone: str = "UTC"
     ) -> Dict[str, Any]:
         """
         创建Stripe Checkout Session
@@ -129,8 +132,11 @@ class StripeService:
         Args:
             email: 用户邮箱（可选，用于预填充或关联已有Customer）
             price_type: 价格类型（monthly/yearly）
+            plan: plan别名，与price_type相同（为了兼容性）
             success_url: 支付成功后的跳转URL
             cancel_url: 支付取消后的跳转URL
+            language: 用户语言偏好（zh/en/ja）
+            timezone: 用户时区（如 Asia/Shanghai）
 
         Returns:
             Dict: Checkout session信息
@@ -145,6 +151,10 @@ class StripeService:
         - 如果不提供email，Stripe Checkout会自动收集email
         """
         try:
+            # plan 参数与 price_type 兼容（优先使用 plan）
+            if plan:
+                price_type = plan
+
             # 选择价格ID
             if price_type == "yearly":
                 price_id = self.price_id_yearly
@@ -179,7 +189,9 @@ class StripeService:
                 "success_url": success_url,
                 "cancel_url": cancel_url,
                 "metadata": {
-                    "price_type": price_type
+                    "price_type": price_type,
+                    "language": language,
+                    "timezone": timezone
                 },
                 # 自动应用促销码
                 "allow_promotion_codes": True,
