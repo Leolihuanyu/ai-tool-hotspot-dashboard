@@ -23,6 +23,9 @@ openai>=1.0.0  # OpenAI API客户端（可选，可替代Claude）
 # === 邮件服务 ===
 sendgrid>=6.12.0  # 邮件发送（research.md推荐）
 
+# === 支付服务 ===
+stripe>=7.0.0  # Stripe支付集成
+
 # === 重试和速率限制 ===
 tenacity>=8.2.0  # 重试逻辑（宪法原则I）
 ratelimit>=2.2.1  # 速率限制（宪法原则I）
