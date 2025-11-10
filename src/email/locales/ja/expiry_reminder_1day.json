@@ -1,0 +1,40 @@
+{
+  "subject": "🚨 最後の24時間 - ベータ版トライアルは明日終了",
+  "title": "⏰ 最後の24時間",
+  "greeting": "こんにちは、",
+  "intro_p1": "最後のお知らせです：<strong>AI Tool Hotspot Dashboard</strong>のベータ版トライアルは<strong>明日</strong>終了します。",
+  "intro_p2": "終了日時：<strong>{{expiry_date}}</strong>",
+  "urgent_title": "🚨 緊急のお知らせ",
+  "urgent_message": "24時間後、以下にアクセスできなくなります：",
+  "losing_access": [
+    "毎日のAIツールホットスポット分析",
+    "製品機会ダッシュボード",
+    "市場トレンドメール配信",
+    "ペインポイント抽出機能"
+  ],
+  "stats_title": "📊 トライアル期間の振り返り",
+  "stats": [
+    "{{opportunities_count}}個のビジネスチャンスを発見",
+    "{{tools_count}}個のトレンドAIツールを閲覧",
+    "{{hours_saved}}時間の市場調査を節約"
+  ],
+  "testimonial_title": "💬 ユーザーの声",
+  "testimonial": "「毎朝ダッシュボードをチェックするのが習慣になりました。3つの価値あるスタートアップアイデアを発見できました！」 - 田中様、個人開発者",
+  "cta_button": "⚡ ラストチャンス：今すぐアップグレード",
+  "pricing_title": "💎 最後のオファー - 早期割引",
+  "pricing_info": "<strong>本日限定</strong>、20%割引でアップグレード：",
+  "pricing_plans": [
+    "月額：$19/月（通常$24）",
+    "年額：$190/年（通常$240、実質2ヶ月無料）"
+  ],
+  "guarantee": "🛡️ <strong>30日間返金保証</strong> - ご満足いただけない場合は全額返金",
+  "final_warning": "⚠️ 何もしない場合、明日あなたは：",
+  "final_warning_points": [
+    "ダッシュボードにログインできなくなります",
+    "毎日のメール配信が停止されます",
+    "すべてのアクセス権限を失います"
+  ],
+  "support": "サポートが必要ですか？今すぐお問い合わせください：support@example.com",
+  "footer_copyright": "© 2025 AI Tool Hotspot Dashboard",
+  "footer_notice": "これが最後のリマインダーメールです"
+}

@@ -1,0 +1,31 @@
+{
+  "subject": "您的 Beta 试用还剩 14 天 - AI工具热点Dashboard",
+  "title": "⏰ 您的试用期即将到期",
+  "greeting": "您好，",
+  "intro_p1": "感谢您使用 <strong>AI工具热点Dashboard</strong>！",
+  "intro_p2": "您的 Beta 试用期还剩 <strong>14 天</strong>，将于 <strong>{{expiry_date}}</strong> 到期。",
+  "stats_title": "📊 您的使用统计",
+  "stats": [
+    "已发现 {{opportunities_count}} 个AI工具机会",
+    "浏览了 {{tools_count}} 个热门AI工具",
+    "节省了超过 {{hours_saved}} 小时的市场调研时间"
+  ],
+  "value_title": "💎 继续享受这些价值",
+  "value_points": [
+    "每日精选 AI 工具热点分析",
+    "独家产品机会 Dashboard 访问",
+    "痛点提取和趋势分析",
+    "优先体验新功能"
+  ],
+  "cta_button": "🚀 升级为付费订阅",
+  "pricing_title": "💰 订阅方案",
+  "pricing_info": "现在升级享受 <strong>20% 早鸟优惠</strong>：",
+  "pricing_plans": [
+    "月付：$19/月（原价 $24）",
+    "年付：$190/年（原价 $240，节省 2 个月）"
+  ],
+  "reminder": "⚠️ 试用期结束后，您将无法访问 Dashboard 和接收每日邮件推送。",
+  "support": "如有任何问题，请随时联系我们。",
+  "footer_copyright": "© 2025 AI工具热点Dashboard",
+  "footer_notice": "此邮件为自动发送，请勿直接回复"
+}

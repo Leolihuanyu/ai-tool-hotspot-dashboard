@@ -1,0 +1,40 @@
+{
+  "subject": "🚨 最后 24 小时 - 您的 Beta 试用明天到期",
+  "title": "⏰ 最后 24 小时",
+  "greeting": "您好，",
+  "intro_p1": "这是最后的提醒：您的 <strong>AI工具热点Dashboard</strong> Beta 试用期将在 <strong>明天</strong>到期。",
+  "intro_p2": "试用结束时间：<strong>{{expiry_date}}</strong>",
+  "urgent_title": "🚨 紧急提醒",
+  "urgent_message": "24小时后，您将失去访问权限，无法继续：",
+  "losing_access": [
+    "查看每日AI工具热点分析",
+    "访问产品机会 Dashboard",
+    "接收市场趋势邮件推送",
+    "使用痛点提取功能"
+  ],
+  "stats_title": "📊 回顾您的试用期",
+  "stats": [
+    "发现了 {{opportunities_count}} 个商业机会",
+    "浏览了 {{tools_count}} 个热门AI工具",
+    "节省了 {{hours_saved}} 小时的市场调研"
+  ],
+  "testimonial_title": "💬 其他用户的反馈",
+  "testimonial": "\"每天早上查看 Dashboard 已经成为我的习惯，帮我发现了 3 个有价值的创业方向！\" - 张先生，独立开发者",
+  "cta_button": "⚡ 最后机会：立即升级",
+  "pricing_title": "💎 最后机会 - 早鸟优惠",
+  "pricing_info": "<strong>仅限今天</strong>，升级享受 20% 折扣：",
+  "pricing_plans": [
+    "月付：$19/月（原价 $24）",
+    "年付：$190/年（原价 $240，相当于免费送 2 个月）"
+  ],
+  "guarantee": "🛡️ <strong>30天无理由退款保证</strong> - 不满意全额退款",
+  "final_warning": "⚠️ 如果您不采取行动，明天您将：",
+  "final_warning_points": [
+    "无法登录 Dashboard",
+    "停止接收每日邮件",
+    "失去所有访问权限"
+  ],
+  "support": "需要帮助？立即联系客户支持：support@example.com",
+  "footer_copyright": "© 2025 AI工具热点Dashboard",
+  "footer_notice": "这是您的最后一次提醒邮件"
+}

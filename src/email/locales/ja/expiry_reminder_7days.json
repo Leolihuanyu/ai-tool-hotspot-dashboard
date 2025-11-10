@@ -1,0 +1,36 @@
+{
+  "subject": "⚠️ 残り1週間 - ベータ版トライアルがまもなく終了",
+  "title": "⏰ トライアル期間残り7日",
+  "greeting": "こんにちは、",
+  "intro_p1": "<strong>AI Tool Hotspot Dashboard</strong>のベータ版トライアルがまもなく終了します。",
+  "intro_p2": "<strong>{{expiry_date}}</strong>まで<strong>残り7日</strong>です。",
+  "urgent_title": "🔥 これらの機会をお見逃しなく",
+  "urgent_points": [
+    "毎日5〜10個の新しいAIツールビジネスチャンスを発見",
+    "市場トレンドを先取り",
+    "数千ドル相当の市場調査データにアクセス",
+    "活発な起業家コミュニティに参加"
+  ],
+  "stats_title": "📊 あなたの実績",
+  "stats": [
+    "{{opportunities_count}}個のビジネスチャンスを発見",
+    "{{tools_count}}個のAIツールを閲覧",
+    "{{hours_saved}}時間の調査時間を節約"
+  ],
+  "cta_button": "🎯 今すぐアップグレード",
+  "pricing_title": "💰 期間限定オファー",
+  "pricing_info": "今すぐアップグレードして<strong>20%早期割引</strong>（今週のみ）：",
+  "pricing_plans": [
+    "月額：$19/月（通常$24）- いつでもキャンセル可能",
+    "年額：$190/年（通常$240）- $50お得"
+  ],
+  "warning": "⚠️ <strong>7日後</strong>、以下にアクセスできなくなります：",
+  "warning_points": [
+    "ダッシュボードの機会分析",
+    "毎日のAIツールホットスポットメール",
+    "ペインポイント抽出とトレンド分析"
+  ],
+  "support": "ご質問がございましたら、いつでもサポートチームにお問い合わせください。",
+  "footer_copyright": "© 2025 AI Tool Hotspot Dashboard",
+  "footer_notice": "これは自動送信メールです。返信しないでください"
+}

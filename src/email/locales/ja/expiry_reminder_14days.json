@@ -1,0 +1,31 @@
+{
+  "subject": "ベータ版トライアルの有効期限まで残り14日 - AI Tool Hotspot Dashboard",
+  "title": "⏰ トライアル期間がまもなく終了します",
+  "greeting": "こんにちは、",
+  "intro_p1": "<strong>AI Tool Hotspot Dashboard</strong>をご利用いただき、ありがとうございます！",
+  "intro_p2": "ベータ版トライアル期間は<strong>あと14日</strong>で、<strong>{{expiry_date}}</strong>に終了します。",
+  "stats_title": "📊 ご利用状況",
+  "stats": [
+    "{{opportunities_count}}個のAIツール機会を発見",
+    "{{tools_count}}個のトレンドAIツールを閲覧",
+    "{{hours_saved}}時間以上の市場調査時間を節約"
+  ],
+  "value_title": "💎 引き続きこれらの特典をご利用ください",
+  "value_points": [
+    "毎日厳選されたAIツールホットスポット分析",
+    "独占的な製品機会ダッシュボードへのアクセス",
+    "ペインポイント抽出とトレンド分析",
+    "新機能への優先アクセス"
+  ],
+  "cta_button": "🚀 有料プランにアップグレード",
+  "pricing_title": "💰 料金プラン",
+  "pricing_info": "今すぐアップグレードして<strong>20%早期割引</strong>をゲット：",
+  "pricing_plans": [
+    "月額：$19/月（通常$24）",
+    "年額：$190/年（通常$240、2ヶ月分お得）"
+  ],
+  "reminder": "⚠️ トライアル終了後は、ダッシュボードと毎日のメール配信にアクセスできなくなります。",
+  "support": "ご質問がございましたら、お気軽にお問い合わせください。",
+  "footer_copyright": "© 2025 AI Tool Hotspot Dashboard",
+  "footer_notice": "これは自動送信メールです。返信しないでください"
+}

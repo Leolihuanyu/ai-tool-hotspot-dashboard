@@ -71,6 +71,30 @@ def verify_token_from_request():
         current_ip=current_ip
     )
 
+    # 如果token有效，检查用户账户是否过期
+    if result.get("valid"):
+        user_email = result.get("email")
+        if user_email:
+            user = user_manager.get_user(user_email)
+            if user:
+                # 检查账户是否过期
+                free_until = user.get('free_until')
+                subscription_type = user.get('subscription_type')
+
+                # Beta用户需要检查free_until
+                if subscription_type == 'beta' and free_until:
+                    from datetime import datetime
+                    from dateutil import parser
+
+                    free_until_dt = parser.parse(free_until)
+                    if datetime.now().astimezone() > free_until_dt:
+                        # 账户已过期
+                        result = {
+                            "valid": False,
+                            "error": "您的试用期已过期，请升级为付费订阅以继续使用",
+                            "expired": True
+                        }
+
     # 记录访问日志
     if result.get("valid"):
         # 成功访问
@@ -79,7 +103,7 @@ def verify_token_from_request():
     else:
         # 访问失败，确定失败类型
         error = result.get("error", "")
-        if "过期" in error:
+        if "过期" in error or "试用期" in error:
             access_result = "expired"
         elif "IP地址" in error or "转发" in error:
             access_result = "ip_mismatch"

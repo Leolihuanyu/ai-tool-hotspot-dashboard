@@ -440,6 +440,66 @@ def cmd_send_email(args):
         return 1
 
 
+def cmd_check_expiry(args):
+    """检查并发送过期提醒邮件"""
+    print("⏰ 检查即将过期的用户...")
+
+    try:
+        from src.email.expiry_reminder import ExpiryReminderService
+
+        service = ExpiryReminderService()
+
+        # 如果指定了天数，只发送特定天数的提醒
+        if args.days:
+            if args.days not in [1, 7, 14]:
+                print(f"❌ 错误: --days 必须是 1, 7 或 14")
+                return 1
+
+            print(f"\n📧 发送 {args.days} 天过期提醒...")
+            users = service.get_expiring_users(args.days)
+
+            if not users:
+                print(f"✅ 没有找到即将在 {args.days} 天后过期的用户")
+                return 0
+
+            print(f"找到 {len(users)} 个用户")
+            sent = 0
+            failed = 0
+
+            for user in users:
+                language = args.language or "zh"
+                if service.send_expiry_reminder(user, args.days, language):
+                    sent += 1
+                else:
+                    failed += 1
+
+            print(f"\n✅ 完成: 成功 {sent}, 失败 {failed}")
+            return 0 if failed == 0 else 1
+
+        else:
+            # 运行完整的每日检查（14天、7天、1天）
+            print("\n📧 运行每日过期提醒检查（14天、7天、1天）...")
+            result = service.run_daily_check()
+
+            if result.get("success"):
+                print(f"\n✅ 检查完成!")
+                print(f"   总共发送: {result['total_sent']} 封邮件")
+                print(f"   发送失败: {result['total_failed']} 封邮件")
+                print(f"\n详细统计:")
+                print(f"   14天提醒: {result['details']['14_days']['sent']} 成功, {result['details']['14_days']['failed']} 失败")
+                print(f"   7天提醒: {result['details']['7_days']['sent']} 成功, {result['details']['7_days']['failed']} 失败")
+                print(f"   1天提醒: {result['details']['1_day']['sent']} 成功, {result['details']['1_day']['failed']} 失败")
+                return 0
+            else:
+                print("❌ 过期提醒检查失败")
+                return 1
+
+    except Exception as e:
+        print(f"❌ 过期提醒检查失败: {e}")
+        default_logger.error(f"过期提醒检查失败: {e}", exc_info=True)
+        return 1
+
+
 def cmd_reproduce(args):
     """重新处理最新数据命令"""
     print("♻️  Reproducing from latest data...")
@@ -496,6 +556,12 @@ def main():
     parser_email.add_argument("--dashboard-url", type=str, default=None, help="仪表板URL(用于邮件中的链接，默认从环境变量DASHBOARD_URL读取)")
     parser_email.add_argument("--no-alert", action="store_true", help="发送失败时不发送告警邮件")
     parser_email.set_defaults(func=cmd_send_email)
+
+    # check-expiry命令
+    parser_expiry = subparsers.add_parser("check-expiry", help="检查并发送过期提醒邮件")
+    parser_expiry.add_argument("--days", type=int, choices=[1, 7, 14], help="仅检查指定天数的过期提醒(1/7/14)")
+    parser_expiry.add_argument("--language", type=str, choices=["zh", "en", "ja"], help="邮件语言(默认zh)")
+    parser_expiry.set_defaults(func=cmd_check_expiry)
 
     # reproduce命令
     parser_reproduce = subparsers.add_parser("reproduce", help="重新处理最新数据")

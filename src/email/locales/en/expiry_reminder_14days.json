@@ -1,0 +1,31 @@
+{
+  "subject": "Your Beta Trial Expires in 14 Days - AI Tool Hotspot Dashboard",
+  "title": "⏰ Your Trial is Expiring Soon",
+  "greeting": "Hello,",
+  "intro_p1": "Thank you for using <strong>AI Tool Hotspot Dashboard</strong>!",
+  "intro_p2": "Your Beta trial will expire in <strong>14 days</strong> on <strong>{{expiry_date}}</strong>.",
+  "stats_title": "📊 Your Usage Stats",
+  "stats": [
+    "Discovered {{opportunities_count}} AI tool opportunities",
+    "Explored {{tools_count}} trending AI tools",
+    "Saved over {{hours_saved}} hours of market research"
+  ],
+  "value_title": "💎 Continue Enjoying These Benefits",
+  "value_points": [
+    "Daily curated AI tool hotspot analysis",
+    "Exclusive product opportunity Dashboard access",
+    "Pain point extraction and trend analysis",
+    "Priority access to new features"
+  ],
+  "cta_button": "🚀 Upgrade to Paid Subscription",
+  "pricing_title": "💰 Pricing Plans",
+  "pricing_info": "Upgrade now and get <strong>20% early bird discount</strong>:",
+  "pricing_plans": [
+    "Monthly: $19/month (Regular $24)",
+    "Yearly: $190/year (Regular $240, save 2 months)"
+  ],
+  "reminder": "⚠️ After trial ends, you will lose access to Dashboard and daily email updates.",
+  "support": "Questions? Feel free to contact us anytime.",
+  "footer_copyright": "© 2025 AI Tool Hotspot Dashboard",
+  "footer_notice": "This is an automated email, please do not reply"
+}

@@ -81,16 +81,23 @@ class UserManager:
                     # 兼容SQLite (tuple/Row) 和 PostgreSQL (dict)
                     referrer_id = referrer['id'] if isinstance(referrer, dict) else referrer[0]
 
+            # 计算试用期截止时间（Beta用户：60天）
+            free_until = None
+            if subscription_type == "beta":
+                from datetime import timedelta
+                trial_days = int(os.getenv("BETA_TRIAL_DAYS", "60"))
+                free_until = (datetime.now(timezone.utc) + timedelta(days=trial_days)).isoformat()
+
             # 插入新用户
             query = convert_placeholder("""
                 INSERT INTO users (
                     email, subscription_type, subscription_status,
-                    invite_code, referrer_id
+                    invite_code, referrer_id, free_until
                 )
-                VALUES (?, ?, 'active', ?, ?)
+                VALUES (?, ?, 'active', ?, ?, ?)
                 RETURNING id
                 """)
-            cursor.execute(query, (email, subscription_type, invite_code, referrer_id))
+            cursor.execute(query, (email, subscription_type, invite_code, referrer_id, free_until))
 
             # 获取新用户ID（兼容PostgreSQL和SQLite）
             result = cursor.fetchone()
@@ -124,6 +131,7 @@ class UserManager:
                     "extra_fields": {
                         "user_id": user_id,
                         "subscription_type": subscription_type,
+                        "free_until": free_until,
                     }
                 },
             )
@@ -132,6 +140,7 @@ class UserManager:
                 "success": True,
                 "user_id": user_id,
                 "message": "用户创建成功",
+                "free_until": free_until,
             }
 
         except Exception as e:

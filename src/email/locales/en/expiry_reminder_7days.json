@@ -1,0 +1,36 @@
+{
+  "subject": "⚠️ Last Week - Your Beta Trial is Ending Soon",
+  "title": "⏰ 7 Days Left in Your Trial",
+  "greeting": "Hello,",
+  "intro_p1": "Your <strong>AI Tool Hotspot Dashboard</strong> Beta trial is ending soon.",
+  "intro_p2": "Only <strong>7 days remaining</strong> until <strong>{{expiry_date}}</strong>.",
+  "urgent_title": "🔥 Don't Miss These Opportunities",
+  "urgent_points": [
+    "Discover 5-10 new AI tool opportunities daily",
+    "Get ahead of market trends",
+    "Access market research worth thousands of dollars",
+    "Join an active entrepreneurial community"
+  ],
+  "stats_title": "📊 Your Achievements",
+  "stats": [
+    "Found {{opportunities_count}} business opportunities",
+    "Explored {{tools_count}} AI tools",
+    "Saved {{hours_saved}} hours of research time"
+  ],
+  "cta_button": "🎯 Upgrade Now",
+  "pricing_title": "💰 Limited Time Offer",
+  "pricing_info": "Upgrade now for <strong>20% early bird discount</strong> (this week only):",
+  "pricing_plans": [
+    "Monthly: $19/month (Regular $24) - Cancel anytime",
+    "Yearly: $190/year (Regular $240) - Save $50"
+  ],
+  "warning": "⚠️ <strong>In 7 days</strong>, you will lose access to:",
+  "warning_points": [
+    "Dashboard opportunity analysis",
+    "Daily AI tool hotspot emails",
+    "Pain point extraction and trend analysis"
+  ],
+  "support": "Questions? Contact our support team anytime.",
+  "footer_copyright": "© 2025 AI Tool Hotspot Dashboard",
+  "footer_notice": "This is an automated email, please do not reply"
+}

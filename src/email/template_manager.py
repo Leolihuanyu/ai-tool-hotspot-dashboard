@@ -26,7 +26,13 @@ class EmailTemplateManager:
     SUPPORTED_LANGUAGES = ('en', 'ja', 'zh')
 
     # 支持的模板列表
-    SUPPORTED_TEMPLATES = ('invite_welcome', 'subscription_welcome')
+    SUPPORTED_TEMPLATES = (
+        'invite_welcome',
+        'subscription_welcome',
+        'expiry_reminder_14days',
+        'expiry_reminder_7days',
+        'expiry_reminder_1day'
+    )
 
     def __init__(self, locales_dir: Optional[str] = None):
         """

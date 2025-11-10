@@ -1,0 +1,36 @@
+{
+  "subject": "⚠️ 最后一周 - 您的 Beta 试用即将结束",
+  "title": "⏰ 您的试用期还剩 7 天",
+  "greeting": "您好，",
+  "intro_p1": "您的 <strong>AI工具热点Dashboard</strong> Beta 试用期即将结束。",
+  "intro_p2": "还剩 <strong>最后 7 天</strong>，将于 <strong>{{expiry_date}}</strong> 到期。",
+  "urgent_title": "🔥 不要错过这些机会",
+  "urgent_points": [
+    "每天平均发现 5-10 个新的 AI 工具商机",
+    "提前洞察市场趋势，抓住先机",
+    "持续访问价值数万元的市场调研数据",
+    "加入活跃的创业者社区"
+  ],
+  "stats_title": "📊 您的成就",
+  "stats": [
+    "已发现 {{opportunities_count}} 个商业机会",
+    "浏览了 {{tools_count}} 个AI工具",
+    "累计为您节省 {{hours_saved}} 小时调研时间"
+  ],
+  "cta_button": "🎯 立即升级订阅",
+  "pricing_title": "💰 限时优惠",
+  "pricing_info": "现在升级享受 <strong>20% 早鸟折扣</strong>（仅限本周）：",
+  "pricing_plans": [
+    "月付：$19/月（原价 $24）- 随时取消",
+    "年付：$190/年（原价 $240）- 节省 $50"
+  ],
+  "warning": "⚠️ <strong>7 天后</strong>，您将无法：",
+  "warning_points": [
+    "访问 Dashboard 查看机会分析",
+    "接收每日 AI 工具热点邮件",
+    "使用痛点提取和趋势分析功能"
+  ],
+  "support": "有任何疑问？随时联系我们的客户支持团队。",
+  "footer_copyright": "© 2025 AI工具热点Dashboard",
+  "footer_notice": "此邮件为自动发送，请勿直接回复"
+}

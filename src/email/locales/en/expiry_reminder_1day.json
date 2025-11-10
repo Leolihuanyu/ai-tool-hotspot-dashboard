@@ -1,0 +1,40 @@
+{
+  "subject": "🚨 Final 24 Hours - Your Beta Trial Expires Tomorrow",
+  "title": "⏰ Last 24 Hours",
+  "greeting": "Hello,",
+  "intro_p1": "This is your final reminder: Your <strong>AI Tool Hotspot Dashboard</strong> Beta trial expires <strong>tomorrow</strong>.",
+  "intro_p2": "Trial ends: <strong>{{expiry_date}}</strong>",
+  "urgent_title": "🚨 Urgent Reminder",
+  "urgent_message": "In 24 hours, you will lose access to:",
+  "losing_access": [
+    "Daily AI tool hotspot analysis",
+    "Product opportunity Dashboard",
+    "Market trend email updates",
+    "Pain point extraction features"
+  ],
+  "stats_title": "📊 Your Trial Summary",
+  "stats": [
+    "Discovered {{opportunities_count}} business opportunities",
+    "Explored {{tools_count}} trending AI tools",
+    "Saved {{hours_saved}} hours of market research"
+  ],
+  "testimonial_title": "💬 What Our Users Say",
+  "testimonial": "\"Checking the Dashboard every morning has become my habit. It helped me discover 3 valuable startup ideas!\" - John, Indie Developer",
+  "cta_button": "⚡ Last Chance: Upgrade Now",
+  "pricing_title": "💎 Final Offer - Early Bird Discount",
+  "pricing_info": "<strong>Today only</strong>, upgrade with 20% discount:",
+  "pricing_plans": [
+    "Monthly: $19/month (Regular $24)",
+    "Yearly: $190/year (Regular $240, like getting 2 months free)"
+  ],
+  "guarantee": "🛡️ <strong>30-day money-back guarantee</strong> - Full refund if not satisfied",
+  "final_warning": "⚠️ If you don't take action, tomorrow you will:",
+  "final_warning_points": [
+    "Lose Dashboard access",
+    "Stop receiving daily emails",
+    "Lose all access privileges"
+  ],
+  "support": "Need help? Contact support: support@example.com",
+  "footer_copyright": "© 2025 AI Tool Hotspot Dashboard",
+  "footer_notice": "This is your final reminder email"
+}
