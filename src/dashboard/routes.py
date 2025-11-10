@@ -1,14 +1,15 @@
-"""Flask路由定义
+"""Flask API路由定义
 
-Dashboard Web界面的所有路由。
+后端API路由（前后端分离架构）。
+仅提供JSON API，不包含HTML渲染。
 """
 
 import json
 import os
 import time
-from flask import render_template, jsonify, request, make_response
+from flask import jsonify, request
 from src.utils.logger import get_logger
-from src.dashboard.auth_middleware import require_auth, optional_auth, verify_token_from_request
+from src.dashboard.auth_middleware import require_auth, verify_token_from_request
 
 logger = get_logger(__name__)
 
@@ -167,140 +168,13 @@ def enrich_opportunities(opportunities, pain_points, ai_tools, trending_topics):
 
 
 def register_routes(app):
-    """注册Flask路由
+    """注册Flask API路由（仅API，不包含HTML渲染）
 
     Args:
         app: Flask应用实例
     """
 
-    @app.route('/')
-    def index():
-        """首页"""
-        try:
-            data = load_latest_data()
-
-            stats = {
-                'ai_tools_count': len(data.get('ai_tools', [])),
-                'trending_topics_count': len(data.get('trending_topics', [])),
-                'opportunities_count': len(data.get('opportunities', []))
-            }
-
-            return render_template('index.html', stats=stats)
-
-        except Exception as e:
-            logger.error(f"Error in index route: {e}")
-            return render_template('error.html', error=str(e)), 500
-
-    @app.route('/tools')
-    def tools():
-        """AI工具榜页面"""
-        try:
-            data = load_latest_data()
-            tools_list = data.get('ai_tools', [])
-
-            # 分页和过滤参数
-            source_filter = request.args.get('source', None)
-            page = int(request.args.get('page', 1))
-            per_page = int(request.args.get('per_page', 30))
-
-            # 来源过滤
-            if source_filter:
-                tools_list = [t for t in tools_list if t.get('source') == source_filter]
-
-            # 按时间排序(最新优先)
-            tools_list.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
-
-            # 分页
-            total = len(tools_list)
-            start = (page - 1) * per_page
-            end = start + per_page
-            tools_page = tools_list[start:end]
-
-            # 分页器所需信息
-            all_sources = list(set(t.get('source') for t in data.get('ai_tools', [])))
-
-            return render_template(
-                'tools.html',
-                tools=tools_page,
-                total=total,
-                page=page,
-                per_page=per_page,
-                sources=all_sources,
-                current_source=source_filter
-            )
-
-        except Exception as e:
-            logger.error(f"Error in tools route: {e}")
-            return render_template('error.html', error=str(e)), 500
-
-    @app.route('/trends')
-    def trends():
-        """热点榜页面"""
-        try:
-            data = load_latest_data()
-            topics_list = data.get('trending_topics', [])
-
-            # 分页和过滤参数
-            source_filter = request.args.get('source', None)
-            page = int(request.args.get('page', 1))
-            per_page = int(request.args.get('per_page', 30))
-
-            # 来源过滤
-            if source_filter:
-                topics_list = [t for t in topics_list if t.get('source') == source_filter]
-
-            # 按热度排序
-            topics_list.sort(key=lambda x: x.get('heat_score', 0), reverse=True)
-
-            # 分页
-            total = len(topics_list)
-            start = (page - 1) * per_page
-            end = start + per_page
-            topics_page = topics_list[start:end]
-
-            # 分页器所需信息
-            all_sources = list(set(t.get('source') for t in data.get('trending_topics', [])))
-
-            return render_template(
-                'trends.html',
-                topics=topics_page,
-                total=total,
-                page=page,
-                per_page=per_page,
-                sources=all_sources,
-                current_source=source_filter
-            )
-
-        except Exception as e:
-            logger.error(f"Error in trends route: {e}")
-            return render_template('error.html', error=str(e)), 500
-
-    @app.route('/opportunities')
-    def opportunities():
-        """机会榜页面"""
-        try:
-            data = load_latest_data()
-
-            # Enrichment opportunities数据
-            enriched_opps = enrich_opportunities(
-                opportunities=data.get('opportunities', []),
-                pain_points=data.get('pain_points', []),
-                ai_tools=data.get('ai_tools', []),
-                trending_topics=data.get('trending_topics', [])
-            )
-
-            # 按opportunity_score排序，选择Top 10
-            enriched_opps.sort(key=lambda x: x.get('opportunity_score', 0), reverse=True)
-            top_opportunities = enriched_opps[:10]
-
-            return render_template(
-                'opportunities.html',
-                opportunities=top_opportunities
-            )
-
-        except Exception as e:
-            logger.error(f"Error in opportunities route: {e}", exc_info=True)
-            return render_template('error.html', error=str(e)), 500
+    # === 公开API路由 ===
 
     @app.route('/api/v1/tools')
     def api_tools():
@@ -363,33 +237,7 @@ def register_routes(app):
                 "error": str(e)
             }), 500
 
-    @app.route('/access-expired')
-    def access_expired():
-        """
-        访问过期/无效提示页面
-
-        URL参数：
-            error: 错误信息
-        """
-        error_message = request.args.get('error', '访问链接已过期或无效')
-
-        # 判断错误类型，显示不同的提示
-        if "过期" in error_message:
-            title = "访问链接已过期"
-            suggestion = "请重新获取最新的访问链接，或订阅以获得持续访问权限。"
-        elif "IP地址" in error_message or "转发" in error_message:
-            title = "安全验证失败"
-            suggestion = "检测到您的访问来自不同的IP地址，可能是链接被转发。请使用原始邮件中的链接访问。"
-        else:
-            title = "访问被拒绝"
-            suggestion = "您的访问链接无效或已被篡改。请联系管理员或重新订阅。"
-
-        return render_template(
-            'access_expired.html',
-            title=title,
-            error_message=error_message,
-            suggestion=suggestion
-        ), 401
+    # === 需要认证的API路由 ===
 
     @app.route('/api/data')
     @require_auth
@@ -438,4 +286,233 @@ def register_routes(app):
                 "error": str(e)
             }), 500
 
-    logger.info("路由注册完成（包含认证路由）")
+    # === 用户认证和注册API ===
+
+    @app.route('/api/register', methods=['POST'])
+    def api_register():
+        """
+        API: 用户注册（通过邀请码）
+
+        请求体：
+            {
+                "email": "user@example.com",
+                "invite_code": "BETA-XXXX-XXXX",
+                "language": "zh"  # 可选：zh/en/ja
+            }
+
+        返回：
+            {
+                "success": True,
+                "message": "注册成功",
+                "token": "access_token_here"
+            }
+        """
+        try:
+            data = request.get_json()
+            email = data.get('email')
+            invite_code = data.get('invite_code')
+            language = data.get('language', 'zh')
+
+            if not email or not invite_code:
+                return jsonify({
+                    "success": False,
+                    "error": "邮箱和邀请码不能为空"
+                }), 400
+
+            # 验证邀请码
+            from src.user.invite_manager import InviteManager
+            invite_manager = InviteManager()
+
+            verify_result = invite_manager.verify_invite_code(invite_code, email)
+            if not verify_result.get('valid'):
+                return jsonify({
+                    "success": False,
+                    "error": verify_result.get('error', '邀请码无效')
+                }), 400
+
+            # 创建用户
+            from src.user.user_manager import UserManager
+            user_manager = UserManager()
+
+            user_result = user_manager.create_user(
+                email=email,
+                subscription_type='beta',
+                language=language
+            )
+
+            if not user_result.get('success'):
+                return jsonify({
+                    "success": False,
+                    "error": user_result.get('error', '创建用户失败')
+                }), 500
+
+            # 标记邀请码为已使用
+            invite_manager.mark_invite_used(invite_code, email)
+
+            # 生成访问token
+            from src.auth.token_manager import TokenManager
+            token_manager = TokenManager()
+            token = token_manager.generate_token(email)
+
+            logger.info(f"用户注册成功: {email}")
+
+            return jsonify({
+                "success": True,
+                "message": "注册成功",
+                "token": token,
+                "email": email
+            })
+
+        except Exception as e:
+            logger.error(f"用户注册失败: {e}")
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            }), 500
+
+    @app.route('/api/verify-invite', methods=['POST'])
+    def api_verify_invite():
+        """
+        API: 验证邀请码是否有效
+
+        请求体：
+            {
+                "invite_code": "BETA-XXXX-XXXX"
+            }
+
+        返回：
+            {
+                "success": True,
+                "valid": True/False,
+                "message": "验证结果"
+            }
+        """
+        try:
+            data = request.get_json()
+            invite_code = data.get('invite_code')
+
+            if not invite_code:
+                return jsonify({
+                    "success": False,
+                    "error": "邀请码不能为空"
+                }), 400
+
+            from src.user.invite_manager import InviteManager
+            invite_manager = InviteManager()
+
+            result = invite_manager.verify_invite_code(invite_code)
+
+            return jsonify({
+                "success": True,
+                "valid": result.get('valid'),
+                "message": result.get('error', '邀请码有效') if not result.get('valid') else '邀请码有效'
+            })
+
+        except Exception as e:
+            logger.error(f"验证邀请码失败: {e}")
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            }), 500
+
+    # === Stripe支付Webhook ===
+
+    @app.route('/api/webhook/stripe', methods=['POST'])
+    def stripe_webhook():
+        """
+        Stripe Webhook端点
+        处理订阅生命周期事件
+
+        处理的事件：
+        - checkout.session.completed - 支付成功
+        - customer.subscription.updated - 订阅更新
+        - customer.subscription.deleted - 订阅取消
+        - invoice.payment_failed - 支付失败
+        """
+        try:
+            payload = request.data
+            sig_header = request.headers.get('Stripe-Signature')
+
+            if not sig_header:
+                logger.warning("Webhook请求缺少Stripe-Signature头部")
+                return jsonify({"error": "Missing signature"}), 400
+
+            # 验证webhook签名并处理事件
+            from src.payment.webhook_handler import StripeWebhookHandler
+            handler = StripeWebhookHandler()
+
+            event = handler.verify_signature(payload, sig_header)
+            if not event:
+                return jsonify({"error": "Invalid signature"}), 400
+
+            result = handler.handle_event(event)
+
+            if result.get('success'):
+                return jsonify({"received": True, "message": result.get('message')}), 200
+            else:
+                return jsonify({"error": result.get('message')}), 500
+
+        except Exception as e:
+            logger.error(f"处理Stripe webhook失败: {e}")
+            return jsonify({"error": str(e)}), 500
+
+    # === Stripe支付创建 ===
+
+    @app.route('/api/create-checkout-session', methods=['POST'])
+    def create_checkout_session():
+        """
+        API: 创建Stripe Checkout Session
+
+        请求体：
+            {
+                "email": "user@example.com",
+                "plan": "monthly" | "yearly",
+                "language": "zh"  # 可选
+            }
+
+        返回：
+            {
+                "success": True,
+                "checkout_url": "https://checkout.stripe.com/..."
+            }
+        """
+        try:
+            data = request.get_json()
+            email = data.get('email')
+            plan = data.get('plan', 'monthly')
+            language = data.get('language', 'zh')
+
+            if not email:
+                return jsonify({
+                    "success": False,
+                    "error": "邮箱不能为空"
+                }), 400
+
+            from src.payment.stripe_service import StripeService
+            stripe_service = StripeService()
+
+            result = stripe_service.create_checkout_session(
+                email=email,
+                plan=plan,
+                language=language
+            )
+
+            if result.get('success'):
+                return jsonify({
+                    "success": True,
+                    "checkout_url": result.get('url')
+                })
+            else:
+                return jsonify({
+                    "success": False,
+                    "error": result.get('error', '创建支付会话失败')
+                }), 500
+
+        except Exception as e:
+            logger.error(f"创建支付会话失败: {e}")
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            }), 500
+
+    logger.info("API路由注册完成（前后端分离架构）")

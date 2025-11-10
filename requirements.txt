@@ -1,5 +1,6 @@
 # === 核心Web框架 ===
 Flask>=3.0.0  # Web仪表板框架
+Flask-CORS>=4.0.0  # CORS支持（用于前后端分离架构）
 gunicorn>=21.2.0  # WSGI服务器（生产环境）
 
 # === HTTP和爬虫 ===
