@@ -520,10 +520,10 @@ def register_routes(app):
                 timezone=timezone
             )
 
-            if result.get('success'):
+            if result.get('url'):
                 return jsonify({
                     "success": True,
-                    "url": result.get('url')
+                    "url": result['url']
                 })
             else:
                 return jsonify({
