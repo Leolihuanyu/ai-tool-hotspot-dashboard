@@ -400,7 +400,7 @@ def register_routes(app):
             from src.user.invite_manager import InviteManager
             invite_manager = InviteManager()
 
-            result = invite_manager.verify_invite_code(invite_code)
+            result = invite_manager.validate_code(invite_code)
 
             return jsonify({
                 "success": True,
