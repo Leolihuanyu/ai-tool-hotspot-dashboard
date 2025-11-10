@@ -525,6 +525,45 @@ class InviteManager:
             )
             return False
 
+    def mark_invite_used(self, code: str, used_by_email: str) -> bool:
+        """
+        标记邀请码已被使用，增加使用次数
+
+        Args:
+            code: 邀请码
+            used_by_email: 使用者邮箱
+
+        Returns:
+            bool: 是否成功
+        """
+        try:
+            with get_db_connection() as conn:
+                cursor = conn.cursor()
+
+                # 增加使用次数
+                query = convert_placeholder("""
+                    UPDATE invite_codes
+                    SET current_uses = current_uses + 1
+                    WHERE code = ?
+                """)
+
+                cursor.execute(query, (code,))
+                conn.commit()
+                cursor.close()
+
+                default_logger.info(
+                    f"邀请码使用次数已更新: {code}",
+                    extra={"extra_fields": {"code": code, "used_by": used_by_email}}
+                )
+                return True
+
+        except Exception as e:
+            default_logger.error(
+                f"标记邀请码使用失败: {str(e)}",
+                extra={"extra_fields": {"code": code, "error": str(e)}},
+            )
+            return False
+
     def _generate_random_code(self, length: int = 8) -> str:
         """
         生成随机邀请码
