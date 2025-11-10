@@ -337,7 +337,7 @@ def register_routes(app):
             user_result = user_manager.create_user(
                 email=email,
                 subscription_type='beta',
-                language=language
+                invite_code=invite_code
             )
 
             if not user_result.get('success'):
