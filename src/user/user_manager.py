@@ -88,10 +88,13 @@ class UserManager:
                     invite_code, referrer_id
                 )
                 VALUES (?, ?, 'active', ?, ?)
+                RETURNING id
                 """)
             cursor.execute(query, (email, subscription_type, invite_code, referrer_id))
 
-            user_id = cursor.lastrowid
+            # 获取新用户ID（兼容PostgreSQL和SQLite）
+            result = cursor.fetchone()
+            user_id = result['id'] if isinstance(result, dict) else result[0]
 
             # 如果使用了邀请码，更新邀请码使用次数
             if invite_code:
