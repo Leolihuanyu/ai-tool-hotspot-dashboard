@@ -13,13 +13,21 @@ echo "[1/4] 创建数据目录..."
 mkdir -p data/archive
 echo "✓ 数据目录已创建"
 
-# 2. 初始化数据库（如果不存在）
-if [ ! -f "data/db.sqlite" ]; then
-    echo "[2/4] 初始化数据库..."
-    python -m src.cli.main init-db
-    echo "✓ 数据库初始化完成"
+# 2. 初始化数据库（根据DB_TYPE环境变量）
+echo "[2/4] 检查数据库配置..."
+if [ "${DB_TYPE}" = "postgresql" ]; then
+    echo "✓ 使用PostgreSQL数据库 (外部托管)"
+    echo "   数据库URL: ${DATABASE_URL:0:50}..."
+    echo "   跳过本地数据库初始化"
 else
-    echo "[2/4] 数据库已存在，跳过初始化"
+    echo "✓ 使用SQLite数据库 (本地文件)"
+    if [ ! -f "data/db.sqlite" ]; then
+        echo "   正在初始化SQLite数据库..."
+        python -m src.cli.main init-db
+        echo "   ✓ 数据库初始化完成"
+    else
+        echo "   ✓ 数据库文件已存在，跳过初始化"
+    fi
 fi
 
 # 3. 检查数据文件
