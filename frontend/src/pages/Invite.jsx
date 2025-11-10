@@ -37,7 +37,9 @@ export default function Invite() {
   // 验证邀请码的API调用
   const validateInviteCode = async (code) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/invite/validate?code=${encodeURIComponent(code)}`);
+      const response = await fetch(`${API_BASE_URL}/invite/validate?code=${encodeURIComponent(code)}`, {
+        credentials: 'include'
+      });
       const data = await response.json();
 
       if (data.valid) {
@@ -78,6 +80,7 @@ export default function Invite() {
           invite_code: inviteCode,
           language: i18n.language, // 传递当前界面语言
         }),
+        credentials: 'include'
       });
 
       const data = await response.json();

@@ -29,7 +29,7 @@ export async function createCheckoutSession(priceType = 'monthly', email = null)
     }
 
     // 构建请求体
-    const body = { price_type: priceType };
+    const body = { plan: priceType };
     if (email) {
       body.email = email;
     }
@@ -37,7 +37,8 @@ export async function createCheckoutSession(priceType = 'monthly', email = null)
     const response = await fetch(`${API_BASE_URL}/create-checkout-session`, {
       method: 'POST',
       headers,
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
+      credentials: 'include'
     });
 
     const data = await response.json();
@@ -71,7 +72,8 @@ export async function getSubscriptionStatus() {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`
-      }
+      },
+      credentials: 'include'
     });
 
     const data = await response.json();
@@ -105,7 +107,8 @@ export async function cancelSubscription(immediately = false) {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify({ immediately })
+      body: JSON.stringify({ immediately }),
+      credentials: 'include'
     });
 
     const data = await response.json();
@@ -136,7 +139,8 @@ export async function createPortalSession() {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`
-      }
+      },
+      credentials: 'include'
     });
 
     const data = await response.json();
