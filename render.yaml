@@ -23,9 +23,11 @@ services:
       - key: FLASK_PORT
         value: 5000
 
-      # 数据库路径
-      - key: DATABASE_PATH
-        value: /data/db.sqlite
+      # 数据库配置 (PostgreSQL)
+      - key: DB_TYPE
+        sync: false  # 在Dashboard配置：postgresql
+      - key: DATABASE_URL
+        sync: false  # 在Dashboard配置：Supabase连接字符串
 
       # LLM配置（需要在Render Dashboard设置）
       - key: LLM_PROVIDER
