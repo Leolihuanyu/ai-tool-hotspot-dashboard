@@ -506,11 +506,9 @@ def register_routes(app):
                 }
                 timezone = timezone_map.get(language, 'UTC')
 
+            # email是可选参数，如果未提供，Stripe Checkout会自动收集
             if not email:
-                return jsonify({
-                    "success": False,
-                    "error": "邮箱不能为空"
-                }), 400
+                logger.info("未提供email，将由Stripe Checkout收集用户邮箱")
 
             from src.payment.stripe_service import StripeService
             stripe_service = StripeService()
@@ -525,7 +523,7 @@ def register_routes(app):
             if result.get('success'):
                 return jsonify({
                     "success": True,
-                    "checkout_url": result.get('url')
+                    "url": result.get('url')
                 })
             else:
                 return jsonify({
