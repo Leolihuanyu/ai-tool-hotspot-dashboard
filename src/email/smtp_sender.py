@@ -288,16 +288,17 @@ class SMTPEmailSender:
         """
         try:
             subject = "🧪 SMTP测试邮件 - AI工具热点仪表板"
-            html_content = """
+            encryption_type = 'STARTTLS' if self.smtp_use_tls else 'SSL'
+            html_content = f"""
             <html>
                 <body style="font-family: Arial, sans-serif; padding: 20px;">
                     <h2 style="color: #4CAF50;">✅ SMTP配置成功！</h2>
                     <p>恭喜！你的SMTP邮件服务已配置成功。</p>
                     <p><strong>配置信息：</strong></p>
                     <ul>
-                        <li>SMTP服务器: {server}</li>
-                        <li>端口: {port}</li>
-                        <li>加密: {'STARTTLS' if self.smtp_use_tls else 'SSL'}</li>
+                        <li>SMTP服务器: {self.smtp_server}</li>
+                        <li>端口: {self.smtp_port}</li>
+                        <li>加密: {encryption_type}</li>
                     </ul>
                     <p>现在可以正常发送每日报告邮件了！</p>
                     <hr>
@@ -306,11 +307,7 @@ class SMTPEmailSender:
                     </p>
                 </body>
             </html>
-            """.format(
-                server=self.smtp_server,
-                port=self.smtp_port,
-                self=self
-            )
+            """
 
             plain_content = f"""
             ✅ SMTP配置成功！
@@ -320,7 +317,7 @@ class SMTPEmailSender:
             配置信息：
             - SMTP服务器: {self.smtp_server}
             - 端口: {self.smtp_port}
-            - 加密: {'STARTTLS' if self.smtp_use_tls else 'SSL'}
+            - 加密: {encryption_type}
 
             现在可以正常发送每日报告邮件了！
 
