@@ -65,22 +65,22 @@ def migrate_add_language_field():
         # SQLite的ALTER TABLE ADD COLUMN语法
         alter_sql = """
         ALTER TABLE users
-        ADD COLUMN language TEXT DEFAULT 'zh' CHECK(language IN ('en', 'ja', 'zh'))
+        ADD COLUMN language TEXT DEFAULT 'en' CHECK(language IN ('en', 'ja', 'zh'))
         """
 
         cursor.execute(alter_sql)
         default_logger.info("✅ language字段添加成功")
 
-        # 3. 为所有现有用户显式设置语言为'zh'（确保数据一致性）
+        # 3. 为所有现有用户显式设置语言为'en'（确保数据一致性）
         update_sql = """
         UPDATE users
-        SET language = 'zh'
+        SET language = 'en'
         WHERE language IS NULL
         """
 
         cursor.execute(update_sql)
         updated_count = cursor.rowcount
-        default_logger.info(f"✅ 已为 {updated_count} 个现有用户设置默认语言为'zh'")
+        default_logger.info(f"✅ 已为 {updated_count} 个现有用户设置默认语言为'en'")
 
         # 4. 提交更改
         conn.commit()

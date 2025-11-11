@@ -311,7 +311,7 @@ def register_routes(app):
             data = request.get_json()
             email = data.get('email')
             invite_code = data.get('invite_code')
-            language = data.get('language', 'zh')
+            language = data.get('language', 'en')
 
             # 获取timezone，如果未提供则根据language推断默认值
             timezone = data.get('timezone')
@@ -493,7 +493,7 @@ def register_routes(app):
             data = request.get_json()
             email = data.get('email')
             plan = data.get('plan', 'monthly')
-            language = data.get('language', 'zh')
+            language = data.get('language', 'en')
 
             # 获取timezone，如果未提供则根据language推断默认值
             timezone = data.get('timezone')

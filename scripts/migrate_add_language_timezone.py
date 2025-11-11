@@ -66,12 +66,12 @@ def migrate():
             if os.getenv('DB_TYPE') == 'postgresql':
                 cursor.execute("""
                     ALTER TABLE users
-                    ADD COLUMN language VARCHAR(10) DEFAULT 'zh'
+                    ADD COLUMN language VARCHAR(10) DEFAULT 'en'
                 """)
             else:
                 cursor.execute("""
                     ALTER TABLE users
-                    ADD COLUMN language TEXT DEFAULT 'zh'
+                    ADD COLUMN language TEXT DEFAULT 'en'
                 """)
             print("✓ language 字段添加成功")
 

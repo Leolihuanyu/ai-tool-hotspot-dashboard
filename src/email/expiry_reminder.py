@@ -89,7 +89,7 @@ class ExpiryReminderService:
                         "free_until": row['free_until'],
                         "created_at": row['created_at'],
                         "timezone": row.get('timezone', 'UTC'),
-                        "language": row.get('language', 'zh'),
+                        "language": row.get('language', 'en'),
                     }
                 else:
                     user_data = {
@@ -99,7 +99,7 @@ class ExpiryReminderService:
                         "free_until": row[3],
                         "created_at": row[4],
                         "timezone": row[5] if len(row) > 5 else 'UTC',
-                        "language": row[6] if len(row) > 6 else 'zh',
+                        "language": row[6] if len(row) > 6 else 'en',
                     }
 
                 # 如果需要按时区过滤
@@ -174,7 +174,7 @@ class ExpiryReminderService:
 
             # 如果未提供language参数，从用户数据中获取
             if language is None:
-                language = user.get('language', 'zh')
+                language = user.get('language', 'en')
 
             # 解析过期时间（可能是字符串或 datetime 对象）
             if isinstance(free_until, str):

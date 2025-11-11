@@ -188,7 +188,7 @@ export function getLocalizedField(item, fieldName, language) {
   };
 
   // 标准化语言代码（提取主要语言部分，如 'en-US' -> 'en'）
-  const normalizedLang = language?.split('-')[0] || 'zh';
+  const normalizedLang = language?.split('-')[0] || 'en';
 
   // 获取对应语言的字段名
   const localizedFieldName = fieldMap[fieldName]?.[normalizedLang];

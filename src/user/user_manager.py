@@ -39,7 +39,7 @@ class UserManager:
         subscription_type: str = "beta",
         invite_code: Optional[str] = None,
         referrer_email: Optional[str] = None,
-        language: str = "zh",
+        language: str = "en",
         timezone: str = "UTC",
     ) -> Dict[str, Any]:
         """

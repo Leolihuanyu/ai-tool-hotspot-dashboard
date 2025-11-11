@@ -149,7 +149,7 @@ class StripeWebhookHandler:
 
             # 从 session metadata 获取语言和时区
             metadata = session.get("metadata", {})
-            language = metadata.get("language", "zh")
+            language = metadata.get("language", "en")
             timezone = metadata.get("timezone", "UTC")
 
             # 更新用户订阅状态
@@ -395,12 +395,13 @@ class StripeWebhookHandler:
             return
 
         try:
-            # 从数据库查询用户语言偏好
+            # 从数据库查询用户语言偏好和订阅类型
             user = self.user_manager.get_user(email)
-            language = user.get('language', 'zh') if user else 'zh'
+            language = user.get('language', 'en') if user else 'en'
+            subscription_type = user.get('subscription_type', 'paid') if user else 'paid'
 
-            # 生成带token的Dashboard访问链接
-            token = self.token_manager.generate_token(email)
+            # 生成带token的Dashboard访问链接（包含正确的订阅类型）
+            token = self.token_manager.generate_token(email, subscription_type=subscription_type)
             # 优先使用 DASHBOARD_BASE_URL（前端地址），向后兼容 DASHBOARD_URL
             dashboard_base_url = os.getenv('DASHBOARD_BASE_URL') or os.getenv('DASHBOARD_URL', 'https://ai-tool-hotspot-dashboard.vercel.app')
             dashboard_url = f"{dashboard_base_url}/dashboard?token={token}&email={email}"

@@ -123,7 +123,7 @@ class StripeService:
         plan: Optional[str] = None,
         success_url: Optional[str] = None,
         cancel_url: Optional[str] = None,
-        language: str = "zh",
+        language: str = "en",
         timezone: str = "UTC"
     ) -> Dict[str, Any]:
         """
