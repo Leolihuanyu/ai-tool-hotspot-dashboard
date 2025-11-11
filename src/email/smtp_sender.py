@@ -57,12 +57,22 @@ class SMTPEmailSender:
         self.smtp_use_tls = config.smtp_use_tls
         self.from_email = config.email_from
 
-        if not self.smtp_server:
-            logger.warning("SMTP_SERVER未配置，邮件功能将不可用")
-        if not self.smtp_username:
-            logger.warning("SMTP_USERNAME未配置，邮件功能将不可用")
-        if not self.smtp_password:
-            logger.warning("SMTP_PASSWORD未配置，邮件功能将不可用")
+        # 验证配置完整性
+        is_valid, missing = self.validate_config()
+        if not is_valid:
+            logger.error(
+                f"SMTP配置不完整，缺少以下环境变量: {', '.join(missing)}",
+                extra={"extra_fields": {"missing_vars": missing}}
+            )
+        else:
+            logger.info(
+                f"SMTP客户端初始化成功: {self.smtp_server}:{self.smtp_port}",
+                extra={"extra_fields": {
+                    "smtp_server": self.smtp_server,
+                    "smtp_port": self.smtp_port,
+                    "use_tls": self.smtp_use_tls
+                }}
+            )
 
     def validate_config(self) -> tuple[bool, List[str]]:
         """验证SMTP配置
@@ -145,13 +155,34 @@ class SMTPEmailSender:
             }
 
         except smtplib.SMTPAuthenticationError as e:
-            logger.error(f"SMTP认证失败: {e}")
+            logger.exception(
+                f"SMTP认证失败: {e}",
+                extra={"extra_fields": {
+                    "smtp_server": self.smtp_server,
+                    "smtp_username": self.smtp_username,
+                    "error_type": "authentication_error"
+                }}
+            )
             raise Exception(f"SMTP认证失败，请检查用户名和密码（Gmail需要使用应用专用密码）: {e}")
         except smtplib.SMTPException as e:
-            logger.error(f"SMTP发送失败: {e}")
+            logger.exception(
+                f"SMTP发送失败: {e}",
+                extra={"extra_fields": {
+                    "smtp_server": self.smtp_server,
+                    "recipients": recipients,
+                    "error_type": "smtp_error"
+                }}
+            )
             raise Exception(f"SMTP发送失败: {e}")
         except Exception as e:
-            logger.error(f"邮件发送失败: {e}")
+            logger.exception(
+                f"邮件发送失败: {e}",
+                extra={"extra_fields": {
+                    "smtp_server": self.smtp_server,
+                    "recipients": recipients,
+                    "error_type": "unknown_error"
+                }}
+            )
             raise
 
     def send_html_email(

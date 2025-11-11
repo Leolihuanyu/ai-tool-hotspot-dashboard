@@ -538,4 +538,97 @@ def register_routes(app):
                 "error": str(e)
             }), 500
 
+    # === 测试工具API ===
+
+    @app.route('/api/test/send-email', methods=['POST'])
+    @require_auth
+    def test_send_email():
+        """
+        API: 发送测试邮件（需要认证）
+
+        用于在生产环境验证SMTP配置是否正确。
+
+        请求体：
+            {
+                "test_email": "recipient@example.com"  # 可选，默认发送给当前登录用户
+            }
+
+        返回：
+            {
+                "success": True/False,
+                "message": "发送结果",
+                "details": {...}  # 发送详情
+            }
+        """
+        try:
+            data = request.get_json() or {}
+            test_email = data.get('test_email') or request.user_email
+
+            if not test_email:
+                return jsonify({
+                    "success": False,
+                    "error": "未指定收件人邮箱"
+                }), 400
+
+            # 初始化邮件发送器并发送测试邮件
+            from src.email.smtp_sender import SMTPEmailSender
+
+            try:
+                email_sender = SMTPEmailSender()
+            except Exception as e:
+                logger.exception(f"邮件发送器初始化失败: {e}")
+                return jsonify({
+                    "success": False,
+                    "error": f"邮件发送器初始化失败: {str(e)}",
+                    "details": {
+                        "error_type": "initialization_error"
+                    }
+                }), 500
+
+            # 验证配置
+            is_valid, missing = email_sender.validate_config()
+            if not is_valid:
+                return jsonify({
+                    "success": False,
+                    "error": f"SMTP配置不完整，缺少: {', '.join(missing)}",
+                    "details": {
+                        "missing_vars": missing,
+                        "error_type": "configuration_error"
+                    }
+                }), 500
+
+            # 发送测试邮件
+            result = email_sender.send_test_email(test_email)
+
+            if result:
+                logger.info(f"测试邮件发送成功: {test_email}")
+                return jsonify({
+                    "success": True,
+                    "message": f"测试邮件已发送至 {test_email}",
+                    "details": {
+                        "recipient": test_email,
+                        "smtp_server": email_sender.smtp_server,
+                        "smtp_port": email_sender.smtp_port
+                    }
+                })
+            else:
+                return jsonify({
+                    "success": False,
+                    "error": "测试邮件发送失败",
+                    "details": {
+                        "recipient": test_email,
+                        "error_type": "send_error"
+                    }
+                }), 500
+
+        except Exception as e:
+            logger.exception(f"测试邮件发送失败: {e}")
+            return jsonify({
+                "success": False,
+                "error": str(e),
+                "details": {
+                    "error_type": "unknown_error"
+                }
+            }), 500
+
     logger.info("API路由注册完成（前后端分离架构）")

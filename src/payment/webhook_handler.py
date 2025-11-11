@@ -33,9 +33,28 @@ class StripeWebhookHandler:
 
         # 初始化邮件发送器（可能未配置，需要处理）
         try:
+            # 验证SMTP配置完整性
+            email_provider = os.getenv("EMAIL_PROVIDER")
+            if email_provider == "smtp":
+                smtp_required_vars = {
+                    "SMTP_SERVER": os.getenv("SMTP_SERVER"),
+                    "SMTP_PORT": os.getenv("SMTP_PORT"),
+                    "SMTP_USERNAME": os.getenv("SMTP_USERNAME"),
+                    "SMTP_PASSWORD": os.getenv("SMTP_PASSWORD"),
+                    "EMAIL_FROM": os.getenv("EMAIL_FROM")
+                }
+                missing_vars = [k for k, v in smtp_required_vars.items() if not v]
+                if missing_vars:
+                    default_logger.error(
+                        f"SMTP配置不完整，缺少以下环境变量: {', '.join(missing_vars)}",
+                        extra={"extra_fields": {"missing_vars": missing_vars}}
+                    )
+                    raise ValueError(f"SMTP配置缺失: {', '.join(missing_vars)}")
+
             self.email_sender = SMTPEmailSender()
+            default_logger.info("邮件发送器初始化成功")
         except Exception as e:
-            default_logger.warning(f"邮件发送器初始化失败: {str(e)}")
+            default_logger.exception(f"邮件发送器初始化失败: {str(e)}")
             self.email_sender = None
 
     def verify_signature(
@@ -386,6 +405,10 @@ class StripeWebhookHandler:
     def _send_subscription_welcome_email(self, email: str):
         """发送多语言订阅欢迎邮件（带Dashboard访问链接）"""
         if not self.email_sender:
+            default_logger.error(
+                f"无法发送欢迎邮件: 邮件发送器未初始化 (收件人: {email})",
+                extra={"extra_fields": {"email": email, "reason": "email_sender_not_initialized"}}
+            )
             return
 
         try:
@@ -420,11 +443,18 @@ class StripeWebhookHandler:
             default_logger.info(f"订阅欢迎邮件已发送至: {email} (语言: {language})")
 
         except Exception as e:
-            default_logger.error(f"发送欢迎邮件失败: {str(e)}")
+            default_logger.exception(
+                f"发送欢迎邮件失败: {str(e)}",
+                extra={"extra_fields": {"email": email, "error": str(e)}}
+            )
 
     def _send_subscription_cancelled_email(self, email: str):
         """发送订阅取消确认邮件"""
         if not self.email_sender:
+            default_logger.error(
+                f"无法发送取消确认邮件: 邮件发送器未初始化 (收件人: {email})",
+                extra={"extra_fields": {"email": email, "reason": "email_sender_not_initialized"}}
+            )
             return
 
         try:
@@ -451,13 +481,21 @@ class StripeWebhookHandler:
                 subject=subject,
                 html_content=html_content
             )
+            default_logger.info(f"订阅取消确认邮件已发送至: {email}")
 
         except Exception as e:
-            default_logger.error(f"发送取消确认邮件失败: {str(e)}")
+            default_logger.exception(
+                f"发送取消确认邮件失败: {str(e)}",
+                extra={"extra_fields": {"email": email, "error": str(e)}}
+            )
 
     def _send_payment_failed_email(self, email: str):
         """发送支付失败通知邮件"""
         if not self.email_sender:
+            default_logger.error(
+                f"无法发送支付失败通知邮件: 邮件发送器未初始化 (收件人: {email})",
+                extra={"extra_fields": {"email": email, "reason": "email_sender_not_initialized"}}
+            )
             return
 
         try:
@@ -492,13 +530,21 @@ class StripeWebhookHandler:
                 subject=subject,
                 html_content=html_content
             )
+            default_logger.info(f"支付失败通知邮件已发送至: {email}")
 
         except Exception as e:
-            default_logger.error(f"发送支付失败邮件失败: {str(e)}")
+            default_logger.exception(
+                f"发送支付失败邮件失败: {str(e)}",
+                extra={"extra_fields": {"email": email, "error": str(e)}}
+            )
 
     def _send_payment_issue_email(self, email: str, status: str):
         """发送支付问题警告邮件"""
         if not self.email_sender:
+            default_logger.error(
+                f"无法发送支付问题警告邮件: 邮件发送器未初始化 (收件人: {email})",
+                extra={"extra_fields": {"email": email, "status": status, "reason": "email_sender_not_initialized"}}
+            )
             return
 
         try:
@@ -524,6 +570,10 @@ class StripeWebhookHandler:
                 subject=subject,
                 html_content=html_content
             )
+            default_logger.info(f"支付问题警告邮件已发送至: {email} (状态: {status})")
 
         except Exception as e:
-            default_logger.error(f"发送支付问题邮件失败: {str(e)}")
+            default_logger.exception(
+                f"发送支付问题邮件失败: {str(e)}",
+                extra={"extra_fields": {"email": email, "status": status, "error": str(e)}}
+            )
