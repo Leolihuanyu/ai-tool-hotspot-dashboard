@@ -146,7 +146,7 @@ CREATE TABLE IF NOT EXISTS access_logs (
     user_agent TEXT,  -- 浏览器User Agent
     access_result TEXT NOT NULL CHECK(access_result IN ('success', 'expired', 'invalid', 'ip_mismatch')),
     error_message TEXT,  -- 如果验证失败，记录错误信息
-    FOREIGN KEY (email) REFERENCES users(email)
+    FOREIGN KEY (email) REFERENCES users(email) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE INDEX IF NOT EXISTS idx_access_logs_email ON access_logs(email);
@@ -162,8 +162,8 @@ CREATE TABLE IF NOT EXISTS referrals (
     reward_status TEXT DEFAULT 'pending' CHECK(reward_status IN ('pending', 'granted', 'expired')),
     reward_granted_at TIMESTAMP,  -- 奖励发放时间
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (referrer_email) REFERENCES users(email),
-    FOREIGN KEY (referee_email) REFERENCES users(email),
+    FOREIGN KEY (referrer_email) REFERENCES users(email) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (referee_email) REFERENCES users(email) ON DELETE CASCADE ON UPDATE CASCADE,
     UNIQUE(referrer_email, referee_email)  -- 防止重复推荐
 );
 
@@ -182,7 +182,7 @@ CREATE TABLE IF NOT EXISTS invite_codes (
     expires_at TIMESTAMP,  -- 过期时间（可选）
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_active BOOLEAN DEFAULT TRUE,  -- 是否激活
-    FOREIGN KEY (created_by) REFERENCES users(email)
+    FOREIGN KEY (created_by) REFERENCES users(email) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 CREATE INDEX IF NOT EXISTS idx_invite_codes_code ON invite_codes(code);
