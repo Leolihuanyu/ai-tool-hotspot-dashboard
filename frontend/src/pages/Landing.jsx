@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Sparkles, TrendingUp, Target, Zap, Shield, Clock,
   Check, ArrowRight, Mail, Github, Twitter, ChevronDown
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import PreviewDashboard from '../components/PreviewDashboard';
 
@@ -13,6 +13,16 @@ import PreviewDashboard from '../components/PreviewDashboard';
  */
 export default function Landing() {
   const [openFaq, setOpenFaq] = useState(null);
+  const navigate = useNavigate();
+
+  // 检测URL中的token参数，如果存在则重定向到Dashboard
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('token') && params.has('email')) {
+      // 保留所有URL参数并重定向到Dashboard
+      navigate(`/dashboard?${params.toString()}`, { replace: true });
+    }
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">

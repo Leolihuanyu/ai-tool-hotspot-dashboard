@@ -176,7 +176,7 @@ class TokenManager:
             ip_address: 可选，用户IP地址
 
         Returns:
-            str: 完整的访问URL，格式：https://your-dashboard.com/?token=xxx&email=yyy
+            str: 完整的访问URL，格式：https://your-dashboard.com/dashboard?token=xxx&email=yyy
         """
         token = self.generate_token(email, subscription_type, ip_address)
 
@@ -184,7 +184,7 @@ class TokenManager:
         base_url = base_url.rstrip("/")
 
         # 构建完整URL
-        dashboard_url = f"{base_url}/?token={token}&email={email}"
+        dashboard_url = f"{base_url}/dashboard?token={token}&email={email}"
 
         return dashboard_url
 
