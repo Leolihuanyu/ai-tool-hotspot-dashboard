@@ -336,25 +336,68 @@ def cmd_send_email(args):
 
     try:
         from src.email import get_email_sender, email_generator
+        from src.email.subscriber_manager import get_subscriber_manager
         from src.utils.config import config
 
         # 获取正确的邮件发送器（根据配置选择SMTP或SendGrid）
         email_sender = get_email_sender()
 
-        # 验证邮件配置
-        print("🔍 Validating email configuration...")
+        # 决定收件人来源：数据库 vs 环境变量
+        use_database = getattr(args, 'use_db', False)
+        to_emails = []
+
+        if use_database:
+            print("📊 Reading subscribers from database...")
+            subscriber_manager = get_subscriber_manager()
+            to_emails = subscriber_manager.get_subscriber_emails(
+                include_beta=True,
+                include_paid=True
+            )
+
+            if not to_emails:
+                print("⚠️  No active subscribers found in database")
+                print("💡 Please ensure users table has active subscribers")
+                return 1
+
+            print(f"✅ Found {len(to_emails)} active subscribers")
+        else:
+            print("📧 Reading recipients from EMAIL_TO_LIST...")
+            to_emails = config.email_to_list
+
+            if not to_emails:
+                print("⚠️  EMAIL_TO_LIST is empty")
+                print("\n💡 You can either:")
+                print("   1. Set EMAIL_TO_LIST in .env file")
+                print("   2. Use --use-db flag to read from database")
+                return 1
+
+            print(f"✅ Found {len(to_emails)} recipients from config")
+
+        # 验证邮件配置（发件人和SMTP配置）
+        print("\n🔍 Validating email sender configuration...")
+        # 临时设置EMAIL_TO_LIST以通过验证
+        original_to_list = config.email_to_list
+        if not config.email_to_list:
+            config.__dict__['_email_to_list_cache'] = to_emails
+
         is_valid, missing = email_sender.validate_config()
+
+        # 恢复原始配置
+        if hasattr(config, '_email_to_list_cache'):
+            delattr(config, '_email_to_list_cache')
+
         if not is_valid:
-            print(f"❌ Email configuration incomplete:")
+            print(f"❌ Email sender configuration incomplete:")
             for item in missing:
-                print(f"   - Missing: {item}")
+                if item != "EMAIL_TO_LIST":  # 忽略EMAIL_TO_LIST，因为我们可能从数据库读取
+                    print(f"   - Missing: {item}")
             print("\n💡 Please configure the following in .env file:")
-            print("   - SENDGRID_API_KEY")
+            print("   - SMTP_SERVER, SMTP_USERNAME, SMTP_PASSWORD")
+            print("   - Or: SENDGRID_API_KEY")
             print("   - EMAIL_FROM")
-            print("   - EMAIL_TO_LIST")
             return 1
 
-        print("✅ Email configuration valid")
+        print("✅ Email sender configuration valid")
 
         # 生成邮件内容
         print("\n📝 Generating email content...")
@@ -380,9 +423,9 @@ def cmd_send_email(args):
             return 1
 
         # 发送邮件
-        print(f"\n📤 Sending email to {len(config.email_to_list)} recipient(s)...")
+        print(f"\n📤 Sending email to {len(to_emails)} recipient(s)...")
         result = email_sender.send_html_email(
-            to_emails=config.email_to_list,
+            to_emails=to_emails,
             subject=subject,
             html_content=html_content,
             plain_text_content=plain_text
@@ -568,6 +611,7 @@ def main():
     parser_email = subparsers.add_parser("send-email", help="发送每日报告邮件")
     parser_email.add_argument("--dashboard-url", type=str, default=None, help="仪表板URL(用于邮件中的链接，默认从环境变量DASHBOARD_URL读取)")
     parser_email.add_argument("--no-alert", action="store_true", help="发送失败时不发送告警邮件")
+    parser_email.add_argument("--use-db", action="store_true", help="从数据库读取活跃订阅者(默认使用EMAIL_TO_LIST)")
     parser_email.set_defaults(func=cmd_send_email)
 
     # check-expiry命令
