@@ -189,7 +189,7 @@ class Config:
     @property
     def dashboard_url(self) -> str:
         """Dashboard URL（用于邮件等外部链接）"""
-        return os.getenv("DASHBOARD_URL", "http://127.0.0.1:5000")
+        return os.getenv("DASHBOARD_URL", "https://ai-tool-hotspot-dashboard.vercel.app")
 
     # === YouTube API配置 ===
     @property

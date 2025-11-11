@@ -457,6 +457,18 @@ class EmailTemplateManager:
                 .footer p {{
                     margin: 8px 0;
                 }}
+                .footer a {{
+                    color: #60a5fa;
+                    text-decoration: none;
+                }}
+                .footer a:hover {{
+                    text-decoration: underline;
+                }}
+                .unsubscribe-link {{
+                    font-size: 12px;
+                    color: #64748b;
+                    margin-top: 20px;
+                }}
             </style>
         </head>
         <body>
@@ -491,6 +503,15 @@ class EmailTemplateManager:
                 <div class="footer">
                     <p>{strings.get('footer_copyright', '')}</p>
                     <p>{strings.get('footer_thanks', '')}</p>
+                    <p style="margin-top: 20px;">
+                        <strong>AI Tool Hotspot Dashboard</strong><br>
+                        {strings.get('company_address', 'Tokyo, Japan')}
+                    </p>
+                    <p class="unsubscribe-link">
+                        <a href="mailto:{strings.get('support_email', 'leolihuanyu@gmail.com')}?subject=Unsubscribe">
+                            {strings.get('unsubscribe_text', 'Unsubscribe from these emails')}
+                        </a>
+                    </p>
                 </div>
             </div>
         </body>

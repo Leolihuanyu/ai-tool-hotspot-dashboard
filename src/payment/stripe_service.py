@@ -42,7 +42,7 @@ class StripeService:
             )
 
         # Dashboard基础URL（用于回调）
-        self.dashboard_base_url = os.getenv("DASHBOARD_BASE_URL", "http://localhost:5000")
+        self.dashboard_base_url = os.getenv("DASHBOARD_BASE_URL", "https://ai-tool-hotspot-dashboard.vercel.app")
 
         # 用户管理器
         self.user_manager = UserManager()

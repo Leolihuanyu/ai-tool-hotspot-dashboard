@@ -401,7 +401,8 @@ class StripeWebhookHandler:
 
             # 生成带token的Dashboard访问链接
             token = self.token_manager.generate_token(email)
-            dashboard_base_url = os.getenv('DASHBOARD_URL', 'https://ai-tool-hotspot-dashboard.vercel.app')
+            # 优先使用 DASHBOARD_BASE_URL（前端地址），向后兼容 DASHBOARD_URL
+            dashboard_base_url = os.getenv('DASHBOARD_BASE_URL') or os.getenv('DASHBOARD_URL', 'https://ai-tool-hotspot-dashboard.vercel.app')
             dashboard_url = f"{dashboard_base_url}?token={token}"
 
             # 使用EmailTemplateManager渲染多语言邮件
