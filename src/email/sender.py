@@ -240,28 +240,51 @@ class EmailSender:
         )
 
 
-# 创建全局实例
-email_sender = EmailSender()
+# 全局实例缓存（懒加载，避免模块导入时的副作用）
+_email_sender_cache = None
 
 
 def get_email_sender() -> Union['EmailSender', 'SMTPEmailSender']:
-    """根据配置获取邮件发送器
+    """根据配置获取邮件发送器（懒加载，单例模式）
+
+    根据 EMAIL_PROVIDER 环境变量自动选择：
+    - "sendgrid": 使用SendGrid邮件发送器（HTTP API）
+    - "smtp": 使用SMTP邮件发送器（Gmail等）
+    - 其他: 默认使用SMTP
 
     Returns:
         EmailSender或SMTPEmailSender实例
     """
+    global _email_sender_cache
+
     provider = config.email_provider.lower()
 
     if provider == "smtp":
-        # 使用SMTP发送器
-        from src.email.smtp_sender import smtp_sender
+        # 使用SMTP发送器（懒加载）
+        from src.email.smtp_sender import get_smtp_sender
         logger.info("使用SMTP邮件发送器")
-        return smtp_sender
+        return get_smtp_sender()
     elif provider == "sendgrid":
-        # 使用SendGrid发送器
+        # 使用SendGrid发送器（懒加载）
+        if _email_sender_cache is None:
+            _email_sender_cache = EmailSender()
         logger.info("使用SendGrid邮件发送器")
-        return email_sender
+        return _email_sender_cache
     else:
         logger.warning(f"未知的邮件提供商: {provider}，使用默认SMTP")
-        from src.email.smtp_sender import smtp_sender
-        return smtp_sender
+        from src.email.smtp_sender import get_smtp_sender
+        return get_smtp_sender()
+
+
+# 为了向后兼容，提供获取默认SendGrid发送器的函数
+# 注意：不再在模块加载时自动创建实例，避免不必要的初始化
+def get_sendgrid_sender():
+    """获取SendGrid邮件发送器实例（懒加载）"""
+    global _email_sender_cache
+    if _email_sender_cache is None:
+        _email_sender_cache = EmailSender()
+    return _email_sender_cache
+
+# 向后兼容：模块级别的email_sender变量
+# 注意：此变量在首次访问时才会初始化，而非模块导入时
+email_sender = None  # 标记为None，使用get_email_sender()或get_sendgrid_sender()代替

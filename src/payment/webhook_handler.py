@@ -15,7 +15,7 @@ from typing import Dict, Any, Optional
 from datetime import datetime, timezone
 from src.user.user_manager import UserManager
 from src.auth.token_manager import TokenManager
-from src.email.smtp_sender import SMTPEmailSender
+from src.email.sender import get_email_sender
 from src.utils.logger import default_logger
 
 
@@ -31,28 +31,11 @@ class StripeWebhookHandler:
         self.user_manager = UserManager()
         self.token_manager = TokenManager()
 
-        # 初始化邮件发送器（可能未配置，需要处理）
+        # 初始化邮件发送器（根据 EMAIL_PROVIDER 自动选择 SendGrid 或 SMTP）
         try:
-            # 验证SMTP配置完整性
-            email_provider = os.getenv("EMAIL_PROVIDER")
-            if email_provider == "smtp":
-                smtp_required_vars = {
-                    "SMTP_SERVER": os.getenv("SMTP_SERVER"),
-                    "SMTP_PORT": os.getenv("SMTP_PORT"),
-                    "SMTP_USERNAME": os.getenv("SMTP_USERNAME"),
-                    "SMTP_PASSWORD": os.getenv("SMTP_PASSWORD"),
-                    "EMAIL_FROM": os.getenv("EMAIL_FROM")
-                }
-                missing_vars = [k for k, v in smtp_required_vars.items() if not v]
-                if missing_vars:
-                    default_logger.error(
-                        f"SMTP配置不完整，缺少以下环境变量: {', '.join(missing_vars)}",
-                        extra={"extra_fields": {"missing_vars": missing_vars}}
-                    )
-                    raise ValueError(f"SMTP配置缺失: {', '.join(missing_vars)}")
-
-            self.email_sender = SMTPEmailSender()
-            default_logger.info("邮件发送器初始化成功")
+            self.email_sender = get_email_sender()
+            email_provider = os.getenv("EMAIL_PROVIDER", "smtp")
+            default_logger.info(f"邮件发送器初始化成功 (provider: {email_provider})")
         except Exception as e:
             default_logger.exception(f"邮件发送器初始化失败: {str(e)}")
             self.email_sender = None

@@ -333,5 +333,20 @@ class SMTPEmailSender:
             return False
 
 
-# 创建全局实例
-smtp_sender = SMTPEmailSender()
+# 全局实例缓存（懒加载模式）
+# 注意：不再在模块导入时自动创建实例，避免不必要的初始化
+# 使用 get_email_sender() 工厂函数获取实例，或使用 get_smtp_sender() 直接获取SMTP实例
+_smtp_sender_instance = None
+
+
+def get_smtp_sender():
+    """获取SMTP邮件发送器实例（懒加载，单例模式）"""
+    global _smtp_sender_instance
+    if _smtp_sender_instance is None:
+        _smtp_sender_instance = SMTPEmailSender()
+    return _smtp_sender_instance
+
+
+# 向后兼容：模块级别的smtp_sender变量
+# 注意：标记为None，建议使用get_email_sender()或get_smtp_sender()代替
+smtp_sender = None
