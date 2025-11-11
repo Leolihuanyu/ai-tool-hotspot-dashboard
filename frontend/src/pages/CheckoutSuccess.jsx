@@ -114,7 +114,7 @@ export default function CheckoutSuccess() {
           </Link>
 
           <a
-            href="mailto:leolihuanyu@gmail.com"
+            href="mailto:support@jereo.co.jp"
             className="block w-full bg-gray-100 text-gray-700 font-semibold py-3 px-6 rounded-lg hover:bg-gray-200 transition-all duration-200"
           >
             {t('checkoutSuccess.support.title')}

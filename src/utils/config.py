@@ -75,8 +75,9 @@ class Config:
         return os.getenv("SMTP_USE_TLS", "true").lower() == "true"
 
     @property
-    def email_from(self) -> Optional[str]:
-        return os.getenv("EMAIL_FROM")
+    def email_from(self) -> str:
+        """邮件发件人地址"""
+        return os.getenv("EMAIL_FROM", "noreply@jereo.co.jp")
 
     @property
     def email_to_list(self) -> list:

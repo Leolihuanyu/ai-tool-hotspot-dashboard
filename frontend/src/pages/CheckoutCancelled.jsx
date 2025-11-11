@@ -87,7 +87,7 @@ export default function CheckoutCancelled() {
           </Link>
 
           <a
-            href="mailto:leolihuanyu@gmail.com"
+            href="mailto:support@jereo.co.jp"
             className="block w-full text-gray-600 font-medium py-2 hover:text-gray-800 transition-colors duration-200"
           >
             {t('checkoutCancelled.actions.support')}
