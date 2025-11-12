@@ -1,11 +1,9 @@
 name: 每日数据抓取
 
 on:
-  # 一天运行3次，分别在三个时区的本地时间早上9点
+  # 每天UTC 00:00运行一次（只负责数据抓取）
   schedule:
-    - cron: '0 0 * * *'   # UTC 00:00 = 日本时间 09:00 (JST, UTC+9)
-    - cron: '0 1 * * *'   # UTC 01:00 = 中国时间 09:00 (CST, UTC+8)
-    - cron: '0 13 * * *'  # UTC 13:00 = 美东时间 09:00 (EDT, UTC-4) 或 14:00 (EST, UTC-5)
+    - cron: '0 0 * * *'   # UTC 00:00 = 日本时间 09:00
 
   # 支持手动触发
   workflow_dispatch:
@@ -78,58 +76,6 @@ jobs:
           echo "开始运行数据抓取Pipeline..."
           python -m src.cli.main run-pipeline
           echo "✓ Pipeline执行完成"
-
-      - name: 发送邮件报告（从数据库读取订阅者）
-        if: success()
-        env:
-          # 数据库配置（PostgreSQL - Supabase）
-          DB_TYPE: postgresql
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-
-          # 邮件配置（优先使用SendGrid）
-          EMAIL_PROVIDER: ${{ secrets.EMAIL_PROVIDER || 'sendgrid' }}
-          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
-          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
-
-          # SMTP配置（备用）
-          SMTP_SERVER: ${{ secrets.SMTP_SERVER || 'smtp.gmail.com' }}
-          SMTP_PORT: ${{ secrets.SMTP_PORT || '587' }}
-          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
-          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
-          SMTP_USE_TLS: true
-
-          # Dashboard URL（用于邮件中的链接）
-          DASHBOARD_URL: ${{ secrets.DASHBOARD_URL || 'https://ai-tool-hotspot-dashboard.vercel.app' }}
-        run: |
-          if [ -n "$EMAIL_FROM" ] && [ -n "$DATABASE_URL" ]; then
-            echo "📧 发送邮件报告（从数据库读取订阅者）..."
-
-            # 根据当前UTC时间决定发送给哪个时区
-            CURRENT_HOUR=$(date -u +%H)
-
-            if [ "$CURRENT_HOUR" = "00" ]; then
-              # UTC 00:00 = 日本时间 09:00
-              echo "🇯🇵 发送给日本用户 (Asia/Tokyo)"
-              python -m src.cli.main send-email --use-db --timezones "Asia/Tokyo" || echo "⚠️ 邮件发送失败（继续执行）"
-            elif [ "$CURRENT_HOUR" = "01" ]; then
-              # UTC 01:00 = 中国时间 09:00
-              echo "🇨🇳 发送给中国用户 (Asia/Shanghai)"
-              python -m src.cli.main send-email --use-db --timezones "Asia/Shanghai" || echo "⚠️ 邮件发送失败（继续执行）"
-            elif [ "$CURRENT_HOUR" = "13" ]; then
-              # UTC 13:00 = 美东时间 09:00 (EDT) 或 08:00 (EST)
-              echo "🇺🇸 发送给美国东部用户 (America/New_York)"
-              python -m src.cli.main send-email --use-db --timezones "America/New_York" || echo "⚠️ 邮件发送失败（继续执行）"
-            else
-              # 手动触发或其他时间，发送给所有用户
-              echo "🌍 发送给所有订阅者"
-              python -m src.cli.main send-email --use-db || echo "⚠️ 邮件发送失败（继续执行）"
-            fi
-          elif [ -n "$EMAIL_FROM" ] && [ -n "$EMAIL_TO_LIST" ]; then
-            echo "📧 发送邮件报告（使用EMAIL_TO_LIST）..."
-            python -m src.cli.main send-email || echo "⚠️ 邮件发送失败（继续执行）"
-          else
-            echo "⚠️ 跳过邮件发送（未配置DATABASE_URL或EMAIL_TO_LIST）"
-          fi
 
       - name: 归档数据
         run: |

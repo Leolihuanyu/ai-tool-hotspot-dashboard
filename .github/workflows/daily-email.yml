@@ -1,0 +1,119 @@
+name: 每日邮件发送
+
+on:
+  # 一天运行3次，分别在三个时区的本地时间早上9点
+  schedule:
+    - cron: '0 0 * * *'   # UTC 00:00 = 日本时间 09:00 (JST, UTC+9)
+    - cron: '0 1 * * *'   # UTC 01:00 = 中国时间 09:00 (CST, UTC+8)
+    - cron: '0 13 * * *'  # UTC 13:00 = 美东时间 09:00 (EDT, UTC-4)
+
+  # 支持手动触发
+  workflow_dispatch:
+    inputs:
+      timezone:
+        description: '指定时区（可选，留空则根据当前时间自动判断）'
+        required: false
+        type: choice
+        options:
+          - ''
+          - 'Asia/Tokyo'
+          - 'Asia/Shanghai'
+          - 'America/New_York'
+          - 'all'
+
+jobs:
+  send-email:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10  # 邮件发送不需要太长时间
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置Python环境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: 安装依赖
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 发送邮件报告
+        env:
+          # 数据库配置
+          DB_TYPE: postgresql
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+          # 邮件配置（使用SendGrid）
+          EMAIL_PROVIDER: ${{ secrets.EMAIL_PROVIDER || 'sendgrid' }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+
+          # SMTP配置（备用）
+          SMTP_SERVER: ${{ secrets.SMTP_SERVER || 'smtp.gmail.com' }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT || '587' }}
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          SMTP_USE_TLS: true
+
+          # Dashboard URL
+          DASHBOARD_URL: ${{ secrets.DASHBOARD_URL || 'https://ai-tool-hotspot-dashboard.vercel.app' }}
+        run: |
+          if [ -z "$EMAIL_FROM" ] || [ -z "$DATABASE_URL" ]; then
+            echo "⚠️ 跳过邮件发送（未配置EMAIL_FROM或DATABASE_URL）"
+            exit 0
+          fi
+
+          echo "📧 开始发送邮件报告..."
+
+          # 确定目标时区
+          TARGET_TIMEZONE=""
+
+          # 如果手动触发并指定了时区
+          if [ -n "${{ github.event.inputs.timezone }}" ]; then
+            if [ "${{ github.event.inputs.timezone }}" = "all" ]; then
+              echo "🌍 手动触发：发送给所有订阅者"
+              python -m src.cli.main send-email --use-db
+              exit 0
+            else
+              TARGET_TIMEZONE="${{ github.event.inputs.timezone }}"
+              echo "🌍 手动触发：发送给时区 $TARGET_TIMEZONE"
+            fi
+          else
+            # 自动触发：根据当前UTC时间决定发送给哪个时区
+            CURRENT_HOUR=$(date -u +%H)
+
+            if [ "$CURRENT_HOUR" = "00" ]; then
+              TARGET_TIMEZONE="Asia/Tokyo"
+              echo "🇯🇵 UTC 00:00 - 发送给日本用户 (Asia/Tokyo)"
+            elif [ "$CURRENT_HOUR" = "01" ]; then
+              TARGET_TIMEZONE="Asia/Shanghai"
+              echo "🇨🇳 UTC 01:00 - 发送给中国用户 (Asia/Shanghai)"
+            elif [ "$CURRENT_HOUR" = "13" ]; then
+              TARGET_TIMEZONE="America/New_York"
+              echo "🇺🇸 UTC 13:00 - 发送给美国东部用户 (America/New_York)"
+            else
+              echo "⚠️ 未知时间点，发送给所有订阅者"
+              python -m src.cli.main send-email --use-db
+              exit 0
+            fi
+          fi
+
+          # 发送邮件
+          if [ -n "$TARGET_TIMEZONE" ]; then
+            python -m src.cli.main send-email --use-db --timezones "$TARGET_TIMEZONE" || {
+              echo "❌ 邮件发送失败"
+              exit 1
+            }
+            echo "✅ 邮件发送成功"
+          fi
+
+      - name: 邮件发送总结
+        if: always()
+        run: |
+          echo "=========================================="
+          echo "邮件发送任务完成"
+          echo "=========================================="
