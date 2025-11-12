@@ -69,7 +69,9 @@ class SubscriberManager:
                 SELECT
                     id,
                     email,
-                    subscription_type
+                    subscription_type,
+                    COALESCE(language, 'en') as language,
+                    COALESCE(timezone, 'UTC') as timezone
                 FROM users
                 WHERE subscription_status = 'active'
                   AND subscription_type IN ({placeholders})
@@ -96,8 +98,8 @@ class SubscriberManager:
                         "id": row[0],
                         "email": row[1],
                         "subscription_type": row[2],
-                        "language": 'en',  # 默认英文
-                        "timezone": 'UTC',  # 默认UTC
+                        "language": row[3] if len(row) > 3 else 'en',  # 默认英文
+                        "timezone": row[4] if len(row) > 4 else 'UTC',  # 默认UTC
                     }
                 subscribers.append(subscriber)
 
@@ -115,6 +117,101 @@ class SubscriberManager:
 
         except Exception as e:
             logger.error(f"获取活跃订阅者失败: {str(e)}")
+            return []
+
+    def get_subscribers_by_timezones(
+        self,
+        target_timezones: List[str],
+        include_beta: bool = True,
+        include_paid: bool = True
+    ) -> List[Dict[str, Any]]:
+        """
+        获取指定时区的活跃订阅者
+
+        Args:
+            target_timezones: 目标时区列表，例如 ['Asia/Shanghai', 'Asia/Tokyo', 'America/New_York']
+            include_beta: 是否包含Beta用户
+            include_paid: 是否包含付费用户
+
+        Returns:
+            List[Dict]: 订阅者列表，只包含时区在目标列表中的用户
+        """
+        try:
+            conn = get_connection(self.database_path)
+            cursor = conn.cursor()
+
+            # 构建订阅类型过滤条件
+            subscription_types = []
+            if include_beta:
+                subscription_types.append('beta')
+            if include_paid:
+                subscription_types.append('paid')
+
+            if not subscription_types:
+                logger.warning("未指定任何订阅类型，返回空列表")
+                return []
+
+            if not target_timezones:
+                logger.warning("未指定目标时区，返回空列表")
+                return []
+
+            # 生成占位符
+            sub_placeholders = ', '.join(['?' for _ in subscription_types])
+            tz_placeholders = ', '.join(['?' for _ in target_timezones])
+
+            # 查询指定时区的活跃订阅者
+            query = convert_placeholder(f"""
+                SELECT
+                    id,
+                    email,
+                    subscription_type,
+                    COALESCE(language, 'en') as language,
+                    COALESCE(timezone, 'UTC') as timezone
+                FROM users
+                WHERE subscription_status = 'active'
+                  AND subscription_type IN ({sub_placeholders})
+                  AND COALESCE(timezone, 'UTC') IN ({tz_placeholders})
+                ORDER BY created_at ASC
+            """)
+
+            cursor.execute(query, subscription_types + target_timezones)
+            rows = cursor.fetchall()
+            conn.close()
+
+            subscribers = []
+            for row in rows:
+                # 兼容SQLite (tuple/Row) 和 PostgreSQL (dict)
+                if isinstance(row, dict):
+                    subscriber = {
+                        "id": row['id'],
+                        "email": row['email'],
+                        "subscription_type": row['subscription_type'],
+                        "language": row.get('language', 'en'),
+                        "timezone": row.get('timezone', 'UTC'),
+                    }
+                else:
+                    subscriber = {
+                        "id": row[0],
+                        "email": row[1],
+                        "subscription_type": row[2],
+                        "language": row[3] if len(row) > 3 else 'en',
+                        "timezone": row[4] if len(row) > 4 else 'UTC',
+                    }
+                subscribers.append(subscriber)
+
+            logger.info(
+                f"找到 {len(subscribers)} 个活跃订阅者 "
+                f"(时区: {', '.join(target_timezones)})",
+                extra={"extra_fields": {
+                    "subscriber_count": len(subscribers),
+                    "target_timezones": target_timezones
+                }}
+            )
+
+            return subscribers
+
+        except Exception as e:
+            logger.error(f"按时区获取订阅者失败: {str(e)}")
             return []
 
     def get_subscriber_emails(

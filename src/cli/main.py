@@ -344,18 +344,36 @@ def cmd_send_email(args):
 
         # 决定收件人来源：数据库 vs 环境变量
         use_database = getattr(args, 'use_db', False)
+        timezones_filter = getattr(args, 'timezones', None)
         to_emails = []
 
         if use_database:
             print("📊 Reading subscribers from database...")
             subscriber_manager = get_subscriber_manager()
-            to_emails = subscriber_manager.get_subscriber_emails(
-                include_beta=True,
-                include_paid=True
-            )
+
+            # 如果指定了时区过滤
+            if timezones_filter:
+                target_timezones = [tz.strip() for tz in timezones_filter.split(',')]
+                print(f"🌍 Filtering by timezones: {', '.join(target_timezones)}")
+
+                subscribers = subscriber_manager.get_subscribers_by_timezones(
+                    target_timezones=target_timezones,
+                    include_beta=True,
+                    include_paid=True
+                )
+                to_emails = [sub['email'] for sub in subscribers]
+            else:
+                # 获取所有活跃订阅者
+                to_emails = subscriber_manager.get_subscriber_emails(
+                    include_beta=True,
+                    include_paid=True
+                )
 
             if not to_emails:
-                print("⚠️  No active subscribers found in database")
+                if timezones_filter:
+                    print(f"⚠️  No active subscribers found for timezones: {timezones_filter}")
+                else:
+                    print("⚠️  No active subscribers found in database")
                 print("💡 Please ensure users table has active subscribers")
                 return 1
 
@@ -612,6 +630,7 @@ def main():
     parser_email.add_argument("--dashboard-url", type=str, default=None, help="仪表板URL(用于邮件中的链接，默认从环境变量DASHBOARD_URL读取)")
     parser_email.add_argument("--no-alert", action="store_true", help="发送失败时不发送告警邮件")
     parser_email.add_argument("--use-db", action="store_true", help="从数据库读取活跃订阅者(默认使用EMAIL_TO_LIST)")
+    parser_email.add_argument("--timezones", type=str, help="按时区过滤订阅者，逗号分隔(例如: Asia/Shanghai,Asia/Tokyo,America/New_York)")
     parser_email.set_defaults(func=cmd_send_email)
 
     # check-expiry命令
