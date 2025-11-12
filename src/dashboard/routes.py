@@ -365,7 +365,41 @@ def register_routes(app):
             # 生成访问token
             from src.auth.token_manager import TokenManager
             token_manager = TokenManager()
-            token = token_manager.generate_token(email)
+            token = token_manager.generate_token(email, subscription_type='beta')
+
+            # 发送邀请注册欢迎邮件
+            try:
+                from src.email.sender import get_email_sender
+                from src.email.template_manager import EmailTemplateManager
+
+                email_sender = get_email_sender()
+                if email_sender:
+                    # 生成Dashboard访问链接
+                    dashboard_base_url = os.getenv('DASHBOARD_BASE_URL') or os.getenv('DASHBOARD_URL', 'https://ai-tool-hotspot-dashboard.vercel.app')
+                    dashboard_url = f"{dashboard_base_url}/dashboard?token={token}&email={email}"
+
+                    # 使用EmailTemplateManager渲染多语言邮件
+                    template_manager = EmailTemplateManager()
+                    subject, html_content = template_manager.render_email(
+                        template_name='invite_welcome',
+                        language=language,
+                        dashboard_url=dashboard_url
+                    )
+
+                    if subject and html_content:
+                        email_sender.send_html_email(
+                            to_emails=[email],
+                            subject=subject,
+                            html_content=html_content
+                        )
+                        logger.info(f"邀请注册欢迎邮件已发送至: {email} (语言: {language})")
+                    else:
+                        logger.warning(f"邮件模板渲染失败，跳过邮件发送: {email}")
+                else:
+                    logger.warning(f"邮件发送器未配置，跳过邮件发送: {email}")
+            except Exception as e:
+                # 邮件发送失败不影响注册流程
+                logger.error(f"发送邀请注册欢迎邮件失败: {e}")
 
             logger.info(f"用户注册成功: {email}")
 
@@ -382,6 +416,63 @@ def register_routes(app):
                 "success": False,
                 "error": str(e)
             }), 500
+
+    @app.route('/api/invite/validate', methods=['GET'])
+    def api_invite_validate():
+        """
+        API: 验证邀请码（前端兼容路由）
+
+        URL参数：
+            code: 邀请码
+
+        返回：
+            {
+                "valid": True/False,
+                "reason": "原因",
+                "code_info": {...}
+            }
+        """
+        try:
+            invite_code = request.args.get('code')
+
+            if not invite_code:
+                return jsonify({
+                    "valid": False,
+                    "reason": "邀请码不能为空"
+                }), 400
+
+            from src.user.invite_manager import InviteManager
+            invite_manager = InviteManager()
+
+            result = invite_manager.validate_code(invite_code)
+
+            if result.get('valid'):
+                return jsonify({
+                    "valid": True,
+                    "code_info": result.get('code_info', {})
+                })
+            else:
+                return jsonify({
+                    "valid": False,
+                    "reason": result.get('error', '邀请码无效')
+                })
+
+        except Exception as e:
+            logger.error(f"验证邀请码失败: {e}")
+            return jsonify({
+                "valid": False,
+                "reason": str(e)
+            }), 500
+
+    @app.route('/api/invite/register', methods=['POST'])
+    def api_invite_register():
+        """
+        API: 邀请码注册（前端兼容路由）
+
+        这是 /api/register 的别名路由，保持与前端API路径一致
+        """
+        # 直接调用 api_register 函数
+        return api_register()
 
     @app.route('/api/verify-invite', methods=['POST'])
     def api_verify_invite():
@@ -423,6 +514,165 @@ def register_routes(app):
 
         except Exception as e:
             logger.error(f"验证邀请码失败: {e}")
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            }), 500
+
+    @app.route('/api/get-session-info', methods=['POST'])
+    def api_get_session_info():
+        """
+        API: 根据Stripe session_id获取用户信息和访问token
+
+        请求体：
+            {
+                "session_id": "cs_test_..."
+            }
+
+        返回：
+            {
+                "success": True,
+                "email": "user@example.com",
+                "token": "access_token_here",
+                "dashboard_url": "https://domain/dashboard?token=xxx&email=yyy"
+            }
+        """
+        try:
+            data = request.get_json()
+            session_id = data.get('session_id')
+
+            if not session_id:
+                return jsonify({
+                    "success": False,
+                    "error": "session_id不能为空"
+                }), 400
+
+            # 从Stripe获取session信息
+            import stripe
+            stripe.api_key = os.getenv('STRIPE_SECRET_KEY')
+
+            try:
+                session = stripe.checkout.Session.retrieve(session_id)
+                customer_email = session.customer_details.email if session.customer_details else None
+
+                if not customer_email:
+                    return jsonify({
+                        "success": False,
+                        "error": "无法从支付会话中获取邮箱信息"
+                    }), 400
+
+            except stripe.error.StripeError as e:
+                logger.error(f"获取Stripe session失败: {e}")
+                return jsonify({
+                    "success": False,
+                    "error": "无效的支付会话ID"
+                }), 400
+
+            # 查询用户信息
+            from src.user.user_manager import UserManager
+            user_manager = UserManager()
+            user = user_manager.get_user(customer_email)
+
+            if not user:
+                return jsonify({
+                    "success": False,
+                    "error": "用户不存在，请稍后重试或联系客服"
+                }), 404
+
+            # 生成访问token
+            from src.auth.token_manager import TokenManager
+            token_manager = TokenManager()
+            subscription_type = user.get('subscription_type', 'paid')
+            token = token_manager.generate_token(customer_email, subscription_type=subscription_type)
+
+            # 生成Dashboard访问链接
+            dashboard_base_url = os.getenv('DASHBOARD_BASE_URL') or os.getenv('DASHBOARD_URL', 'https://ai-tool-hotspot-dashboard.vercel.app')
+            dashboard_url = f"{dashboard_base_url}/dashboard?token={token}&email={customer_email}"
+
+            logger.info(f"为用户生成访问token (通过session_id): {customer_email}")
+
+            return jsonify({
+                "success": True,
+                "email": customer_email,
+                "token": token,
+                "dashboard_url": dashboard_url
+            })
+
+        except Exception as e:
+            logger.error(f"获取session信息失败: {e}")
+            return jsonify({
+                "success": False,
+                "error": str(e)
+            }), 500
+
+    @app.route('/api/get-access-token', methods=['POST'])
+    def api_get_access_token():
+        """
+        API: 获取用户访问token（用于直接通过邮箱获取token）
+
+        请求体：
+            {
+                "email": "user@example.com"
+            }
+
+        返回：
+            {
+                "success": True,
+                "token": "access_token_here",
+                "dashboard_url": "https://domain/dashboard?token=xxx&email=yyy",
+                "email": "user@example.com"
+            }
+        """
+        try:
+            data = request.get_json()
+            email = data.get('email')
+
+            if not email:
+                return jsonify({
+                    "success": False,
+                    "error": "邮箱地址不能为空"
+                }), 400
+
+            # 查询用户信息
+            from src.user.user_manager import UserManager
+            user_manager = UserManager()
+            user = user_manager.get_user(email)
+
+            if not user:
+                return jsonify({
+                    "success": False,
+                    "error": "用户不存在"
+                }), 404
+
+            # 检查订阅状态
+            subscription_status = user.get('subscription_status')
+            if subscription_status != 'active':
+                return jsonify({
+                    "success": False,
+                    "error": "订阅未激活"
+                }), 403
+
+            # 生成访问token
+            from src.auth.token_manager import TokenManager
+            token_manager = TokenManager()
+            subscription_type = user.get('subscription_type', 'paid')
+            token = token_manager.generate_token(email, subscription_type=subscription_type)
+
+            # 生成Dashboard访问链接
+            dashboard_base_url = os.getenv('DASHBOARD_BASE_URL') or os.getenv('DASHBOARD_URL', 'https://ai-tool-hotspot-dashboard.vercel.app')
+            dashboard_url = f"{dashboard_base_url}/dashboard?token={token}&email={email}"
+
+            logger.info(f"为用户生成访问token: {email}")
+
+            return jsonify({
+                "success": True,
+                "token": token,
+                "dashboard_url": dashboard_url,
+                "email": email
+            })
+
+        except Exception as e:
+            logger.error(f"获取访问token失败: {e}")
             return jsonify({
                 "success": False,
                 "error": str(e)

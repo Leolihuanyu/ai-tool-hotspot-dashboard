@@ -86,10 +86,22 @@ export default function Invite() {
       const data = await response.json();
 
       if (data.success) {
+        // 保存token和email
+        const token = data.token;
+        const userEmail = data.email;
+
+        // 生成Dashboard访问链接
+        const dashboardBaseUrl = window.location.origin;
+        const dashboardUrl = `${dashboardBaseUrl}/dashboard?token=${token}&email=${userEmail}`;
+
+        // 设置成功状态并保存Dashboard链接
         setStep('success');
-        setSuccessMessage(
-          t('checkoutSuccess.message') + ' ' + t('checkoutSuccess.emailSent')
-        );
+        setSuccessMessage(dashboardUrl);
+
+        // 3秒后自动跳转到Dashboard
+        setTimeout(() => {
+          window.location.href = dashboardUrl;
+        }, 3000);
       } else {
         setStep('error');
         setErrorMessage(data.message || t('pricing.error'));
@@ -152,38 +164,45 @@ export default function Invite() {
 
     // 注册成功
     if (step === 'success') {
+      const dashboardUrl = successMessage; // successMessage中保存了dashboard URL
       return (
         <div className="text-center">
           <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6" />
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
             {t('invite.success.title')}
           </h2>
-          <p className="text-gray-600 text-lg mb-6">
-            {successMessage}
+          <p className="text-gray-600 text-lg mb-2">
+            注册成功！欢迎加入AI工具热点Dashboard
           </p>
-          <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-left mb-6">
-            <h3 className="font-semibold text-green-900 mb-3">
-              {t('invite.success.nextSteps')}
-            </h3>
-            <ul className="space-y-2 text-green-800 text-sm">
-              <li className="flex items-start gap-2">
-                <span className="text-green-600 font-bold">1.</span>
-                <span>{t('invite.success.step1')} <strong>{email}</strong></span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-green-600 font-bold">2.</span>
-                <span>{t('invite.success.step2')}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-green-600 font-bold">3.</span>
-                <span>{t('invite.success.step3')}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-green-600 font-bold">4.</span>
-                <span>{t('invite.success.step4')}</span>
-              </li>
-            </ul>
+          <p className="text-sm text-gray-500 mb-6">
+            注册邮箱: <span className="font-medium text-gray-700">{email}</span>
+          </p>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-left mb-6">
+            <div className="flex items-start gap-3">
+              <svg className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              </svg>
+              <div>
+                <h3 className="font-semibold text-blue-900 mb-2">
+                  即将自动跳转到Dashboard，或者：
+                </h3>
+                <ul className="space-y-1 text-blue-800 text-sm">
+                  <li>• 点击下方"立即访问"按钮</li>
+                  <li>• 访问链接也已发送至您的邮箱作为备用</li>
+                  <li>• 链接有效期为24小时</li>
+                </ul>
+              </div>
+            </div>
           </div>
+          <p className="text-sm text-gray-500 mb-4">
+            3秒后自动跳转...
+          </p>
+          <a
+            href={dashboardUrl}
+            className="block w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl mb-3"
+          >
+            立即访问Dashboard
+          </a>
         </div>
       );
     }
