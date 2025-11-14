@@ -29,7 +29,7 @@ export default function CheckoutSuccess() {
       }
 
       try {
-        const response = await fetch(`${API_BASE_URL}/api/get-session-info`, {
+        const response = await fetch(`${API_BASE_URL}/get-session-info`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
