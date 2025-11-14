@@ -45,9 +45,8 @@ class EmailSender:
         if not self.from_email:
             missing.append("EMAIL_FROM")
 
-        to_list = config.email_to_list
-        if not to_list:
-            missing.append("EMAIL_TO_LIST")
+        # EMAIL_TO_LIST 只在批量发送时需要，不在此强制要求
+        # 单个邮件发送时会通过 to_emails 参数指定收件人
 
         return len(missing) == 0, missing
 
