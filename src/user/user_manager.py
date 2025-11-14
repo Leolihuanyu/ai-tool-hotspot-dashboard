@@ -239,6 +239,9 @@ class UserManager:
         stripe_subscription_id: Optional[str] = None,
         language: Optional[str] = None,
         timezone: Optional[str] = None,
+        access_token: Optional[str] = None,
+        token_generated_at: Optional[str] = None,
+        token_expires_at: Optional[str] = None,
     ) -> bool:
         """
         更新用户信息
@@ -251,6 +254,9 @@ class UserManager:
             stripe_subscription_id: Stripe订阅ID
             language: 用户语言偏好（zh/en/ja）
             timezone: 用户时区（如 Asia/Shanghai）
+            access_token: 长期访问token
+            token_generated_at: token生成时间（ISO格式字符串）
+            token_expires_at: token过期时间（ISO格式字符串）
 
         Returns:
             bool: 是否更新成功
@@ -286,6 +292,18 @@ class UserManager:
             if timezone:
                 update_fields.append("timezone = ?")
                 params.append(timezone)
+
+            if access_token is not None:  # 允许清空token（设置为None）
+                update_fields.append("access_token = ?")
+                params.append(access_token)
+
+            if token_generated_at:
+                update_fields.append("token_generated_at = ?")
+                params.append(token_generated_at)
+
+            if token_expires_at:
+                update_fields.append("token_expires_at = ?")
+                params.append(token_expires_at)
 
             # 总是更新updated_at
             from datetime import timezone as tz
@@ -325,6 +343,86 @@ class UserManager:
                 extra={"extra_fields": {"email": email, "error": str(e)}},
             )
             return False
+
+    def update_access_token(
+        self,
+        email: str,
+        access_token: str,
+        expiry_days: int = 90
+    ) -> bool:
+        """
+        更新用户的访问token
+
+        Args:
+            email: 用户邮箱
+            access_token: 新的访问token
+            expiry_days: token有效期（天），默认90天
+
+        Returns:
+            bool: 是否更新成功
+        """
+        try:
+            from datetime import timedelta, timezone as tz
+
+            generated_at = datetime.now(tz.utc)
+            expires_at = generated_at + timedelta(days=expiry_days)
+
+            success = self.update_user(
+                email=email,
+                access_token=access_token,
+                token_generated_at=generated_at.isoformat(),
+                token_expires_at=expires_at.isoformat()
+            )
+
+            if success:
+                default_logger.info(
+                    f"访问token更新成功: {email}",
+                    extra={"extra_fields": {
+                        "email": email,
+                        "token_expires_at": expires_at.isoformat()
+                    }}
+                )
+
+            return success
+
+        except Exception as e:
+            default_logger.error(
+                f"更新访问token失败: {str(e)}",
+                extra={"extra_fields": {"email": email, "error": str(e)}}
+            )
+            return False
+
+    def get_user_token(self, email: str) -> Optional[str]:
+        """
+        获取用户的访问token
+
+        Args:
+            email: 用户邮箱
+
+        Returns:
+            str: 访问token，如果用户不存在或没有token则返回None
+        """
+        user = self.get_user(email)
+        if user:
+            return user.get("access_token")
+        return None
+
+    def clear_access_token(self, email: str) -> bool:
+        """
+        清空用户的访问token（用于撤销访问权限）
+
+        Args:
+            email: 用户邮箱
+
+        Returns:
+            bool: 是否清空成功
+        """
+        return self.update_user(
+            email=email,
+            access_token=None,
+            token_generated_at=None,
+            token_expires_at=None
+        )
 
     def log_access(
         self,

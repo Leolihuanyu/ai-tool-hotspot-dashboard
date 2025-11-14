@@ -218,6 +218,106 @@ class TokenManager:
         except Exception as e:
             return {"valid_signature": False, "error": str(e)}
 
+    def generate_long_term_token(self, expiry_days: int = 90) -> str:
+        """
+        生成长期有效的访问token（用于数据库存储）
+
+        使用随机字符串而非JWT，因为：
+        1. 不需要携带用户信息（数据库中已有）
+        2. 更容易撤销和刷新
+        3. 避免签名验证开销
+
+        Args:
+            expiry_days: token有效期（天），默认90天
+
+        Returns:
+            str: 随机生成的token字符串（URL安全）
+        """
+        import secrets
+        # 生成32字节（256位）的随机token，转换为URL安全的字符串
+        token = secrets.token_urlsafe(32)
+        return token
+
+    def verify_database_token(
+        self,
+        token: str,
+        email: str,
+        user_manager
+    ) -> Dict[str, Any]:
+        """
+        验证数据库中存储的长期token
+
+        Args:
+            token: 待验证的token
+            email: 用户邮箱
+            user_manager: UserManager实例（用于查询数据库）
+
+        Returns:
+            Dict: 验证结果
+                {
+                    "valid": True/False,
+                    "email": "user@example.com",
+                    "subscription_type": "beta/paid",
+                    "error": "错误信息（如果验证失败）"
+                }
+        """
+        try:
+            # 从数据库获取用户信息
+            user = user_manager.get_user(email)
+
+            if not user:
+                return {
+                    "valid": False,
+                    "error": "用户不存在"
+                }
+
+            # 验证token是否匹配
+            if user.get("access_token") != token:
+                return {
+                    "valid": False,
+                    "error": "Token无效或已被撤销"
+                }
+
+            # 验证token是否过期
+            token_expires_at = user.get("token_expires_at")
+            if token_expires_at:
+                from dateutil import parser
+                try:
+                    expires_dt = parser.parse(token_expires_at)
+                    if datetime.now(timezone.utc) > expires_dt:
+                        return {
+                            "valid": False,
+                            "error": "Token已过期，请重新获取访问链接"
+                        }
+                except Exception as e:
+                    return {
+                        "valid": False,
+                        "error": f"Token过期时间格式错误: {str(e)}"
+                    }
+
+            # 验证订阅状态
+            subscription_status = user.get("subscription_status")
+            if subscription_status != "active":
+                return {
+                    "valid": False,
+                    "error": f"订阅已{subscription_status}，无法访问"
+                }
+
+            # 所有验证通过
+            return {
+                "valid": True,
+                "email": user["email"],
+                "subscription_type": user.get("subscription_type", "beta"),
+                "language": user.get("language", "en"),
+                "timezone": user.get("timezone", "UTC")
+            }
+
+        except Exception as e:
+            return {
+                "valid": False,
+                "error": f"Token验证失败: {str(e)}"
+            }
+
 
 # 使用示例
 if __name__ == "__main__":

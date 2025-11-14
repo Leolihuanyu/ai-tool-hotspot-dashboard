@@ -127,6 +127,9 @@ CREATE TABLE IF NOT EXISTS users (
     stripe_subscription_id VARCHAR(255),  -- Stripe订阅ID
     language VARCHAR(10) DEFAULT 'en',  -- 语言偏好 (zh/en/ja)
     timezone VARCHAR(50) DEFAULT 'UTC',  -- 用户时区 (IANA时区格式，如 Asia/Shanghai)
+    access_token TEXT,  -- 长期访问token（用于邮件链接）
+    token_generated_at TIMESTAMP,  -- token生成时间
+    token_expires_at TIMESTAMP,  -- token过期时间
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_accessed_at TIMESTAMP,
@@ -138,6 +141,7 @@ CREATE INDEX IF NOT EXISTS idx_users_subscription_type ON users(subscription_typ
 CREATE INDEX IF NOT EXISTS idx_users_invite_code ON users(invite_code);
 CREATE INDEX IF NOT EXISTS idx_users_referrer_id ON users(referrer_id);
 CREATE INDEX IF NOT EXISTS idx_users_timezone ON users(timezone);  -- 用于按时区查询订阅者
+CREATE INDEX IF NOT EXISTS idx_users_access_token ON users(access_token);  -- 用于快速验证token
 
 -- 访问日志表（安全审计）
 CREATE TABLE IF NOT EXISTS access_logs (
