@@ -345,7 +345,7 @@ def cmd_send_email(args):
         # 决定收件人来源：数据库 vs 环境变量
         use_database = getattr(args, 'use_db', False)
         timezones_filter = getattr(args, 'timezones', None)
-        to_emails = []
+        subscribers = []
 
         if use_database:
             print("📊 Reading subscribers from database...")
@@ -361,15 +361,14 @@ def cmd_send_email(args):
                     include_beta=True,
                     include_paid=True
                 )
-                to_emails = [sub['email'] for sub in subscribers]
             else:
                 # 获取所有活跃订阅者
-                to_emails = subscriber_manager.get_subscriber_emails(
+                subscribers = subscriber_manager.get_active_subscribers(
                     include_beta=True,
                     include_paid=True
                 )
 
-            if not to_emails:
+            if not subscribers:
                 if timezones_filter:
                     print(f"⚠️  No active subscribers found for timezones: {timezones_filter}")
                 else:
@@ -377,7 +376,7 @@ def cmd_send_email(args):
                 print("💡 Please ensure users table has active subscribers")
                 return 1
 
-            print(f"✅ Found {len(to_emails)} active subscribers")
+            print(f"✅ Found {len(subscribers)} active subscribers")
         else:
             print("📧 Reading recipients from EMAIL_TO_LIST...")
             to_emails = config.email_to_list
@@ -390,25 +389,17 @@ def cmd_send_email(args):
                 return 1
 
             print(f"✅ Found {len(to_emails)} recipients from config")
+            # 将邮箱列表转换为订阅者格式
+            subscribers = [{'email': email} for email in to_emails]
 
         # 验证邮件配置（发件人和SMTP配置）
         print("\n🔍 Validating email sender configuration...")
-        # 临时设置EMAIL_TO_LIST以通过验证
-        original_to_list = config.email_to_list
-        if not config.email_to_list:
-            config.__dict__['_email_to_list_cache'] = to_emails
-
         is_valid, missing = email_sender.validate_config()
-
-        # 恢复原始配置
-        if hasattr(config, '_email_to_list_cache'):
-            delattr(config, '_email_to_list_cache')
 
         if not is_valid:
             print(f"❌ Email sender configuration incomplete:")
             for item in missing:
-                if item != "EMAIL_TO_LIST":  # 忽略EMAIL_TO_LIST，因为我们可能从数据库读取
-                    print(f"   - Missing: {item}")
+                print(f"   - Missing: {item}")
             print("\n💡 Please configure the following in .env file:")
             print("   - SMTP_SERVER, SMTP_USERNAME, SMTP_PASSWORD")
             print("   - Or: SENDGRID_API_KEY")
@@ -417,67 +408,101 @@ def cmd_send_email(args):
 
         print("✅ Email sender configuration valid")
 
-        # 生成邮件内容
-        print("\n📝 Generating email content...")
+        # 使用个性化邮件生成器
+        print("\n📝 Generating personalized emails...")
+        from src.email.daily_email_generator import DailyEmailGenerator
+
         try:
-            # 优先使用环境变量中的配置，命令行参数可以覆盖
+            daily_generator = DailyEmailGenerator()
+
+            # 获取 Dashboard URL
             dashboard_url = config.dashboard_url
             if hasattr(args, 'dashboard_url') and args.dashboard_url and args.dashboard_url != "http://127.0.0.1:5000":
-                # 只有明确指定了非默认值，才使用命令行参数
                 dashboard_url = args.dashboard_url
-            subject, html_content, plain_text = email_generator.generate_email_content(
-                dashboard_url=dashboard_url
-            )
-            print(f"✅ Email content generated")
-            print(f"   Subject: {subject}")
+
+            print(f"✅ Email generator initialized")
+
         except FileNotFoundError as e:
-            print(f"❌ Failed to generate email content: {e}")
+            print(f"❌ Failed to initialize email generator: {e}")
             print("\n💡 Please run the pipeline first to generate data:")
             print("   python -m src.cli.main run-pipeline")
             return 1
         except Exception as e:
-            print(f"❌ Failed to generate email content: {e}")
-            default_logger.error(f"Email content generation failed: {e}", exc_info=True)
+            print(f"❌ Failed to initialize email generator: {e}")
+            default_logger.error(f"Email generator initialization failed: {e}", exc_info=True)
             return 1
 
-        # 发送邮件
-        print(f"\n📤 Sending email to {len(to_emails)} recipient(s)...")
-        result = email_sender.send_html_email(
-            to_emails=to_emails,
-            subject=subject,
-            html_content=html_content,
-            plain_text_content=plain_text
-        )
+        # 为每个订阅者发送个性化邮件
+        print(f"\n📤 Sending personalized emails to {len(subscribers)} recipient(s)...")
 
-        if result["success"]:
-            print(f"✅ Email sent successfully!")
-            print(f"   Recipients: {', '.join(result['recipients'])}")
-            print(f"   Status code: {result['status_code']}")
-            print(f"   Timestamp: {result['timestamp']}")
+        success_count = 0
+        failed_count = 0
+        errors = []
 
-            # 记录发送日志
-            default_logger.info({
-                "event": "email_command_completed",
-                "status": "success",
-                "recipients_count": len(result['recipients']),
-                "timestamp": result['timestamp']
-            })
+        for subscriber in subscribers:
+            email = subscriber.get('email')
+            if not email:
+                default_logger.warning("订阅者数据缺少email字段", extra={"extra_fields": {"subscriber": subscriber}})
+                failed_count += 1
+                continue
 
-            return 0
-        else:
-            print(f"❌ Email sending failed:")
-            for error in result["errors"]:
-                print(f"   - {error}")
+            try:
+                # 生成个性化邮件内容
+                subject, html_content, plain_text = daily_generator.generate_personalized_email(
+                    email=email,
+                    dashboard_base_url=dashboard_url
+                )
 
-            # 如果配置了管理员邮箱,发送失败告警
-            admin_email = config.email_from  # 默认发给发件人自己
+                # 发送邮件
+                result = email_sender.send_html_email(
+                    to_emails=[email],
+                    subject=subject,
+                    html_content=html_content,
+                    plain_text_content=plain_text
+                )
+
+                if result["success"]:
+                    success_count += 1
+                    print(f"  ✅ Sent to {email}")
+                else:
+                    failed_count += 1
+                    error_msg = f"Failed to send to {email}: {', '.join(result['errors'])}"
+                    errors.append(error_msg)
+                    print(f"  ❌ {error_msg}")
+
+            except Exception as e:
+                failed_count += 1
+                error_msg = f"Failed to send to {email}: {str(e)}"
+                errors.append(error_msg)
+                print(f"  ❌ {error_msg}")
+                default_logger.error(f"Email sending failed for {email}: {e}", exc_info=True)
+
+        # 汇总结果
+        print(f"\n📊 Email Sending Summary:")
+        print(f"  ✅ Success: {success_count}")
+        print(f"  ❌ Failed: {failed_count}")
+
+        # 记录发送日志
+        default_logger.info({
+            "event": "email_command_completed",
+            "status": "success" if failed_count == 0 else "partial",
+            "success_count": success_count,
+            "failed_count": failed_count,
+            "timestamp": datetime.now().isoformat()
+        })
+
+        # 如果有失败，发送告警
+        if failed_count > 0:
+            admin_email = config.email_from
             if admin_email and not args.no_alert:
                 print(f"\n⚠️  Sending failure alert to admin: {admin_email}")
                 alert_result = email_sender.send_failure_alert(
                     admin_email=admin_email,
                     failure_details={
-                        **result,
-                        "subject": subject
+                        "success_count": success_count,
+                        "failed_count": failed_count,
+                        "errors": errors,
+                        "timestamp": datetime.now().isoformat()
                     }
                 )
                 if alert_result["success"]:

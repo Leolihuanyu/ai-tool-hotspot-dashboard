@@ -252,7 +252,7 @@
             </div>
 
             <!-- 查看详情链接 -->
-            <a href="{{ dashboard_url }}/opportunities/{{ opportunity.id }}" class="cta-button">
+            <a href="{{ dashboard_url }}/opportunities/{{ opportunity.id }}{{ personalized_params }}" class="cta-button">
                 查看完整详情 View Details
             </a>
         </div>
@@ -260,7 +260,7 @@
 
         <!-- 查看更多按钮 -->
         <div style="text-align: center; margin-top: 30px;">
-            <a href="{{ dashboard_url }}" class="cta-button" style="background-color: #2196F3;">
+            <a href="{{ dashboard_url }}/dashboard{{ personalized_params }}" class="cta-button" style="background-color: #2196F3;">
                 访问完整仪表板 Visit Full Dashboard
             </a>
         </div>

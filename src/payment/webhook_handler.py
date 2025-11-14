@@ -400,11 +400,32 @@ class StripeWebhookHandler:
             language = user.get('language', 'en') if user else 'en'
             subscription_type = user.get('subscription_type', 'paid') if user else 'paid'
 
-            # 生成带token的Dashboard访问链接（包含正确的订阅类型）
-            token = self.token_manager.generate_token(email, subscription_type=subscription_type)
+            # 生成长期有效token（90天）并保存到数据库
+            long_term_token = self.token_manager.generate_long_term_token(expiry_days=90)
+
+            # 保存token到数据库
+            token_saved = self.user_manager.update_access_token(
+                email=email,
+                access_token=long_term_token,
+                expiry_days=90
+            )
+
+            if not token_saved:
+                default_logger.warning(
+                    f"保存访问token失败，使用临时token: {email}",
+                    extra={"extra_fields": {"email": email}}
+                )
+                # 如果保存失败，回退到临时token
+                long_term_token = self.token_manager.generate_token(email, subscription_type=subscription_type)
+            else:
+                default_logger.info(
+                    f"长期访问token已生成并保存: {email}",
+                    extra={"extra_fields": {"email": email, "expiry_days": 90}}
+                )
+
             # 优先使用 DASHBOARD_BASE_URL（前端地址），向后兼容 DASHBOARD_URL
             dashboard_base_url = os.getenv('DASHBOARD_BASE_URL') or os.getenv('DASHBOARD_URL', 'https://ai-tool-hotspot-dashboard.vercel.app')
-            dashboard_url = f"{dashboard_base_url}/dashboard?token={token}&email={email}"
+            dashboard_url = f"{dashboard_base_url}/dashboard?token={long_term_token}&email={email}"
 
             # 使用EmailTemplateManager渲染多语言邮件
             from src.email.template_manager import EmailTemplateManager
