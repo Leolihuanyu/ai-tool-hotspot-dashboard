@@ -14,6 +14,10 @@ import hashlib
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict, Any
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
+from src.utils.logger import get_logger
+
+# 获取logger实例
+logger = get_logger(__name__)
 
 
 class TokenManager:
@@ -263,7 +267,7 @@ class TokenManager:
         """
         try:
             # 记录验证开始
-            default_logger.info(
+            logger.info(
                 f"开始数据库token验证",
                 extra={"extra_fields": {
                     "email": email,
@@ -275,7 +279,7 @@ class TokenManager:
             user = user_manager.get_user(email)
 
             if not user:
-                default_logger.warning(f"数据库token验证失败: 用户不存在 - {email}")
+                logger.warning(f"数据库token验证失败: 用户不存在 - {email}")
                 return {
                     "valid": False,
                     "error": "用户不存在"
@@ -285,7 +289,7 @@ class TokenManager:
             db_token = user.get("access_token")
             token_match = db_token == token
 
-            default_logger.info(
+            logger.info(
                 f"Token比对结果",
                 extra={"extra_fields": {
                     "email": email,
@@ -311,7 +315,7 @@ class TokenManager:
                     was_naive = expires_dt.tzinfo is None
                     if was_naive:
                         expires_dt = expires_dt.replace(tzinfo=timezone.utc)
-                        default_logger.info(
+                        logger.info(
                             f"Token过期时间处理",
                             extra={"extra_fields": {
                                 "email": email,
@@ -324,7 +328,7 @@ class TokenManager:
                     current_time = datetime.now(timezone.utc)
                     is_expired = current_time > expires_dt
 
-                    default_logger.info(
+                    logger.info(
                         f"Token过期检查",
                         extra={"extra_fields": {
                             "email": email,
