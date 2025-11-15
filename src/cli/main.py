@@ -5,6 +5,7 @@
 
 import sys
 import argparse
+from datetime import datetime
 from src.database import init_database
 from src.utils.config import config
 from src.utils.logger import default_logger

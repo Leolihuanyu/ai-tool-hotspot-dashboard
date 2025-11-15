@@ -28,6 +28,15 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: 运行数据库迁移
+        env:
+          DB_TYPE: postgresql
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          echo "🔄 运行数据库迁移..."
+          python scripts/run_migrations.py
+          echo "✅ 迁移完成"
+
       - name: 运行过期提醒检查
         env:
           # 数据库配置（PostgreSQL - Supabase）
