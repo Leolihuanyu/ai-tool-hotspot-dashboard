@@ -310,7 +310,15 @@ class TokenManager:
             if token_expires_at:
                 from dateutil import parser
                 try:
-                    expires_dt = parser.parse(token_expires_at)
+                    # 处理不同数据库返回的不同类型
+                    # SQLite返回字符串，PostgreSQL返回datetime对象
+                    if isinstance(token_expires_at, str):
+                        # SQLite: 需要解析字符串
+                        expires_dt = parser.parse(token_expires_at)
+                    else:
+                        # PostgreSQL: 已经是datetime对象
+                        expires_dt = token_expires_at
+
                     # 确保expires_dt有时区信息（如果没有，假定为UTC）
                     was_naive = expires_dt.tzinfo is None
                     if was_naive:
@@ -319,7 +327,8 @@ class TokenManager:
                             f"Token过期时间处理",
                             extra={"extra_fields": {
                                 "email": email,
-                                "original_time": token_expires_at,
+                                "original_time": str(token_expires_at),
+                                "original_type": type(token_expires_at).__name__,
                                 "converted_to_utc": True
                             }}
                         )
