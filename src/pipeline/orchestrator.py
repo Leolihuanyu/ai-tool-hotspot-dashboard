@@ -506,6 +506,37 @@ class PipelineOrchestrator:
         if not topics:
             return []
 
+        # ===== 硬过滤：移除超过30天的旧数据 =====
+        from datetime import datetime, timedelta, timezone
+        cutoff_date = datetime.now(timezone.utc) - timedelta(days=30)
+
+        recent_topics = []
+        old_count = 0
+
+        for topic in topics:
+            if hasattr(topic, 'timestamp') and topic.timestamp:
+                # 确保时区信息
+                topic_time = topic.timestamp
+                if topic_time.tzinfo is None:
+                    topic_time = topic_time.replace(tzinfo=timezone.utc)
+
+                # 只保留最近30天的数据
+                if topic_time >= cutoff_date:
+                    recent_topics.append(topic)
+                else:
+                    old_count += 1
+                    logger.debug(f"过滤旧话题: {topic.title[:50]}... (时间: {topic_time.date()})")
+            else:
+                # 没有时间戳的数据也保留（但记录警告）
+                logger.warning(f"话题缺少时间戳: {topic.title[:50]}")
+                recent_topics.append(topic)
+
+        if old_count > 0:
+            logger.info(f"全局时间过滤: 移除 {old_count} 个超过30天的旧话题，保留 {len(recent_topics)} 个最近话题")
+
+        topics = recent_topics
+        # ===== 时间过滤结束 =====
+
         # 分类和评分
         heat_topics = []  # 高热度话题
         pain_topics = []  # 高痛点话题

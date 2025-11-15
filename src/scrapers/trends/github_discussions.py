@@ -41,18 +41,28 @@ class GitHubDiscussionsScraper(BaseScraper):
         self.github_token = getattr(config, 'github_token', None)
 
         # 目标仓库（owner/name格式）
-        # 选择高星、活跃的项目，它们的discussions质量高
+        # 优先选择面向应用开发者的仓库，具有明确的商业痛点和用户需求
+        # 避免选择编程语言内部实现仓库（如golang/go, python/cpython等）
         self.target_repos = [
-            "microsoft/vscode",       # VS Code - 开发工具
-            "vercel/next.js",        # Next.js - Web框架
-            "facebook/react",        # React - UI库
-            "python/cpython",        # Python - 编程语言
-            "rust-lang/rust",        # Rust - 编程语言
-            "golang/go",             # Go - 编程语言
-            "nodejs/node",           # Node.js - 运行时
-            "tensorflow/tensorflow", # TensorFlow - AI框架
+            # 开发工具和框架（保留 - 开发者痛点明确）
+            "microsoft/vscode",              # VS Code - 开发工具
+            "vercel/next.js",               # Next.js - Web框架
+            "facebook/react",               # React - UI库
+
+            # SaaS/创业工具（新增 - 高商业价值）
+            "supabase/supabase",            # 开源Firebase替代品
+            "appwrite/appwrite",            # 开源后端服务
+            "nocodb/nocodb",                # 开源Airtable替代品（No-code痛点）
+            "n8n-io/n8n",                   # 工作流自动化工具
+            "plausible/analytics",          # 隐私友好分析工具
+
+            # AI应用层（新增 - 当前热点）
+            "langchain-ai/langchain",       # LLM应用开发框架
+            "vercel/ai",                    # AI SDK for Web
+
+            # AI SDK（保留 - 实际应用场景）
             "anthropics/anthropic-sdk-python",  # Anthropic SDK
-            "openai/openai-python",  # OpenAI SDK
+            "openai/openai-python",         # OpenAI SDK
         ]
 
         # Feature request关键词
@@ -163,7 +173,31 @@ class GitHubDiscussionsScraper(BaseScraper):
         try:
             data = self._make_graphql_request(query, variables)
             discussions = data.get('repository', {}).get('discussions', {}).get('nodes', [])
-            return discussions
+
+            # 过滤掉超过30天的讨论（避免抓取旧数据）
+            from datetime import datetime, timedelta, timezone
+            cutoff_date = datetime.now(timezone.utc) - timedelta(days=30)
+
+            recent_discussions = []
+            filtered_count = 0
+
+            for discussion in discussions:
+                created_at_str = discussion.get('createdAt')
+                if created_at_str:
+                    created_at = datetime.fromisoformat(created_at_str.replace('Z', '+00:00'))
+                    if created_at >= cutoff_date:
+                        recent_discussions.append(discussion)
+                    else:
+                        filtered_count += 1
+                        self.logger.debug(f"过滤掉旧discussion: {discussion.get('title', '')[:50]}... (创建于{created_at.date()})")
+                else:
+                    # 没有时间戳的保留（虽然不太可能）
+                    recent_discussions.append(discussion)
+
+            if filtered_count > 0:
+                self.logger.info(f"{owner}/{repo}: 过滤掉 {filtered_count} 个超过30天的旧讨论")
+
+            return recent_discussions
         except Exception as e:
             self.logger.warning(f"获取{owner}/{repo} discussions失败: {e}")
             return []

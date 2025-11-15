@@ -288,11 +288,12 @@ def cmd_run_pipeline(args):
         except Exception as e:
             print(f"  ⚠️  TikTok: {e}")
 
-        try:
-            scrapers['YouTube'] = YouTubeScraper()
-            print("  ✅ YouTube")
-        except Exception as e:
-            print(f"  ⚠️  YouTube: {e}")
+        # YouTube Shorts已废弃 - 内容浅显，缺乏深度商业痛点
+        # try:
+        #     scrapers['YouTube'] = YouTubeScraper()
+        #     print("  ✅ YouTube")
+        # except Exception as e:
+        #     print(f"  ⚠️  YouTube: {e}")
 
         try:
             scrapers['X'] = XTwitterScraper()
@@ -300,11 +301,12 @@ def cmd_run_pipeline(args):
         except Exception as e:
             print(f"  ⚠️  X: {e}")
 
-        try:
-            scrapers['Google Trends'] = GoogleTrendsScraper()
-            print("  ✅ Google Trends")
-        except Exception as e:
-            print(f"  ⚠️  Google Trends: {e}")
+        # Google Trends已废弃 - 只有关键词，缺乏上下文和真实痛点
+        # try:
+        #     scrapers['Google Trends'] = GoogleTrendsScraper()
+        #     print("  ✅ Google Trends")
+        # except Exception as e:
+        #     print(f"  ⚠️  Google Trends: {e}")
 
         if not scrapers:
             print("\n❌ No scrapers available. Please check scraper implementations.")

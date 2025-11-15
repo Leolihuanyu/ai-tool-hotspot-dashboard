@@ -134,20 +134,31 @@ class RedditScraper(BaseScraper):
             try:
                 subreddit = reddit.subreddit(subreddit_name)
 
-                # 获取热门帖子
-                for submission in subreddit.hot(limit=posts_per_subreddit):
-                    results.append({
-                        'id': submission.id,
-                        'title': submission.title,
-                        'selftext': submission.selftext,
-                        'url': f"https://reddit.com{submission.permalink}",
-                        'score': submission.score,
-                        'num_comments': submission.num_comments,
-                        'created_utc': submission.created_utc,
-                        'author': str(submission.author),
-                        'subreddit': subreddit_name,
-                        'upvote_ratio': submission.upvote_ratio
-                    })
+                # 获取热门帖子，并进行商业价值过滤
+                for submission in subreddit.hot(limit=posts_per_subreddit * 3):  # 多抓取一些用于过滤
+                    # 计算商业价值评分（标题+内容）
+                    text = f"{submission.title} {submission.selftext}"
+                    business_score, matched_kw = self._calculate_payment_willingness_score(text)
+
+                    # 只保留有一定商业价值的帖子（评分>0或高互动）
+                    # 高互动帖子即使不含关键词也保留（可能是热点讨论）
+                    if business_score >= 10 or submission.score >= 100 or submission.num_comments >= 50:
+                        results.append({
+                            'id': submission.id,
+                            'title': submission.title,
+                            'selftext': submission.selftext,
+                            'url': f"https://reddit.com{submission.permalink}",
+                            'score': submission.score,
+                            'num_comments': submission.num_comments,
+                            'created_utc': submission.created_utc,
+                            'author': str(submission.author),
+                            'subreddit': subreddit_name,
+                            'upvote_ratio': submission.upvote_ratio,
+                            'business_value_score': business_score,  # 新增：商业价值评分
+                            'business_keywords': matched_kw  # 新增：匹配的关键词
+                        })
+                    else:
+                        self.logger.debug(f"过滤低商业价值帖子: {submission.title[:50]}... (评分:{business_score})")
 
                     if limit and len(results) >= limit:
                         break
