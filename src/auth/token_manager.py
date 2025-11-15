@@ -262,17 +262,40 @@ class TokenManager:
                 }
         """
         try:
+            # 记录验证开始
+            default_logger.info(
+                f"开始数据库token验证",
+                extra={"extra_fields": {
+                    "email": email,
+                    "token_prefix": token[:20] + "..." if token and len(token) > 20 else token
+                }}
+            )
+
             # 从数据库获取用户信息
             user = user_manager.get_user(email)
 
             if not user:
+                default_logger.warning(f"数据库token验证失败: 用户不存在 - {email}")
                 return {
                     "valid": False,
                     "error": "用户不存在"
                 }
 
             # 验证token是否匹配
-            if user.get("access_token") != token:
+            db_token = user.get("access_token")
+            token_match = db_token == token
+
+            default_logger.info(
+                f"Token比对结果",
+                extra={"extra_fields": {
+                    "email": email,
+                    "db_token_exists": db_token is not None,
+                    "db_token_prefix": db_token[:20] + "..." if db_token and len(db_token) > 20 else db_token,
+                    "token_match": token_match
+                }}
+            )
+
+            if not token_match:
                 return {
                     "valid": False,
                     "error": "Token无效或已被撤销"
@@ -284,7 +307,34 @@ class TokenManager:
                 from dateutil import parser
                 try:
                     expires_dt = parser.parse(token_expires_at)
-                    if datetime.now(timezone.utc) > expires_dt:
+                    # 确保expires_dt有时区信息（如果没有，假定为UTC）
+                    was_naive = expires_dt.tzinfo is None
+                    if was_naive:
+                        expires_dt = expires_dt.replace(tzinfo=timezone.utc)
+                        default_logger.info(
+                            f"Token过期时间处理",
+                            extra={"extra_fields": {
+                                "email": email,
+                                "original_time": token_expires_at,
+                                "converted_to_utc": True
+                            }}
+                        )
+
+                    # 现在可以安全地比较两个aware datetime
+                    current_time = datetime.now(timezone.utc)
+                    is_expired = current_time > expires_dt
+
+                    default_logger.info(
+                        f"Token过期检查",
+                        extra={"extra_fields": {
+                            "email": email,
+                            "expires_at": expires_dt.isoformat(),
+                            "current_time": current_time.isoformat(),
+                            "is_expired": is_expired
+                        }}
+                    )
+
+                    if is_expired:
                         return {
                             "valid": False,
                             "error": "Token已过期，请重新获取访问链接"

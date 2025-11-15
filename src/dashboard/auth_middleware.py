@@ -82,16 +82,27 @@ def verify_token_from_request():
                 extra={"extra_fields": {"email": email, "token_type": "database"}}
             )
         else:
-            # 数据库token验证失败，尝试JWT验证（向后兼容）
-            logger.debug(
-                f"数据库token验证失败，尝试JWT验证: {email}",
-                extra={"extra_fields": {"email": email, "error": db_result.get("error")}}
+            # 数据库token验证失败
+            db_error = db_result.get("error", "未知错误")
+            logger.warning(
+                f"数据库token验证失败: {email} - {db_error}",
+                extra={"extra_fields": {"email": email, "error": db_error}}
             )
-            result = token_manager.verify_token(
-                token=token,
-                require_ip_match=require_ip_match,
-                current_ip=current_ip
-            )
+
+            # 检查token是否可能是JWT格式（以eyJ开头的base64编码）
+            # JWT token通常以"eyJ"开头（这是{"的base64编码）
+            if token and (token.startswith("eyJ") or token.startswith(".")):
+                # 看起来像JWT，尝试JWT验证（向后兼容）
+                logger.debug(f"Token看起来像JWT格式，尝试JWT验证: {email}")
+                result = token_manager.verify_token(
+                    token=token,
+                    require_ip_match=require_ip_match,
+                    current_ip=current_ip
+                )
+            else:
+                # 不是JWT格式，直接返回数据库验证的错误
+                # 避免误导性的"访问链接无效或已被篡改"错误
+                result = db_result
     else:
         # 没有email参数，直接使用JWT验证
         result = token_manager.verify_token(
