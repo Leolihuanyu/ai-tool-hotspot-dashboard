@@ -383,9 +383,9 @@ def register_routes(app):
 
                 email_sender = get_email_sender()
                 if email_sender:
-                    # 生成Dashboard访问链接
+                    # 生成Dashboard访问链接（使用长期token）
                     dashboard_base_url = os.getenv('DASHBOARD_BASE_URL') or os.getenv('DASHBOARD_URL', 'https://ai-tool-hotspot-dashboard.vercel.app')
-                    dashboard_url = f"{dashboard_base_url}/dashboard?token={token}&email={email}"
+                    dashboard_url = f"{dashboard_base_url}/dashboard?token={long_term_token}&email={email}"
 
                     # 使用EmailTemplateManager渲染多语言邮件
                     template_manager = EmailTemplateManager()
