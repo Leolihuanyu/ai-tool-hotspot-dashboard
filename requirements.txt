@@ -39,6 +39,9 @@ pytrends>=4.9.0  # Google Trends非官方API
 # === 数据处理 ===
 python-dateutil>=2.8.2  # 日期处理
 
+# === 翻译服务 ===
+deep-translator>=1.11.0  # 翻译服务（用于多语言摘要，支持多种翻译引擎）
+
 # === 测试 ===
 pytest>=7.4.0  # 测试框架
 pytest-cov>=4.1.0  # 测试覆盖率

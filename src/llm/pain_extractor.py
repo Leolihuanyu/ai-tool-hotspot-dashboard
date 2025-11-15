@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 import logging
 
 from src.llm.client import LLMClient
+from src.llm.summarizer import TrilingualSummarizer
 from src.models.pain_point import UserPainPoint
 from src.utils.logger import get_logger
 
@@ -101,6 +102,8 @@ class PainPointExtractor:
             llm_client: LLM客户端实例,如果为None则创建新实例
         """
         self.llm_client = llm_client or LLMClient()
+        # 添加TrilingualSummarizer用于生成三语摘要
+        self.summarizer = TrilingualSummarizer(self.llm_client)
 
     def contains_pain_keyword(self, text: str) -> bool:
         """
@@ -140,9 +143,12 @@ class PainPointExtractor:
         Returns:
             UserPainPoint对象,如果未提取到痛点则返回None
         """
-        # 快速检查:如果不包含痛点关键词,跳过LLM调用
-        if not self.contains_pain_keyword(comment_text):
-            logger.debug(f"评论不包含痛点关键词,跳过: {comment_text[:50]}...")
+        # 关键词检查改为可选，用于增强置信度而非过滤
+        has_pain_keywords = self.contains_pain_keyword(comment_text)
+
+        # 如果文本太短且没有关键词，跳过（节省LLM调用）
+        if len(comment_text) < 50 and not has_pain_keywords:
+            logger.debug(f"评论太短且无关键词,跳过: {comment_text[:50]}...")
             return None
 
         # 使用LLM提取结构化痛点信息
@@ -162,6 +168,20 @@ class PainPointExtractor:
                 logger.debug(f"LLM判断不是痛点: {comment_text[:50]}...")
                 return None
 
+            # 使用TrilingualSummarizer生成三语摘要
+            summary_en = extracted_data.get("summary_en", "")
+            if summary_en:
+                # 使用英文摘要生成中文和日文版本
+                summaries = self.summarizer.generate_summary(summary_en)
+                summary_cn = summaries.get("summary_cn", "")
+                summary_ja = summaries.get("summary_ja", "")
+            else:
+                # 如果没有英文摘要，从原文生成
+                summaries = self.summarizer.generate_summary(comment_text[:500])
+                summary_en = summaries.get("summary_en", "")
+                summary_cn = summaries.get("summary_cn", "")
+                summary_ja = summaries.get("summary_ja", "")
+
             # 构建UserPainPoint对象
             pain_point = UserPainPoint(
                 original_text=comment_text,
@@ -171,10 +191,11 @@ class PainPointExtractor:
                 url=url,
                 timestamp=timestamp,
                 engagement_score=engagement_score,
-                confidence_score=extracted_data.get("confidence_score", 0.5),
+                confidence_score=extracted_data.get("confidence_score", 0.3),  # 降低默认置信度
                 tags=extracted_data.get("tags", []),
-                summary_cn=extracted_data.get("summary_cn", ""),
-                summary_ja=extracted_data.get("summary_ja", ""),
+                summary_en=summary_en,  # 添加英文摘要
+                summary_cn=summary_cn,
+                summary_ja=summary_ja,
                 data_quality_score=self._calculate_data_quality(
                     comment_text, source, engagement_score
                 ),
@@ -186,7 +207,7 @@ class PainPointExtractor:
                 author_metadata=author_metadata
             )
 
-            logger.info(f"成功提取痛点: {pain_point.summary_cn[:50]}...")
+            logger.info(f"成功提取痛点: {summary_en[:50]}...")
             return pain_point
 
         except Exception as e:
@@ -277,20 +298,20 @@ class PainPointExtractor:
 
 请以JSON格式返回分析结果,包含以下字段:
 
-1. **is_pain_point** (boolean): 是否表达了真实的用户痛点(不仅仅是抱怨或吐槽)
+1. **is_pain_point** (boolean): 是否表达了用户痛点
 2. **confidence_score** (float 0-1): 痛点的置信度评分
 3. **keywords** (list[str]): 提取的关键词(5-10个)
 4. **tags** (list[str]): 分类标签(如 "automation", "data-analysis" 等)
-5. **summary_cn** (str): 中文摘要(≤200字符)
-6. **summary_ja** (str): 日文摘要(≤200字符)
-7. **business_value** (int 1-10): 商业价值评分 - 解决这个痛点的市场潜力
-8. **urgency_level** (int 1-10): 紧迫性评分 - 用户对解决方案的需求紧迫程度
-9. **market_size_hint** (str): 潜在市场规模提示（"niche"小众, "moderate"中等, "large"大规模）
-10. **willingness_to_pay** (str): 付费意愿（"low"低, "medium"中, "high"高, "very_high"非常高）
+5. **summary_en** (str): 英文摘要 - 简洁描述痛点核心(≤200字符)
+6. **business_value** (int 1-10): 商业价值评分 - 解决这个痛点的市场潜力
+7. **urgency_level** (int 1-10): 紧迫性评分 - 用户对解决方案的需求紧迫程度
+8. **market_size_hint** (str): 潜在市场规模提示（"niche"小众, "moderate"中等, "large"大规模）
+9. **willingness_to_pay** (str): 付费意愿（"low"低, "medium"中, "high"高, "very_high"非常高）
 
-评估标准:
-- **是痛点**: 明确表达需要解决的问题、缺失的功能、工作流程障碍
-- **不是痛点**: 一般性抱怨、情绪发泄、无具体需求
+评估标准(更宽松):
+- **是痛点**: 表达了问题、困难、需求、期望、限制、挑战、障碍、低效率等
+- **也是痛点**: 讨论改进空间、希望优化、寻求建议、分享挫折经历
+- **不是痛点**: 纯粹赞美、单纯分享新闻、无关内容
 
 商业价值评分标准（1-10）:
 - 8-10分: 影响大量用户、节省显著成本、提高核心效率

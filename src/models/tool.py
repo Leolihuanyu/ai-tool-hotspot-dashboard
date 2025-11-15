@@ -23,6 +23,7 @@ class AITool(BaseModel):
         tags: 标签列表
         features: 功能列表(v1.1新增)
         pricing_model: 定价模式(v1.1新增)
+        summary_en: 英文摘要(≤200字符)
         summary_cn: 中文摘要(≤200字符)
         summary_ja: 日文摘要(≤200字符)
         data_quality_score: 数据质量评分(0-1, v1.1新增)
@@ -38,8 +39,9 @@ class AITool(BaseModel):
     tags: List[str]
     features: List[str]  # v1.1
     pricing_model: Literal["free", "freemium", "paid", "subscription"]  # v1.1
-    summary_cn: str = Field(max_length=200, default="")
-    summary_ja: str = Field(max_length=200, default="")
+    summary_en: str = Field(max_length=200, default="")  # 英文摘要
+    summary_cn: str = Field(max_length=200, default="")  # 中文摘要
+    summary_ja: str = Field(max_length=200, default="")  # 日文摘要
     data_quality_score: float = Field(ge=0.0, le=1.0, default=0.7)  # v1.1
     schema_version: str = "1.1"
 
@@ -55,6 +57,7 @@ class AITool(BaseModel):
                 "tags": ["image-generation", "creativity", "design"],
                 "features": ["text-to-image", "style-transfer", "batch-processing"],
                 "pricing_model": "subscription",
+                "summary_en": "AI-powered text-to-image tool supporting various art styles",
                 "summary_cn": "基于AI的文本生成图像工具，支持多种艺术风格",
                 "summary_ja": "テキストから画像を生成するAIツール、複数のアートスタイルをサポート",
                 "data_quality_score": 0.95,

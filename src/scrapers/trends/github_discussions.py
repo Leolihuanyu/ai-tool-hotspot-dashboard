@@ -348,7 +348,7 @@ class GitHubDiscussionsScraper(BaseScraper):
         return TrendingTopic(
             id=str(uuid4()),
             title=title[:200],
-            description=description[:500],
+            description=description[:1500],
             source="GitHub Discussions",
             url=raw_data['url'],
             timestamp=dt,

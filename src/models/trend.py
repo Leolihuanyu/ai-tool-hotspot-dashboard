@@ -23,6 +23,7 @@ class TrendingTopic(BaseModel):
         heat_score: 热度分数(0-100)
         trend_direction: 趋势方向(v1.1新增)
         tags: 标签列表
+        summary_en: 英文摘要(≤200字符)
         summary_cn: 中文摘要(≤200字符)
         summary_ja: 日文摘要(≤200字符)
         data_quality_score: 数据质量评分(0-1, v1.1新增)
@@ -41,8 +42,9 @@ class TrendingTopic(BaseModel):
     heat_score: float = Field(ge=0.0, le=100.0)
     trend_direction: Literal["rising", "falling", "stable"]  # v1.1
     tags: List[str]
-    summary_cn: str = Field(max_length=200, default="")
-    summary_ja: str = Field(max_length=200, default="")
+    summary_en: str = Field(max_length=200, default="")  # 英文摘要
+    summary_cn: str = Field(max_length=200, default="")  # 中文摘要
+    summary_ja: str = Field(max_length=200, default="")  # 日文摘要
     data_quality_score: float = Field(ge=0.0, le=1.0, default=0.7)  # v1.1
     schema_version: str = "1.2"
 
@@ -63,6 +65,7 @@ class TrendingTopic(BaseModel):
                 "heat_score": 85.5,
                 "trend_direction": "rising",
                 "tags": ["AI", "coding", "tutorial"],
+                "summary_en": "Tutorial on using ChatGPT to write Python code efficiently",
                 "summary_cn": "教你如何使用ChatGPT编写Python代码的教程",
                 "summary_ja": "ChatGPTを使ってPythonコードを書く方法のチュートリアル",
                 "data_quality_score": 0.88,

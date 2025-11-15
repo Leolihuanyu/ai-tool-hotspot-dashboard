@@ -256,7 +256,7 @@ class ProductHuntScraper(BaseScraper):
         # 创建AITool对象
         tool = AITool(
             name=raw_data['title'],
-            description=description[:500],
+            description=description[:1500],
             source="ProductHunt",
             url=raw_data['link'],
             timestamp=timestamp,

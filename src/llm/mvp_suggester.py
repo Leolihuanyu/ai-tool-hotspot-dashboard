@@ -6,6 +6,7 @@
 
 import json
 from typing import Optional, Dict, Any, List
+from deep_translator import GoogleTranslator
 from src.llm.client import LLMClient
 from src.llm.prompts import MVP_SUGGESTION_PROMPT
 from src.models.pain_point import UserPainPoint
@@ -34,6 +35,9 @@ class MVPSuggester:
             llm_client: LLM客户端(可选,默认创建新实例)
         """
         self.llm_client = llm_client or LLMClient()
+        # 初始化翻译器
+        self.translator_to_zh = GoogleTranslator(source='en', target='zh-CN')
+        self.translator_to_ja = GoogleTranslator(source='en', target='ja')
 
     def generate(
         self,
@@ -81,18 +85,37 @@ class MVPSuggester:
 
                 result = json.loads(response_clean)
 
-                # 验证必需字段
-                if "mvp_suggestion_cn" not in result or "mvp_suggestion_ja" not in result:
-                    default_logger.warning(
-                        "MVP suggestion missing required fields",
-                        extra={"extra_fields": {"response": response}}
-                    )
-                    return None
+                # 验证必需字段（现在需要英文版本）
+                if "mvp_suggestion_en" not in result:
+                    # 兼容旧格式：如果只有中文版本，则使用中文版本作为英文（临时方案）
+                    if "mvp_suggestion_cn" in result:
+                        mvp_en = result["mvp_suggestion_cn"]  # 临时使用中文
+                        mvp_cn = result["mvp_suggestion_cn"]
+                        mvp_ja = result.get("mvp_suggestion_ja", result["mvp_suggestion_cn"])
+                    else:
+                        default_logger.warning(
+                            "MVP suggestion missing required fields",
+                            extra={"extra_fields": {"response": response}}
+                        )
+                        return None
+                else:
+                    # 新格式：英文优先，然后翻译
+                    mvp_en = result["mvp_suggestion_en"]
 
-                # 返回所有字段（包括新增的竞品分析等）
+                    # 翻译成中文和日文
+                    try:
+                        mvp_cn = self.translator_to_zh.translate(mvp_en)
+                        mvp_ja = self.translator_to_ja.translate(mvp_en)
+                    except Exception as e:
+                        default_logger.warning(f"Translation failed: {e}, using English version")
+                        mvp_cn = mvp_en  # 翻译失败时使用英文版本
+                        mvp_ja = mvp_en
+
+                # 返回所有字段（包括新增的英文建议）
                 return {
-                    "mvp_suggestion_cn": result["mvp_suggestion_cn"],
-                    "mvp_suggestion_ja": result["mvp_suggestion_ja"],
+                    "mvp_suggestion_en": mvp_en,  # 新增英文字段
+                    "mvp_suggestion_cn": mvp_cn,
+                    "mvp_suggestion_ja": mvp_ja,
                     "competitive_analysis": result.get("competitive_analysis", ""),
                     "differentiation": result.get("differentiation", ""),
                     "launch_difficulty": result.get("launch_difficulty", "medium"),

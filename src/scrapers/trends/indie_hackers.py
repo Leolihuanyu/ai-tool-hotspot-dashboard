@@ -179,7 +179,7 @@ class IndieHackersScraper(BaseScraper):
                     post_data = {
                         "title": title,
                         "url": post_url,
-                        "description": description[:500],  # 限制长度
+                        "description": description[:1500],  # 限制长度
                         "author": author,
                         "upvotes": upvotes,
                         "comments": comments,

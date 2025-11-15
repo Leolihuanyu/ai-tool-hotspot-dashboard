@@ -24,6 +24,7 @@ class UserPainPoint(BaseModel):
         engagement_score: 互动分数(0-100)
         confidence_score: 痛点置信度(0-1, v1.1新增)
         tags: 标签列表
+        summary_en: 英文摘要(≤200字符)
         summary_cn: 中文摘要(≤200字符)
         summary_ja: 日文摘要(≤200字符)
         data_quality_score: 数据质量评分(0-1, v1.1新增)
@@ -45,8 +46,9 @@ class UserPainPoint(BaseModel):
     engagement_score: float = Field(ge=0.0, le=100.0)
     confidence_score: float = Field(ge=0.0, le=1.0)  # v1.1
     tags: List[str]
-    summary_cn: str = Field(max_length=200, default="")
-    summary_ja: str = Field(max_length=200, default="")
+    summary_en: str = Field(max_length=200, default="")  # 英文摘要
+    summary_cn: str = Field(max_length=200, default="")  # 中文摘要
+    summary_ja: str = Field(max_length=200, default="")  # 日文摘要
     data_quality_score: float = Field(ge=0.0, le=1.0, default=0.7)  # v1.1
 
     # v1.2 新增字段
@@ -73,6 +75,7 @@ class UserPainPoint(BaseModel):
                 "engagement_score": 72.0,
                 "confidence_score": 0.85,
                 "tags": ["content-creation", "automation", "video"],
+                "summary_en": "Need a tool to automatically generate YouTube video thumbnails",
                 "summary_cn": "需要一个自动生成YouTube视频缩略图的工具",
                 "summary_ja": "YouTube動画のサムネイルを自動生成するツールが必要",
                 "data_quality_score": 0.90,

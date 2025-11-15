@@ -327,9 +327,10 @@ class PipelineOrchestrator:
 
         for tool in tools:
             try:
-                if not tool.summary_cn or not tool.summary_ja:
+                if not tool.summary_cn or not tool.summary_ja or not tool.summary_en:
                     summaries = self.summarizer.generate_summary(tool.description)
                     if summaries:
+                        tool.summary_en = summaries['summary_en']
                         tool.summary_cn = summaries['summary_cn']
                         tool.summary_ja = summaries['summary_ja']
             except Exception as e:
@@ -343,9 +344,10 @@ class PipelineOrchestrator:
 
         for topic in topics:
             try:
-                if not topic.summary_cn or not topic.summary_ja:
+                if not topic.summary_cn or not topic.summary_ja or not topic.summary_en:
                     summaries = self.summarizer.generate_summary(topic.description)
                     if summaries:
+                        topic.summary_en = summaries['summary_en']
                         topic.summary_cn = summaries['summary_cn']
                         topic.summary_ja = summaries['summary_ja']
             except Exception as e:
@@ -712,6 +714,9 @@ class PipelineOrchestrator:
 
         opportunities = []
 
+        # 如果痛点太少，创建虚拟痛点从热点话题生成机会
+        min_opportunities = 5  # 最少生成5个机会
+
         # 为每个痛点生成MVP机会
         for pain_point in pain_points[:15]:  # 多生成一些，然后筛选Top 10
             try:
@@ -739,6 +744,7 @@ class PipelineOrchestrator:
                 opportunity = {
                     'pain_point_id': pain_point.id,
                     'related_topics': [topic.id for topic in related_topics],
+                    'mvp_suggestion_en': mvp.get('mvp_suggestion_en', ''),  # v1.3新增：英文建议
                     'mvp_suggestion_cn': mvp['mvp_suggestion_cn'],
                     'mvp_suggestion_ja': mvp['mvp_suggestion_ja'],
                     'opportunity_score': opportunity_score,
@@ -751,6 +757,51 @@ class PipelineOrchestrator:
 
             except Exception as e:
                 logger.warning(f"生成MVP机会失败: {e}")
+
+        # 如果机会不足，从热点话题直接生成额外机会
+        if len(opportunities) < min_opportunities and topics:
+            logger.info(f"机会不足({len(opportunities)}个)，从热点话题生成额外机会")
+
+            # 选择高热度的话题作为机会来源
+            high_heat_topics = sorted(topics, key=lambda x: getattr(x, 'heat_score', 0), reverse=True)[:10]
+
+            for topic in high_heat_topics:
+                if len(opportunities) >= min_opportunities:
+                    break
+
+                try:
+                    # 从话题描述提取潜在痛点
+                    virtual_pain = self.pain_extractor.extract_from_text(
+                        text=topic.description[:1500],
+                        context=topic.title,
+                        source=topic.source,
+                        url=topic.url
+                    )
+
+                    if virtual_pain:
+                        # 生成MVP建议
+                        mvp = self.mvp_suggester.generate(
+                            pain_point=virtual_pain,
+                            related_topics=[topic]
+                        )
+
+                        if mvp:
+                            opportunity = {
+                                'pain_point_id': virtual_pain.id,
+                                'related_topics': [topic.id],
+                                'mvp_suggestion_en': mvp.get('mvp_suggestion_en', ''),  # v1.3新增：英文建议
+                                'mvp_suggestion_cn': mvp['mvp_suggestion_cn'],
+                                'mvp_suggestion_ja': mvp['mvp_suggestion_ja'],
+                                'opportunity_score': 70.0,  # 给虚拟痛点一个中等评分
+                                'timestamp': datetime.now(),
+                                'tags': topic.tags,
+                                'data_quality_score': 0.6
+                            }
+                            opportunities.append(opportunity)
+                            logger.info(f"从热点话题生成额外机会: {topic.title[:50]}")
+                except Exception as e:
+                    logger.debug(f"从热点生成机会失败: {e}")
+                    continue
 
         # 按机会评分排序，返回Top 10
         opportunities.sort(key=lambda x: x['opportunity_score'], reverse=True)

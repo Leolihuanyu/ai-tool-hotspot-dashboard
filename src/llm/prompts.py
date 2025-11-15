@@ -29,6 +29,19 @@ SUMMARY_PROMPT_JA = """以下の内容を簡潔な日本語（≤200文字）で
 
 要約のみを直接返し、前置きや説明は含めないでください。"""
 
+# 英文摘要生成提示词（主模板 - 用于生成然后翻译）
+SUMMARY_PROMPT_EN = """Summarize the following content concisely (≤200 characters):
+
+{description}
+
+Requirements:
+- Highlight core features and value proposition
+- Use clear and simple language
+- Avoid marketing jargon
+- Strictly limit to 200 characters
+
+Return only the summary without any prefix or explanation."""
+
 # 痛点提取提示词
 PAIN_POINT_EXTRACTION_PROMPT = """分析以下文本，判断是否包含用户痛点（需求、问题、期望）：
 
@@ -57,55 +70,54 @@ PAIN_POINT_EXTRACTION_PROMPT = """分析以下文本，判断是否包含用户�
 
 直接返回JSON，不要包含任何其他文本。"""
 
-# MVP建议生成提示词（增强版 - 包含竞品分析和差异化建议）
-MVP_SUGGESTION_PROMPT = """基于以下用户痛点和市场热点，生成一个创新的MVP产品概要：
+# MVP建议生成提示词（英文优先版本）
+MVP_SUGGESTION_PROMPT = """Based on the following user pain point and market trends, generate an innovative MVP product proposal:
 
-用户痛点：
+User Pain Point:
 {pain_point}
 
-市场热点：
+Market Trends:
 {related_topics}
 
-请返回以下JSON格式的产品概要：
+Please return the following JSON format product proposal:
 {{
-    "mvp_suggestion_cn": "中文产品概要（400字以内）",
-    "mvp_suggestion_ja": "日文产品概要（400字以内）",
-    "competitive_analysis": "竞品分析（200字以内）",
-    "differentiation": "差异化策略（150字以内）",
-    "launch_difficulty": "启动难度（easy/medium/hard）",
-    "estimated_time": "预计开发时间（48hours/1week/1month/3months）"
+    "mvp_suggestion_en": "English product proposal (400 words or less)",
+    "competitive_analysis": "Competitive analysis (200 words or less)",
+    "differentiation": "Differentiation strategy (150 words or less)",
+    "launch_difficulty": "Launch difficulty (easy/medium/hard)",
+    "estimated_time": "Estimated development time (48hours/1week/1month/3months)"
 }}
 
-产品概要必须包含以下四部分：
+The product proposal MUST include the following four parts:
 
-1. 核心功能（3-5个要点）
-   - 这个产品具体做什么
-   - 如何解决用户痛点
-   - 关键特性和亮点
+1. Core Features (3-5 key points)
+   - What this product specifically does
+   - How it solves user pain points
+   - Key features and highlights
 
-2. 目标用户群
-   - 谁会使用这个产品
-   - 用户画像（行业、角色、场景）
-   - 预估用户规模
+2. Target User Groups
+   - Who will use this product
+   - User personas (industry, roles, scenarios)
+   - Estimated user scale
 
-3. 变现方式建议
-   - 推荐的收费模式（订阅制/一次性付费/免费增值）
-   - 价格区间建议
-   - 预期月收入潜力
+3. Monetization Strategy
+   - Recommended pricing model (subscription/one-time/freemium)
+   - Pricing tier suggestions
+   - Expected monthly revenue potential
 
-4. 竞品分析与差异化
-   - 检查是否已有类似工具（如有，列出1-2个主要竞品）
-   - 我们的差异化优势是什么
-   - 为什么用户会选择我们而非现有方案
+4. Competitive Analysis & Differentiation
+   - Check if similar tools already exist (if yes, list 1-2 main competitors)
+   - Our differentiation advantages
+   - Why users would choose us over existing solutions
 
-示例格式：
-\"核心功能：1) 自动从Reddit提取用户痛点并分类，2) AI分析变现潜力和市场规模，3) 生成带竞品分析的MVP报告。目标用户：独立开发者、产品经理、小型创业团队，预估10万+潜在用户。变现方式：订阅制，$29/月基础版，$99/月专业版，预期月收入$5000-20000。竞品：目前缺少专注痛点发现的成熟工具，我们通过多数据源聚合和AI深度分析形成差异化。\"
+Example format:
+"Core Features: 1) Automatically extract and categorize user pain points from Reddit, 2) AI analysis of monetization potential and market size, 3) Generate MVP reports with competitive analysis. Target Users: Indie developers, product managers, small startup teams, estimated 100K+ potential users. Monetization: Subscription model, $29/month basic, $99/month professional, expected monthly revenue $5,000-20,000. Competition: Currently lacks mature tools focused on pain point discovery, we differentiate through multi-source aggregation and deep AI analysis."
 
-要求：
-- 必须先检查是否已有类似解决方案
-- 如果有竞品，明确说明如何做得更好
-- 评估真实的启动难度和时间
-- 聚焦产品价值和可行性
-- 避免过于乐观的预测
+Requirements:
+- Must check if similar solutions already exist
+- If competitors exist, clearly explain how to do better
+- Evaluate realistic launch difficulty and timeline
+- Focus on product value and feasibility
+- Avoid overly optimistic predictions
 
-直接返回JSON，不要包含任何其他文本。"""
+Return JSON directly without any additional text."""

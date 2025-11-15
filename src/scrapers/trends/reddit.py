@@ -272,7 +272,7 @@ class RedditScraper(BaseScraper):
         return TrendingTopic(
             id=str(uuid4()),
             title=title[:200],  # 限制长度
-            description=description[:500],  # 限制长度
+            description=description[:1500],  # 限制长度
             source="Reddit",
             url=raw_data['url'],
             timestamp=dt,

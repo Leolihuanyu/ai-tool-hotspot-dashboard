@@ -151,7 +151,7 @@ class FuturepediaScraper(BaseScraper):
         # 构建AITool对象
         tool = AITool(
             name=raw_data['title'],
-            description=description[:500],  # 限制长度
+            description=description[:1500],  # 限制长度
             source="Futurepedia",
             url=raw_data['link'],
             timestamp=timestamp,
