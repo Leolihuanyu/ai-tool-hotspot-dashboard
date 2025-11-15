@@ -362,10 +362,19 @@ def register_routes(app):
             # 标记邀请码为已使用
             invite_manager.mark_invite_used(invite_code, email)
 
-            # 生成访问token
+            # 生成短期JWT token（用于立即访问）
             from src.auth.token_manager import TokenManager
             token_manager = TokenManager()
             token = token_manager.generate_token(email, subscription_type='beta')
+
+            # 生成并保存长期access token（90天，用于邮件链接）
+            long_term_token = token_manager.generate_long_term_token(expiry_days=90)
+            user_manager.update_access_token(
+                email=email,
+                access_token=long_term_token,
+                expiry_days=90
+            )
+            logger.info(f"长期token已生成并保存: {email}")
 
             # 发送邀请注册欢迎邮件
             try:

@@ -4,6 +4,7 @@
 """
 
 import os
+from datetime import datetime, timezone
 from typing import Dict, Any, Tuple
 from src.email.generator import EmailContentGenerator
 from src.user.user_manager import UserManager
@@ -56,13 +57,39 @@ class DailyEmailGenerator:
 
             # 获取用户的长期token
             access_token = user.get("access_token")
+            token_expires_at = user.get("token_expires_at")
 
-            # 如果没有token，生成一个新的（这是一个后备机制）
+            # 检查token是否需要刷新（不存在 或 已过期 或 即将过期）
+            should_refresh = False
             if not access_token:
+                should_refresh = True
                 logger.warning(
                     f"用户没有访问token，生成新token: {email}",
                     extra={"extra_fields": {"email": email}}
                 )
+            elif token_expires_at:
+                # 检查token是否已过期或即将过期（提前7天刷新）
+                from dateutil import parser
+                from datetime import timedelta
+                try:
+                    expires_dt = parser.parse(token_expires_at)
+                    refresh_threshold = datetime.now(timezone.utc) + timedelta(days=7)
+                    if expires_dt < refresh_threshold:
+                        should_refresh = True
+                        logger.info(
+                            f"Token即将过期，刷新token: {email}",
+                            extra={"extra_fields": {
+                                "email": email,
+                                "expires_at": token_expires_at,
+                                "days_until_expiry": (expires_dt - datetime.now(timezone.utc)).days
+                            }}
+                        )
+                except Exception as e:
+                    logger.error(f"解析token过期时间失败: {e}")
+                    should_refresh = True
+
+            # 如果需要刷新，生成新token并保存
+            if should_refresh:
                 access_token = self.token_manager.generate_long_term_token(expiry_days=90)
                 # 保存到数据库
                 self.user_manager.update_access_token(
