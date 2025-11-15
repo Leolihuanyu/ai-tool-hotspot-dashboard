@@ -47,6 +47,9 @@ jobs:
           DB_TYPE: postgresql
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
+          # JWT配置（用于生成个性化邮件链接）
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+
           # 邮件配置（使用SendGrid）
           EMAIL_PROVIDER: ${{ secrets.EMAIL_PROVIDER || 'sendgrid' }}
           SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
