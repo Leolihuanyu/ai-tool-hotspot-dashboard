@@ -65,11 +65,40 @@ def verify_token_from_request():
     require_ip_match = os.getenv("TOKEN_REQUIRE_IP_MATCH", "false").lower() == "true"
     current_ip = request.remote_addr
 
-    result = token_manager.verify_token(
-        token=token,
-        require_ip_match=require_ip_match,
-        current_ip=current_ip
-    )
+    # 优先尝试数据库token验证（如果同时提供了token和email）
+    # 这用于邮件链接中的长期token（90天有效期）
+    if email:
+        db_result = token_manager.verify_database_token(
+            token=token,
+            email=email,
+            user_manager=user_manager
+        )
+
+        # 如果数据库token验证成功，直接返回结果
+        if db_result.get("valid"):
+            result = db_result
+            logger.info(
+                f"数据库token验证成功: {email}",
+                extra={"extra_fields": {"email": email, "token_type": "database"}}
+            )
+        else:
+            # 数据库token验证失败，尝试JWT验证（向后兼容）
+            logger.debug(
+                f"数据库token验证失败，尝试JWT验证: {email}",
+                extra={"extra_fields": {"email": email, "error": db_result.get("error")}}
+            )
+            result = token_manager.verify_token(
+                token=token,
+                require_ip_match=require_ip_match,
+                current_ip=current_ip
+            )
+    else:
+        # 没有email参数，直接使用JWT验证
+        result = token_manager.verify_token(
+            token=token,
+            require_ip_match=require_ip_match,
+            current_ip=current_ip
+        )
 
     # 如果token有效，检查用户账户是否过期
     if result.get("valid"):
