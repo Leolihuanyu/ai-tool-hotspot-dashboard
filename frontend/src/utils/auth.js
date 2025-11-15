@@ -109,11 +109,18 @@ export function clearToken() {
 /**
  * 调用后端API验证token的有效性
  * @param {string} token - 待验证的token
+ * @param {string} email - 用户邮箱（用于数据库token验证）
  * @returns {Promise<{ valid: boolean, email?: string, subscription_type?: string, error?: string }>}
  */
-export async function verifyToken(token) {
+export async function verifyToken(token, email) {
   try {
-    const response = await fetch(`${API_BASE_URL}/verify-token?token=${encodeURIComponent(token)}`, {
+    // 构建查询参数（同时传递token和email）
+    const params = new URLSearchParams({ token });
+    if (email) {
+      params.append('email', email);
+    }
+
+    const response = await fetch(`${API_BASE_URL}/verify-token?${params.toString()}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -168,8 +175,8 @@ export async function handleAuthFlow() {
 
   console.log('🔍 发现URL中的token，开始验证...', { email });
 
-  // 2. 验证token
-  const verifyResult = await verifyToken(token);
+  // 2. 验证token（传递email用于数据库token验证）
+  const verifyResult = await verifyToken(token, email);
 
   if (!verifyResult.valid) {
     console.error('❌ Token验证失败:', verifyResult.error);
