@@ -491,7 +491,7 @@ class PipelineOrchestrator:
         return min(100, pain_score)
 
     def _filter_top_topics(self, topics: List[TrendingTopic]) -> List[TrendingTopic]:
-        """筛选Top 20热点话题（混合策略：12个高热度+8个高痛点）
+        """筛选Top 20热点话题（混合策略：12个高热度+8个高痛点，考虑时间因素）
 
         Args:
             topics: 热点话题列表
@@ -499,7 +499,7 @@ class PipelineOrchestrator:
         Returns:
             Top 20话题列表（包含热点和痛点）
         """
-        logger.info(f"Phase 3.5: 筛选Top 20热点话题（当前 {len(topics)} 个，混合热点+痛点）")
+        logger.info(f"Phase 3.5: 筛选Top 20热点话题（当前 {len(topics)} 个，混合热点+痛点+时间权重）")
 
         if not topics:
             return []
@@ -528,13 +528,38 @@ class PipelineOrchestrator:
             if topic.summary_cn or topic.summary_ja:
                 quality_score += 20
 
-            # 来自高质量源（Tier 1）+30
-            tier1_sources = ['hackernews', 'github', 'reddit']
+            # 来自高质量源（Tier 1）+30（Reddit已提升至A级）
+            tier1_sources = ['hackernews', 'github', 'reddit', 'producthunt']
             if any(source in topic.source.lower() for source in tier1_sources):
                 quality_score += 30
 
             # 热度评分（0-100）
             heat_score = min(100, topic.heat_score) if hasattr(topic, 'heat_score') else 50
+
+            # 时间权重计算（最近7天的内容增加20分）
+            time_bonus = 0
+            if hasattr(topic, 'timestamp') and topic.timestamp:
+                from datetime import datetime, timedelta, timezone
+                now = datetime.now(timezone.utc)
+                if topic.timestamp.tzinfo is None:
+                    # 如果timestamp没有时区信息，假设为UTC
+                    topic.timestamp = topic.timestamp.replace(tzinfo=timezone.utc)
+                days_ago = (now - topic.timestamp).days
+                if days_ago <= 1:
+                    time_bonus = 25  # 24小时内
+                    topic.trend_marker = "🔥 最新"
+                elif days_ago <= 7:
+                    time_bonus = 20  # 7天内
+                    topic.trend_marker = "📈 热门"
+                elif days_ago <= 14:
+                    time_bonus = 10  # 14天内
+                    topic.trend_marker = "💡 活跃"
+                else:
+                    time_bonus = 0
+                    topic.trend_marker = None
+
+            # 调整后的热度评分
+            adjusted_heat_score = min(100, heat_score + time_bonus)
 
             # 痛点评分（0-100）
             pain_score = self._calculate_pain_score(topic)
@@ -545,16 +570,16 @@ class PipelineOrchestrator:
                     'topic': topic,
                     'pain_score': pain_score,
                     'quality_score': quality_score,
-                    'heat_score': heat_score
+                    'heat_score': adjusted_heat_score  # 使用调整后的热度评分
                 })
             else:
-                # 综合评分：质量70% + 热度30%
-                composite_score = quality_score * 0.7 + heat_score * 0.3
+                # 综合评分：质量60% + 调整后热度40%（增加热度权重）
+                composite_score = quality_score * 0.6 + adjusted_heat_score * 0.4
                 heat_topics.append({
                     'topic': topic,
                     'composite_score': composite_score,
                     'quality_score': quality_score,
-                    'heat_score': heat_score
+                    'heat_score': adjusted_heat_score  # 使用调整后的热度评分
                 })
 
         # 分别排序

@@ -51,6 +51,7 @@ def cmd_scrape(args):
         from src.scrapers.trends.google_trends import GoogleTrendsScraper
         from src.scrapers.trends.hackernews import HackerNewsScraper
         from src.scrapers.trends.github_discussions import GitHubDiscussionsScraper
+        from src.scrapers.trends.indie_hackers import IndieHackersScraper
         from src.pipeline.normalizer import DataNormalizer
         from src.pipeline.deduplicator import Deduplicator
         from src.llm.summarizer import BilingualSummarizer
@@ -80,6 +81,7 @@ def cmd_scrape(args):
             'Reddit': RedditScraper(),  # 优化版，15个高价值子版块
             'Hacker News': HackerNewsScraper(),  # Ask HN + Who is Hiring
             'GitHub Discussions': GitHubDiscussionsScraper(),  # Feature Requests
+            'Indie Hackers': IndieHackersScraper(),  # 独立开发者社区，revenue分享
             'TikTok': TikTokScraper(),
             'YouTube': YouTubeScraper(),
             'X': XTwitterScraper(),

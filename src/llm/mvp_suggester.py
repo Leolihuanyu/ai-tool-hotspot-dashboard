@@ -89,9 +89,14 @@ class MVPSuggester:
                     )
                     return None
 
+                # 返回所有字段（包括新增的竞品分析等）
                 return {
                     "mvp_suggestion_cn": result["mvp_suggestion_cn"],
-                    "mvp_suggestion_ja": result["mvp_suggestion_ja"]
+                    "mvp_suggestion_ja": result["mvp_suggestion_ja"],
+                    "competitive_analysis": result.get("competitive_analysis", ""),
+                    "differentiation": result.get("differentiation", ""),
+                    "launch_difficulty": result.get("launch_difficulty", "medium"),
+                    "estimated_time": result.get("estimated_time", "1month")
                 }
 
             except json.JSONDecodeError as e:

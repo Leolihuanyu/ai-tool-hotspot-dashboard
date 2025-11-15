@@ -1,0 +1,23 @@
+{
+  "subject": "Payment Failed - AI Tool Hotspot Dashboard",
+  "title": "⚠️ Payment Failed",
+  "greeting": "Hello,",
+  "intro": "We encountered an issue processing your AI Tool Hotspot Dashboard subscription payment.",
+  "issue": "The payment could not be processed successfully. This may be due to:",
+  "reasons": [
+    "Insufficient funds on your credit card",
+    "Expired credit card",
+    "Bank declined the transaction",
+    "Incorrect payment information"
+  ],
+  "action_title": "Action Required",
+  "action_p1": "To ensure your service continues without interruption, please update your payment information as soon as possible.",
+  "action_p2": "You can update your payment method in the Stripe Customer Portal.",
+  "timeline_title": "Important Timeline",
+  "timeline": "If payment is not successful within the next few days, your subscription may be suspended.",
+  "cta_button": "Update Payment Information",
+  "help_title": "Need Help?",
+  "help": "If you're having trouble updating your payment information or believe this is an error, please contact our support team.",
+  "footer_copyright": "© 2025 AI Tool Hotspot Dashboard",
+  "footer_notice": "This is an automated notification email, please do not reply directly"
+}

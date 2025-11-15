@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { CheckCircle, XCircle, Mail, Loader2, UserPlus, Gift, Clock } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { getUserTimezone } from '../utils/locale';
 
 // 使用环境变量配置API基础URL
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
@@ -79,6 +80,7 @@ export default function Invite() {
           email: email,
           invite_code: inviteCode,
           language: i18n.language, // 传递当前界面语言
+          timezone: getUserTimezone(), // 传递浏览器真实时区
         }),
         credentials: 'include'
       });

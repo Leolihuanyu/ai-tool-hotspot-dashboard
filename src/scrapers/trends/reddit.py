@@ -127,7 +127,8 @@ class RedditScraper(BaseScraper):
         )
 
         results = []
-        posts_per_subreddit = (limit or 30) // len(self.subreddits)
+        # 确保每个子版块至少抓取1个帖子（测试模式下）
+        posts_per_subreddit = max(1, (limit or 30) // len(self.subreddits))
 
         for subreddit_name in self.subreddits:
             try:
@@ -173,7 +174,8 @@ class RedditScraper(BaseScraper):
             帖子数据列表
         """
         results = []
-        posts_per_subreddit = (limit or 30) // len(self.subreddits)
+        # 确保每个子版块至少抓取1个帖子（测试模式下）
+        posts_per_subreddit = max(1, (limit or 30) // len(self.subreddits))
 
         for subreddit_name in self.subreddits:
             try:

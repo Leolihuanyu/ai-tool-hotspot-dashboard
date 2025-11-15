@@ -360,10 +360,31 @@
     }
   },
   "checkoutSuccess": {
+    "loading": {
+      "title": "正在准备您的Dashboard...",
+      "message": "请稍候，我们正在为您生成访问凭证"
+    },
+    "error": {
+      "title": "出现问题",
+      "missingSession": "缺少支付会话ID",
+      "fetchFailed": "获取访问信息失败",
+      "networkError": "网络错误，请稍后重试",
+      "backHome": "返回首页",
+      "contactSupport": "联系客服"
+    },
     "title": "订阅成功！",
     "message": "感谢您订阅AI工具热点Dashboard！",
     "emailSent": "我们已向您的邮箱发送了欢迎邮件。",
+    "emailLabel": "订阅邮箱:",
     "orderId": "订单ID",
+    "redirectNotice": "即将自动跳转到Dashboard，或者：",
+    "redirectSteps": {
+      "step1": "点击下方"立即访问"按钮",
+      "step2": "访问链接也已发送至您的邮箱作为备用",
+      "step3": "链接有效期为24小时"
+    },
+    "countdownText": "秒后自动跳转...",
+    "accessNow": "立即访问Dashboard",
     "nextSteps": {
       "title": "接下来的步骤：",
       "step1": "查看您的邮箱获取访问链接",

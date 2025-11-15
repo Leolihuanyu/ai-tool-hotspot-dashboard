@@ -13,9 +13,11 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
  * 创建Stripe Checkout Session
  * @param {string} priceType - 价格类型 ('monthly' | 'yearly')
  * @param {string} email - 用户邮箱（可选，用于预填充）
+ * @param {string} language - 用户语言偏好（可选，例如 'zh', 'en', 'ja'）
+ * @param {string} timezone - 用户时区（可选，例如 'Asia/Shanghai'）
  * @returns {Promise<Object>} Checkout session信息
  */
-export async function createCheckoutSession(priceType = 'monthly', email = null) {
+export async function createCheckoutSession(priceType = 'monthly', email = null, language = null, timezone = null) {
   try {
     const token = getAuthToken();
 
@@ -32,6 +34,12 @@ export async function createCheckoutSession(priceType = 'monthly', email = null)
     const body = { plan: priceType };
     if (email) {
       body.email = email;
+    }
+    if (language) {
+      body.language = language;
+    }
+    if (timezone) {
+      body.timezone = timezone;
     }
 
     const response = await fetch(`${API_BASE_URL}/create-checkout-session`, {
@@ -159,10 +167,14 @@ export async function createPortalSession() {
 /**
  * 重定向到Stripe Checkout
  * @param {string} priceType - 价格类型
+ * @param {Object} options - 可选参数
+ * @param {string} options.language - 用户语言偏好
+ * @param {string} options.timezone - 用户时区
  */
-export async function redirectToCheckout(priceType) {
+export async function redirectToCheckout(priceType, options = {}) {
   try {
-    const session = await createCheckoutSession(priceType);
+    const { language, timezone } = options;
+    const session = await createCheckoutSession(priceType, null, language, timezone);
     if (session.url) {
       window.location.href = session.url;
     } else {

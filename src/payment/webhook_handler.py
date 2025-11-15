@@ -474,7 +474,7 @@ class StripeWebhookHandler:
             )
 
     def _send_subscription_cancelled_email(self, email: str):
-        """发送订阅取消确认邮件"""
+        """发送订阅取消确认邮件（多语言支持）"""
         if not self.email_sender:
             default_logger.error(
                 f"无法发送取消确认邮件: 邮件发送器未初始化 (收件人: {email})",
@@ -483,30 +483,24 @@ class StripeWebhookHandler:
             return
 
         try:
-            subject = "订阅已取消 - AI工具热点Dashboard"
-            html_content = f"""
-            <html>
-            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-                <h2>订阅已取消</h2>
-                <p>您好，</p>
-                <p>您的AI工具热点Dashboard订阅已被取消。</p>
-                <p>我们很遗憾看到您离开。如果您有任何反馈或建议，欢迎随时告诉我们。</p>
-                <p>如果您改变主意，随时欢迎重新订阅！</p>
+            # 从数据库获取用户语言偏好
+            user = self.user_manager.get_user(email)
+            language = user.get('language', 'en') if user else 'en'
 
-                <p style="margin-top: 30px;">
-                    祝好！<br>
-                    AI工具热点Dashboard团队
-                </p>
-            </body>
-            </html>
-            """
+            # 使用 EmailTemplateManager 渲染多语言邮件
+            from src.email.template_manager import EmailTemplateManager
+            template_manager = EmailTemplateManager()
+            subject, html_content = template_manager.render_email(
+                template_name='subscription_cancelled',
+                language=language
+            )
 
             self.email_sender.send_html_email(
                 to_emails=[email],
                 subject=subject,
                 html_content=html_content
             )
-            default_logger.info(f"订阅取消确认邮件已发送至: {email}")
+            default_logger.info(f"订阅取消确认邮件已发送至: {email} (语言: {language})")
 
         except Exception as e:
             default_logger.exception(
@@ -515,7 +509,7 @@ class StripeWebhookHandler:
             )
 
     def _send_payment_failed_email(self, email: str):
-        """发送支付失败通知邮件"""
+        """发送支付失败通知邮件（多语言支持）"""
         if not self.email_sender:
             default_logger.error(
                 f"无法发送支付失败通知邮件: 邮件发送器未初始化 (收件人: {email})",
@@ -524,38 +518,24 @@ class StripeWebhookHandler:
             return
 
         try:
-            subject = "⚠️ 支付失败 - AI工具热点Dashboard"
-            html_content = f"""
-            <html>
-            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-                <h2 style="color: #DC2626;">支付失败通知</h2>
-                <p>您好，</p>
-                <p>您的AI工具热点Dashboard订阅续费失败。</p>
+            # 从数据库获取用户语言偏好
+            user = self.user_manager.get_user(email)
+            language = user.get('language', 'en') if user else 'en'
 
-                <h3>可能的原因：</h3>
-                <ul>
-                    <li>信用卡余额不足</li>
-                    <li>信用卡已过期</li>
-                    <li>支付信息需要更新</li>
-                </ul>
-
-                <p>请尽快更新您的支付信息以继续享受服务。</p>
-                <p>您可以在账户设置中管理您的支付方式。</p>
-
-                <p style="margin-top: 30px;">
-                    如有疑问请联系我们。<br>
-                    AI工具热点Dashboard团队
-                </p>
-            </body>
-            </html>
-            """
+            # 使用 EmailTemplateManager 渲染多语言邮件
+            from src.email.template_manager import EmailTemplateManager
+            template_manager = EmailTemplateManager()
+            subject, html_content = template_manager.render_email(
+                template_name='payment_failed',
+                language=language
+            )
 
             self.email_sender.send_html_email(
                 to_emails=[email],
                 subject=subject,
                 html_content=html_content
             )
-            default_logger.info(f"支付失败通知邮件已发送至: {email}")
+            default_logger.info(f"支付失败通知邮件已发送至: {email} (语言: {language})")
 
         except Exception as e:
             default_logger.exception(
@@ -564,7 +544,7 @@ class StripeWebhookHandler:
             )
 
     def _send_payment_issue_email(self, email: str, status: str):
-        """发送支付问题警告邮件"""
+        """发送支付问题警告邮件（多语言支持）"""
         if not self.email_sender:
             default_logger.error(
                 f"无法发送支付问题警告邮件: 邮件发送器未初始化 (收件人: {email})",
@@ -573,29 +553,24 @@ class StripeWebhookHandler:
             return
 
         try:
-            subject = "⚠️ 订阅状态异常 - AI工具热点Dashboard"
-            html_content = f"""
-            <html>
-            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-                <h2 style="color: #F59E0B;">订阅状态异常</h2>
-                <p>您好，</p>
-                <p>您的AI工具热点Dashboard订阅状态为: <strong>{status}</strong></p>
-                <p>这可能会影响您的服务访问。请检查您的支付信息。</p>
+            # 从数据库获取用户语言偏好
+            user = self.user_manager.get_user(email)
+            language = user.get('language', 'en') if user else 'en'
 
-                <p style="margin-top: 30px;">
-                    如有疑问请联系我们。<br>
-                    AI工具热点Dashboard团队
-                </p>
-            </body>
-            </html>
-            """
+            # 使用 EmailTemplateManager 渲染多语言邮件
+            from src.email.template_manager import EmailTemplateManager
+            template_manager = EmailTemplateManager()
+            subject, html_content = template_manager.render_email(
+                template_name='payment_issue',
+                language=language
+            )
 
             self.email_sender.send_html_email(
                 to_emails=[email],
                 subject=subject,
                 html_content=html_content
             )
-            default_logger.info(f"支付问题警告邮件已发送至: {email} (状态: {status})")
+            default_logger.info(f"支付问题警告邮件已发送至: {email} (状态: {status}, 语言: {language})")
 
         except Exception as e:
             default_logger.exception(

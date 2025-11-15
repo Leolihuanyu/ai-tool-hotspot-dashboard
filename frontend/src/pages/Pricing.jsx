@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { Check, Loader2, Sparkles, TrendingUp, Zap, Shield, ArrowRight } from 'lucide-react';
 import { redirectToCheckout } from '../services/paymentService';
 import { useTranslation } from 'react-i18next';
+import { getUserTimezone } from '../utils/locale';
 
 /**
  * 定价页面
  * 显示月付和年付订阅选项
  */
 export default function Pricing() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState(null); // 'monthly' | 'yearly' | null
   const [error, setError] = useState('');
 
@@ -18,8 +19,12 @@ export default function Pricing() {
       setLoading(priceType);
       setError('');
 
-      // 重定向到Stripe Checkout
-      await redirectToCheckout(priceType);
+      // 获取用户的语言和时区
+      const language = i18n.language;
+      const timezone = getUserTimezone();
+
+      // 重定向到Stripe Checkout，传递语言和时区
+      await redirectToCheckout(priceType, { language, timezone });
     } catch (err) {
       console.error('订阅失败:', err);
       setError(err.message || t('pricing.error') + err.message);

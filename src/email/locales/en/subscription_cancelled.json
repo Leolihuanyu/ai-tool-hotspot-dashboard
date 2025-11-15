@@ -1,0 +1,25 @@
+{
+  "subject": "Subscription Cancelled - AI Tool Hotspot Dashboard",
+  "title": "Subscription Cancelled",
+  "greeting": "Hello,",
+  "intro": "We confirm that your AI Tool Hotspot Dashboard subscription has been cancelled.",
+  "details_title": "Cancellation Details",
+  "end_date": "Your access will remain active until the end of your current billing period:",
+  "info_p1": "Until this date, you can continue to access full Dashboard features.",
+  "info_p2": "You will not be charged after the current billing period ends.",
+  "comeback_title": "We'd Love to See You Again!",
+  "comeback_p1": "If you change your mind, you can resubscribe anytime.",
+  "comeback_p2": "We're constantly improving our product to provide more valuable AI tool hotspot analysis.",
+  "features_title": "Features you'll miss:",
+  "features": [
+    "Daily AI tool hotspot analysis",
+    "Smart pain point opportunity matching",
+    "Multi-source deep aggregation",
+    "LLM intelligent summaries"
+  ],
+  "cta_button": "Resubscribe Now",
+  "feedback_title": "We'd Love Your Feedback",
+  "feedback": "If you'd like to share why you cancelled, please reply to this email. Your feedback helps us improve.",
+  "footer_copyright": "© 2025 AI Tool Hotspot Dashboard",
+  "footer_notice": "If you have any questions, please contact our support team"
+}

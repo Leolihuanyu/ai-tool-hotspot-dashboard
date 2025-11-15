@@ -353,7 +353,7 @@ class ProductHuntScraper(BaseScraper):
             return self._scrape_pain_points_via_rss(limit)
 
     def _scrape_pain_points_via_api(self, limit: int = None) -> List[Dict[str, Any]]:
-        """通过API获取评论中的痛点
+        """通过API获取评论中的痛点（增强版）
 
         Args:
             limit: 限制数量
@@ -362,21 +362,51 @@ class ProductHuntScraper(BaseScraper):
             评论数据列表
         """
         try:
-            # GraphQL查询获取评论
+            # 增强版GraphQL查询 - 获取更多产品和更深入的评论
             query = """
             query {
-              posts(first: 20, order: VOTES) {
+              posts(first: 30, order: VOTES) {
                 edges {
                   node {
                     id
                     name
+                    tagline
+                    description
                     url
-                    comments(first: 10) {
+                    votesCount
+                    commentsCount
+                    comments(first: 20) {
                       edges {
                         node {
                           body
                           createdAt
                           votesCount
+                          isHunter
+                          user {
+                            username
+                            headline
+                            followersCount
+                          }
+                          replies(first: 5) {
+                            edges {
+                              node {
+                                body
+                                votesCount
+                                user {
+                                  username
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                    reviews {
+                      edges {
+                        node {
+                          rating
+                          body
+                          createdAt
                           user {
                             username
                           }
@@ -407,36 +437,113 @@ class ProductHuntScraper(BaseScraper):
             comments_data = []
             posts = data.get('data', {}).get('posts', {}).get('edges', [])
 
+            # 痛点相关关键词（用于优先级排序）
+            pain_keywords = [
+                'wish', 'need', 'problem', 'issue', 'missing',
+                'would be great', 'should have', 'lacking',
+                'alternative', 'competitor', 'better than',
+                'expensive', 'pricing', 'cheaper',
+                'difficult', 'hard to', 'confusing'
+            ]
+
             for post_edge in posts:
                 post = post_edge['node']
                 product_name = post['name']
+                product_tagline = post.get('tagline', '')
                 product_url = post['url']
+                product_votes = post.get('votesCount', 0)
 
+                # 1. 处理评论
                 comments = post.get('comments', {}).get('edges', [])
 
                 for comment_edge in comments:
                     comment = comment_edge['node']
+                    comment_body = comment['body']
 
                     # 只保留足够长的评论
-                    if len(comment['body']) < 20:
+                    if len(comment_body) < 30:
                         continue
 
+                    # 计算痛点相关性分数
+                    pain_score = sum(1 for kw in pain_keywords if kw.lower() in comment_body.lower()) * 20
+
+                    # 基础互动分数
+                    votes = comment.get('votesCount', 0)
+                    user_followers = comment.get('user', {}).get('followersCount', 0)
+                    engagement_score = min(100.0, votes * 10.0 + user_followers * 0.1 + pain_score)
+
                     comments_data.append({
-                        'text': comment['body'],
-                        'context_title': f"Review on {product_name}",
+                        'text': comment_body,
+                        'context_title': f"{product_name}: {product_tagline}",
                         'source': 'ProductHunt',
                         'url': product_url,
                         'timestamp': datetime.fromisoformat(
                             comment['createdAt'].replace('Z', '+00:00')
                         ),
-                        'engagement_score': min(100.0, comment.get('votesCount', 0) * 10.0),
+                        'engagement_score': engagement_score,
                         'author_metadata': {
-                            'username': comment.get('user', {}).get('username', 'Unknown')
+                            'username': comment.get('user', {}).get('username', 'Unknown'),
+                            'headline': comment.get('user', {}).get('headline', ''),
+                            'is_hunter': comment.get('isHunter', False)
+                        },
+                        'product_metadata': {
+                            'product_votes': product_votes,
+                            'comments_count': post.get('commentsCount', 0)
                         }
                     })
 
+                    # 处理回复（通常包含更深入的讨论）
+                    replies = comment.get('replies', {}).get('edges', [])
+                    for reply_edge in replies[:3]:  # 限制每条评论最多3个回复
+                        reply = reply_edge['node']
+                        reply_body = reply.get('body', '')
+
+                        if len(reply_body) < 20:
+                            continue
+
+                        comments_data.append({
+                            'text': reply_body,
+                            'context_title': f"Reply to: {product_name}",
+                            'source': 'ProductHunt',
+                            'url': product_url,
+                            'timestamp': datetime.now(timezone.utc),  # 回复通常没有时间戳
+                            'engagement_score': min(100.0, reply.get('votesCount', 0) * 10.0),
+                            'author_metadata': {
+                                'username': reply.get('user', {}).get('username', 'Unknown'),
+                                'is_reply': True
+                            }
+                        })
+
                     if limit and len(comments_data) >= limit:
                         break
+
+                # 2. 处理评价（reviews）- 如果存在
+                reviews = post.get('reviews', {}).get('edges', [])
+                for review_edge in reviews[:5]:  # 每个产品最多5条评价
+                    review = review_edge['node']
+                    review_body = review.get('body', '')
+
+                    if len(review_body) < 30:
+                        continue
+
+                    # 低评分的评价通常包含痛点
+                    rating = review.get('rating', 3)
+                    pain_bonus = 30 if rating <= 2 else 0
+
+                    comments_data.append({
+                        'text': review_body,
+                        'context_title': f"Review of {product_name} ({rating}★)",
+                        'source': 'ProductHunt',
+                        'url': product_url,
+                        'timestamp': datetime.fromisoformat(
+                            review.get('createdAt', datetime.now(timezone.utc).isoformat()).replace('Z', '+00:00')
+                        ),
+                        'engagement_score': 60.0 + pain_bonus,  # 评价通常更有价值
+                        'author_metadata': {
+                            'username': review.get('user', {}).get('username', 'Unknown'),
+                            'rating': rating
+                        }
+                    })
 
                 if limit and len(comments_data) >= limit:
                     break

@@ -27,6 +27,10 @@ class UserPainPoint(BaseModel):
         summary_cn: 中文摘要(≤200字符)
         summary_ja: 日文摘要(≤200字符)
         data_quality_score: 数据质量评分(0-1, v1.1新增)
+        business_value: 商业价值评分(1-10, v1.2新增)
+        urgency_level: 紧迫性评分(1-10, v1.2新增)
+        market_size_hint: 潜在市场规模(v1.2新增)
+        willingness_to_pay: 付费意愿(v1.2新增)
         schema_version: 数据模型版本
         author_metadata: 作者元信息(可选, v1.1新增)
     """
@@ -44,7 +48,14 @@ class UserPainPoint(BaseModel):
     summary_cn: str = Field(max_length=200, default="")
     summary_ja: str = Field(max_length=200, default="")
     data_quality_score: float = Field(ge=0.0, le=1.0, default=0.7)  # v1.1
-    schema_version: str = "1.1"
+
+    # v1.2 新增字段
+    business_value: int = Field(ge=1, le=10, default=5)  # 商业价值评分
+    urgency_level: int = Field(ge=1, le=10, default=5)  # 紧迫性评分
+    market_size_hint: Literal["niche", "moderate", "large"] = Field(default="moderate")  # 市场规模
+    willingness_to_pay: Literal["low", "medium", "high", "very_high"] = Field(default="medium")  # 付费意愿
+
+    schema_version: str = "1.2"
 
     # 可选字段
     author_metadata: Optional[Dict[str, Any]] = None  # v1.1

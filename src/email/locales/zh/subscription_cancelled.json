@@ -1,0 +1,25 @@
+{
+  "subject": "订阅已取消 - AI工具热点Dashboard",
+  "title": "订阅已取消",
+  "greeting": "您好，",
+  "intro": "我们确认您的 AI工具热点Dashboard 订阅已被取消。",
+  "details_title": "取消详情",
+  "end_date": "您的访问权限将保留至当前计费周期结束：",
+  "info_p1": "在此日期之前，您仍可以继续访问完整的Dashboard功能。",
+  "info_p2": "当前计费周期结束后，您将不再收取费用。",
+  "comeback_title": "随时欢迎回来！",
+  "comeback_p1": "如果您改变主意，可以随时重新订阅。",
+  "comeback_p2": "我们会继续改进产品，为您提供更有价值的AI工具热点分析。",
+  "features_title": "您将错过的功能：",
+  "features": [
+    "每日AI工具热点分析",
+    "痛点机会智能匹配",
+    "多数据源深度聚合",
+    "LLM智能总结"
+  ],
+  "cta_button": "重新订阅",
+  "feedback_title": "我们想听听您的意见",
+  "feedback": "如果您愿意分享取消订阅的原因，请直接回复此邮件。您的反馈将帮助我们改进产品。",
+  "footer_copyright": "© 2025 AI工具热点Dashboard",
+  "footer_notice": "如有任何问题，请联系我们的客服团队"
+}

@@ -1,0 +1,24 @@
+{
+  "subject": "Action Required for Your Subscription - AI Tool Hotspot Dashboard",
+  "title": "⚠️ Subscription Payment Needs Your Attention",
+  "greeting": "Hello,",
+  "intro": "We've encountered some issues with your AI Tool Hotspot Dashboard subscription payment.",
+  "issue_title": "Current Situation",
+  "issue": "There may be an issue with your payment method. To avoid service interruption, we recommend checking and updating your payment information.",
+  "why_title": "Why am I receiving this email?",
+  "why": "Our system detected that your payment method may not be able to process the next bill successfully. This could be because:",
+  "reasons": [
+    "Credit card is about to expire",
+    "Bank updated security policies",
+    "Previous payment attempts failed",
+    "Payment method requires verification"
+  ],
+  "action_title": "Recommended Action",
+  "action": "We recommend updating your payment information now to ensure continuous service. This only takes a few minutes.",
+  "cta_button": "Check Payment Information",
+  "assurance_title": "Your Service",
+  "assurance": "Your service is currently still active. We're just notifying you in advance so you have time to address any potential issues.",
+  "help": "If you need any help or have questions, please feel free to contact our support team.",
+  "footer_copyright": "© 2025 AI Tool Hotspot Dashboard",
+  "footer_notice": "This is a preventive notification email designed to help you avoid service interruption"
+}

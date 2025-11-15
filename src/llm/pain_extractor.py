@@ -20,6 +20,7 @@ class PainPointExtractor:
 
     # 痛点识别关键词
     PAIN_KEYWORDS = [
+        # 原有关键词 - 显式痛点
         "need a tool",
         "wish there was",
         "looking for",
@@ -35,6 +36,61 @@ class PainPointExtractor:
         "problem with",
         "hate that",
         "annoying",
+
+        # 新增：隐式痛点表达
+        "every time i have to",
+        "always have to",
+        "takes hours to",
+        "takes forever",
+        "manually",
+        "waste time",
+        "time consuming",
+        "tedious",
+        "repetitive",
+        "no way to",
+        "impossible to",
+        "can't believe there's no",
+
+        # 新增：变现相关痛点
+        "how to monetize",
+        "pricing strategy",
+        "get first customers",
+        "find paying users",
+        "revenue model",
+        "charge for",
+        "willing to pay",
+        "subscription model",
+        "freemium",
+        "customer acquisition",
+        "market validation",
+        "mvp validation",
+
+        # 新增：技术相关痛点（针对AI开发者）
+        "training is slow",
+        "inference cost",
+        "prompt engineering",
+        "api limits",
+        "rate limiting",
+        "model performance",
+        "deployment issues",
+        "scaling problems",
+
+        # 新增：中文痛点关键词
+        "需要一个工具",
+        "找不到",
+        "没有好的解决方案",
+        "麻烦",
+        "效率低",
+        "费时费力",
+        "手动",
+        "重复劳动",
+        "痛点",
+        "难以",
+        "无法",
+        "希望有",
+        "愿意付费",
+        "想要",
+        "缺少"
     ]
 
     def __init__(self, llm_client: Optional[LLMClient] = None):
@@ -122,6 +178,11 @@ class PainPointExtractor:
                 data_quality_score=self._calculate_data_quality(
                     comment_text, source, engagement_score
                 ),
+                # v1.2 新字段
+                business_value=extracted_data.get("business_value", 5),
+                urgency_level=extracted_data.get("urgency_level", 5),
+                market_size_hint=extracted_data.get("market_size_hint", "moderate"),
+                willingness_to_pay=extracted_data.get("willingness_to_pay", "medium"),
                 author_metadata=author_metadata
             )
 
@@ -208,7 +269,7 @@ class PainPointExtractor:
 
     def _build_extraction_prompt(self, comment_text: str, context_title: str) -> str:
         """构建痛点提取的LLM提示词"""
-        return f"""你是一个专业的用户痛点分析师。请分析以下评论,判断是否表达了用户痛点,并提取相关信息。
+        return f"""你是一个专业的用户痛点分析师和商业机会评估专家。请分析以下评论,判断是否表达了用户痛点,并提取相关信息。
 
 **帖子标题**: {context_title}
 
@@ -222,10 +283,24 @@ class PainPointExtractor:
 4. **tags** (list[str]): 分类标签(如 "automation", "data-analysis" 等)
 5. **summary_cn** (str): 中文摘要(≤200字符)
 6. **summary_ja** (str): 日文摘要(≤200字符)
+7. **business_value** (int 1-10): 商业价值评分 - 解决这个痛点的市场潜力
+8. **urgency_level** (int 1-10): 紧迫性评分 - 用户对解决方案的需求紧迫程度
+9. **market_size_hint** (str): 潜在市场规模提示（"niche"小众, "moderate"中等, "large"大规模）
+10. **willingness_to_pay** (str): 付费意愿（"low"低, "medium"中, "high"高, "very_high"非常高）
 
 评估标准:
 - **是痛点**: 明确表达需要解决的问题、缺失的功能、工作流程障碍
 - **不是痛点**: 一般性抱怨、情绪发泄、无具体需求
+
+商业价值评分标准（1-10）:
+- 8-10分: 影响大量用户、节省显著成本、提高核心效率
+- 5-7分: 影响特定用户群、有明确价值主张
+- 1-4分: 影响少数用户、价值不明显
+
+紧迫性评分标准（1-10）:
+- 8-10分: 用户明确表示"急需"、"每天都遇到"、"愿意立即付费"
+- 5-7分: 用户表示"经常遇到"、"希望有解决方案"
+- 1-4分: 用户表示"偶尔遇到"、"nice to have"
 
 返回JSON:"""
 

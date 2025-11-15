@@ -23,7 +23,7 @@ export default function CheckoutSuccess() {
   useEffect(() => {
     const fetchAccessToken = async () => {
       if (!sessionId) {
-        setError('缺少支付会话ID');
+        setError(t('checkoutSuccess.error.missingSession'));
         setLoading(false);
         return;
       }
@@ -44,18 +44,18 @@ export default function CheckoutSuccess() {
           setDashboardUrl(data.dashboard_url);
           setLoading(false);
         } else {
-          setError(data.error || '获取访问信息失败');
+          setError(data.error || t('checkoutSuccess.error.fetchFailed'));
           setLoading(false);
         }
       } catch (err) {
         console.error('获取访问token失败:', err);
-        setError('网络错误，请稍后重试');
+        setError(t('checkoutSuccess.error.networkError'));
         setLoading(false);
       }
     };
 
     fetchAccessToken();
-  }, [sessionId]);
+  }, [sessionId, t]);
 
   // 倒计时自动跳转
   useEffect(() => {
@@ -88,8 +88,8 @@ export default function CheckoutSuccess() {
               </svg>
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">正在准备您的Dashboard...</h1>
-          <p className="text-gray-600">请稍候，我们正在为您生成访问凭证</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('checkoutSuccess.loading.title')}</h1>
+          <p className="text-gray-600">{t('checkoutSuccess.loading.message')}</p>
         </div>
       </div>
     );
@@ -107,20 +107,20 @@ export default function CheckoutSuccess() {
               </svg>
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">出现问题</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">{t('checkoutSuccess.error.title')}</h1>
           <p className="text-gray-600 mb-6">{error}</p>
           <div className="space-y-3">
             <Link
               to="/"
               className="block w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200"
             >
-              返回首页
+              {t('checkoutSuccess.error.backHome')}
             </Link>
             <a
               href="mailto:support@jereo.co.jp"
               className="block w-full bg-gray-100 text-gray-700 font-semibold py-3 px-6 rounded-lg hover:bg-gray-200 transition-all duration-200"
             >
-              联系客服
+              {t('checkoutSuccess.error.contactSupport')}
             </a>
           </div>
         </div>
@@ -162,7 +162,7 @@ export default function CheckoutSuccess() {
         </p>
         {email && (
           <p className="text-sm text-gray-500 mb-6">
-            订阅邮箱: <span className="font-medium text-gray-700">{email}</span>
+            {t('checkoutSuccess.emailLabel')} <span className="font-medium text-gray-700">{email}</span>
           </p>
         )}
 
@@ -192,12 +192,12 @@ export default function CheckoutSuccess() {
             </svg>
             <div className="text-left">
               <p className="text-sm font-medium text-blue-900 mb-2">
-                即将自动跳转到Dashboard，或者：
+                {t('checkoutSuccess.redirectNotice')}
               </p>
               <ul className="text-sm text-blue-800 space-y-1">
-                <li>• 点击下方"立即访问"按钮</li>
-                <li>• 访问链接也已发送至您的邮箱作为备用</li>
-                <li>• 链接有效期为24小时</li>
+                <li>• {t('checkoutSuccess.redirectSteps.step1')}</li>
+                <li>• {t('checkoutSuccess.redirectSteps.step2')}</li>
+                <li>• {t('checkoutSuccess.redirectSteps.step3')}</li>
               </ul>
             </div>
           </div>
@@ -205,7 +205,7 @@ export default function CheckoutSuccess() {
 
         {/* 倒计时提示 */}
         <p className="text-sm text-gray-500 mb-4">
-          {countdown} 秒后自动跳转...
+          {countdown} {t('checkoutSuccess.countdownText')}
         </p>
 
         {/* 按钮组 */}
@@ -215,7 +215,7 @@ export default function CheckoutSuccess() {
               href={dashboardUrl}
               className="block w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl"
             >
-              立即访问Dashboard
+              {t('checkoutSuccess.accessNow')}
             </a>
           )}
 

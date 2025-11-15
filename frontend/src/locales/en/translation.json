@@ -358,10 +358,31 @@
     }
   },
   "checkoutSuccess": {
+    "loading": {
+      "title": "Preparing Your Dashboard...",
+      "message": "Please wait, we're generating your access credentials"
+    },
+    "error": {
+      "title": "Something Went Wrong",
+      "missingSession": "Missing payment session ID",
+      "fetchFailed": "Failed to retrieve access information",
+      "networkError": "Network error, please try again later",
+      "backHome": "Back to Home",
+      "contactSupport": "Contact Support"
+    },
     "title": "Subscription Successful!",
     "message": "Thank you for subscribing to AI Tool Hotspot Dashboard!",
     "emailSent": "We've sent a welcome email to your inbox.",
+    "emailLabel": "Subscription Email:",
     "orderId": "Order ID",
+    "redirectNotice": "Redirecting to Dashboard automatically, or:",
+    "redirectSteps": {
+      "step1": "Click the 'Access Now' button below",
+      "step2": "Access link has also been sent to your email as backup",
+      "step3": "Link is valid for 24 hours"
+    },
+    "countdownText": "seconds until automatic redirect...",
+    "accessNow": "Access Dashboard Now",
     "nextSteps": {
       "title": "Next steps:",
       "step1": "Check your email for the access link",

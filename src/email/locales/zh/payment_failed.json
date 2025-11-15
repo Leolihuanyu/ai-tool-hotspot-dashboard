@@ -1,0 +1,23 @@
+{
+  "subject": "支付失败 - AI工具热点Dashboard",
+  "title": "⚠️ 支付失败",
+  "greeting": "您好，",
+  "intro": "我们在处理您的 AI工具热点Dashboard 订阅付款时遇到了问题。",
+  "issue": "支付未能成功处理，这可能是由于以下原因：",
+  "reasons": [
+    "信用卡余额不足",
+    "信用卡已过期",
+    "银行拒绝了交易",
+    "支付信息不正确"
+  ],
+  "action_title": "请采取行动",
+  "action_p1": "为了确保您的服务不中断，请尽快更新您的支付信息。",
+  "action_p2": "您可以在 Stripe 客户门户中更新您的支付方式。",
+  "timeline_title": "重要时间节点",
+  "timeline": "如果在接下来的几天内支付仍未成功，您的订阅可能会被暂停。",
+  "cta_button": "更新支付信息",
+  "help_title": "需要帮助？",
+  "help": "如果您在更新支付信息时遇到问题，或者认为这是一个错误，请联系我们的客服团队。",
+  "footer_copyright": "© 2025 AI工具热点Dashboard",
+  "footer_notice": "这是一封自动通知邮件，请勿直接回复"
+}

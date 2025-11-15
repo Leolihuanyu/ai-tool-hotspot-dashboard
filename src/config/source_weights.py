@@ -19,11 +19,12 @@ A_TIER_SOURCES = {
     "ProductHunt": 4.0,
     "GitHub Discussions": 4.0,
     "Hacker News": 4.0,
+    "Reddit": 4.0,  # 提升至A级 - r/entrepreneur, r/SaaS等子版块包含高价值痛点信息
+    "Indie Hackers": 4.0,  # 独立开发者核心社区 - revenue分享、MVP验证、获客策略
 }
 
 # B级中信号源（权重2）
 B_TIER_SOURCES = {
-    "Reddit": 2.0,
     "YouTube": 2.0,
     "X": 2.0,
 }
@@ -51,6 +52,10 @@ SOURCE_ALIASES = {
     "github": "GitHub Discussions",
     "github discussions": "GitHub Discussions",
     "reddit": "Reddit",
+    "indie hackers": "Indie Hackers",
+    "indiehackers": "Indie Hackers",
+    "indie-hackers": "Indie Hackers",
+    "ih": "Indie Hackers",
     "youtube": "YouTube",
     "twitter": "X",
     "x": "X",

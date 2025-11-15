@@ -29,6 +29,7 @@ class TrendingTopic(BaseModel):
         schema_version: 数据模型版本
         platforms: 跨平台列表(可选)
         trend_velocity: 趋势速度(可选, v1.1新增)
+        trend_marker: 趋势标记(可选, v1.2新增)
     """
 
     id: str = Field(default_factory=lambda: str(uuid4()))
@@ -43,11 +44,12 @@ class TrendingTopic(BaseModel):
     summary_cn: str = Field(max_length=200, default="")
     summary_ja: str = Field(max_length=200, default="")
     data_quality_score: float = Field(ge=0.0, le=1.0, default=0.7)  # v1.1
-    schema_version: str = "1.1"
+    schema_version: str = "1.2"
 
     # 可选字段
     platforms: Optional[List[str]] = None
     trend_velocity: Optional[float] = None  # v1.1
+    trend_marker: Optional[str] = None  # v1.2 趋势标记（🔥最新/📈热门/💡活跃）
 
     class Config:
         json_schema_extra = {
