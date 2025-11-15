@@ -175,7 +175,8 @@ class UserManager:
                        invite_code, referrer_id, free_until,
                        stripe_customer_id, stripe_subscription_id,
                        created_at, updated_at, last_accessed_at,
-                       language, timezone
+                       language, timezone, access_token,
+                       token_generated_at, token_expires_at
                 FROM users
                 WHERE email = ?
                 """)
@@ -204,6 +205,9 @@ class UserManager:
                     "last_accessed_at": row['last_accessed_at'],
                     "language": row['language'],
                     "timezone": row['timezone'],
+                    "access_token": row['access_token'],
+                    "token_generated_at": row['token_generated_at'],
+                    "token_expires_at": row['token_expires_at'],
                 }
             else:
                 return {
@@ -221,6 +225,9 @@ class UserManager:
                     "last_accessed_at": row[11],
                     "language": row[12],
                     "timezone": row[13],
+                    "access_token": row[14],
+                    "token_generated_at": row[15],
+                    "token_expires_at": row[16],
                 }
 
         except Exception as e:

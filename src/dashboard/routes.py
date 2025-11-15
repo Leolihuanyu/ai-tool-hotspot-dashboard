@@ -588,22 +588,62 @@ def register_routes(app):
                     "error": "用户不存在，请稍后重试或联系客服"
                 }), 404
 
-            # 生成访问token
+            # 获取或生成长期访问token
             from src.auth.token_manager import TokenManager
+            from datetime import datetime, timezone
             token_manager = TokenManager()
             subscription_type = user.get('subscription_type', 'paid')
-            token = token_manager.generate_token(customer_email, subscription_type=subscription_type)
+
+            # 尝试使用数据库中的access_token
+            db_access_token = user.get("access_token")
+            token_expires_at = user.get("token_expires_at")
+            token_is_valid = False
+
+            # 检查数据库中的token是否有效（未过期）
+            if db_access_token and token_expires_at:
+                try:
+                    # 处理不同格式的过期时间
+                    if isinstance(token_expires_at, str):
+                        from dateutil import parser as date_parser
+                        expires_dt = date_parser.parse(token_expires_at)
+                        if expires_dt.tzinfo is None:
+                            expires_dt = expires_dt.replace(tzinfo=timezone.utc)
+                    else:
+                        expires_dt = token_expires_at
+                        if expires_dt.tzinfo is None:
+                            expires_dt = expires_dt.replace(tzinfo=timezone.utc)
+
+                    # 检查是否过期
+                    if datetime.now(timezone.utc) < expires_dt:
+                        # 数据库中的token仍然有效，直接使用
+                        long_term_token = db_access_token
+                        token_is_valid = True
+                        logger.info(f"使用数据库中的长期token: {customer_email}")
+                except Exception as e:
+                    logger.warning(f"解析token过期时间失败: {e}")
+
+            # 如果数据库中没有有效的token，生成新的长期token
+            if not token_is_valid:
+                long_term_token = token_manager.generate_long_term_token(expiry_days=90)
+
+                # 保存长期token到数据库
+                user_manager.update_access_token(
+                    email=customer_email,
+                    access_token=long_term_token,
+                    expiry_days=90
+                )
+                logger.info(f"生成并保存新的长期token: {customer_email}")
 
             # 生成Dashboard访问链接
             dashboard_base_url = os.getenv('DASHBOARD_BASE_URL') or os.getenv('DASHBOARD_URL', 'https://ai-tool-hotspot-dashboard.vercel.app')
-            dashboard_url = f"{dashboard_base_url}/dashboard?token={token}&email={customer_email}"
+            dashboard_url = f"{dashboard_base_url}/dashboard?token={long_term_token}&email={customer_email}"
 
-            logger.info(f"为用户生成访问token (通过session_id): {customer_email}")
+            logger.info(f"为用户提供访问token (通过session_id): {customer_email}")
 
             return jsonify({
                 "success": True,
                 "email": customer_email,
-                "token": token,
+                "token": long_term_token,
                 "dashboard_url": dashboard_url
             })
 

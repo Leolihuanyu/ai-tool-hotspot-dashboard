@@ -379,7 +379,7 @@
     "orderId": "订单ID",
     "redirectNotice": "即将自动跳转到Dashboard，或者：",
     "redirectSteps": {
-      "step1": "点击下方"立即访问"按钮",
+      "step1": "点击下方「立即访问」按钮",
       "step2": "访问链接也已发送至您的邮箱作为备用",
       "step3": "链接有效期为24小时"
     },
