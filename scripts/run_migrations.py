@@ -33,69 +33,66 @@ def run_migrations():
 
     print(f"📦 找到 {len(migration_files)} 个迁移文件")
 
-    # 连接数据库
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
+    # 连接数据库并使用上下文管理器
     try:
-        # 创建 schema_version 表（如果不存在）
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS schema_version (
-                version VARCHAR(10) PRIMARY KEY,
-                description TEXT,
-                applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        """)
-        conn.commit()
-        print("✅ schema_version 表已就绪")
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
 
-        # 运行每个迁移
-        for migration_file in migration_files:
-            print(f"\n🔄 正在运行迁移: {migration_file.name}")
-
-            # 读取 SQL 文件
-            with open(migration_file, 'r', encoding='utf-8') as f:
-                sql = f.read()
-
-            try:
-                # 执行迁移 SQL
-                cursor.execute(sql)
-                conn.commit()
-                print(f"   ✅ {migration_file.name} 执行成功")
-
-                # 记录日志
-                default_logger.info(
-                    f"迁移成功: {migration_file.name}",
-                    extra={"extra_fields": {"migration_file": str(migration_file)}}
+            # 创建 schema_version 表（如果不存在）
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS schema_version (
+                    version VARCHAR(10) PRIMARY KEY,
+                    description TEXT,
+                    applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
+            """)
+            conn.commit()
+            print("✅ schema_version 表已就绪")
 
-            except Exception as e:
-                # 如果迁移已经运行过，可能会出错（这是正常的）
-                error_msg = str(e).lower()
-                if "already exists" in error_msg or "duplicate" in error_msg:
-                    print(f"   ⏭️  {migration_file.name} 已经执行过（跳过）")
-                else:
-                    print(f"   ❌ {migration_file.name} 执行失败: {e}")
-                    default_logger.error(
-                        f"迁移失败: {migration_file.name}",
-                        extra={"extra_fields": {
-                            "migration_file": str(migration_file),
-                            "error": str(e)
-                        }}
+            # 运行每个迁移
+            for migration_file in migration_files:
+                print(f"\n🔄 正在运行迁移: {migration_file.name}")
+
+                # 读取 SQL 文件
+                with open(migration_file, 'r', encoding='utf-8') as f:
+                    sql = f.read()
+
+                try:
+                    # 执行迁移 SQL
+                    cursor.execute(sql)
+                    conn.commit()
+                    print(f"   ✅ {migration_file.name} 执行成功")
+
+                    # 记录日志
+                    default_logger.info(
+                        f"迁移成功: {migration_file.name}",
+                        extra={"extra_fields": {"migration_file": str(migration_file)}}
                     )
-                conn.rollback()
 
-        print("\n✅ 所有迁移执行完成")
-        return True
+                except Exception as e:
+                    # 如果迁移已经运行过，可能会出错（这是正常的）
+                    error_msg = str(e).lower()
+                    if "already exists" in error_msg or "duplicate" in error_msg:
+                        print(f"   ⏭️  {migration_file.name} 已经执行过（跳过）")
+                    else:
+                        print(f"   ❌ {migration_file.name} 执行失败: {e}")
+                        default_logger.error(
+                            f"迁移失败: {migration_file.name}",
+                            extra={"extra_fields": {
+                                "migration_file": str(migration_file),
+                                "error": str(e)
+                            }}
+                        )
+                    conn.rollback()
+
+            cursor.close()
+            print("\n✅ 所有迁移执行完成")
+            return True
 
     except Exception as e:
         print(f"\n❌ 迁移执行失败: {e}")
         default_logger.error(f"迁移执行失败: {e}", exc_info=True)
         return False
-
-    finally:
-        cursor.close()
-        conn.close()
 
 
 if __name__ == "__main__":

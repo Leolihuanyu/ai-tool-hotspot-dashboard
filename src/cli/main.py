@@ -374,8 +374,9 @@ def cmd_send_email(args):
                     print(f"⚠️  No active subscribers found for timezones: {timezones_filter}")
                 else:
                     print("⚠️  No active subscribers found in database")
-                print("💡 Please ensure users table has active subscribers")
-                return 1
+                print("💡 This is normal if no users are subscribed in the target timezone")
+                print("✅ Skipping email sending (no subscribers)")
+                return 0  # 返回成功状态，因为这是正常的业务情况
 
             print(f"✅ Found {len(subscribers)} active subscribers")
         else:
@@ -515,8 +516,8 @@ def cmd_send_email(args):
             default_logger.error({
                 "event": "email_command_failed",
                 "status": "failed",
-                "errors": result["errors"],
-                "timestamp": result['timestamp']
+                "errors": errors,
+                "timestamp": datetime.now().isoformat()
             })
 
             return 1
