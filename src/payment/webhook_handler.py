@@ -293,11 +293,31 @@ class StripeWebhookHandler:
                 subscription_status="cancelled"
             )
 
+            # 清空用户的访问token（撤销访问权限）
+            token_cleared = self.user_manager.clear_access_token(customer_email)
+            if token_cleared:
+                default_logger.info(
+                    f"用户访问token已清空: {customer_email}",
+                    extra={"extra_fields": {
+                        "email": customer_email,
+                        "subscription_id": subscription_id
+                    }}
+                )
+            else:
+                default_logger.warning(
+                    f"清空用户访问token失败: {customer_email}",
+                    extra={"extra_fields": {
+                        "email": customer_email,
+                        "subscription_id": subscription_id
+                    }}
+                )
+
             default_logger.info(
                 f"订阅已取消: {customer_email}",
                 extra={"extra_fields": {
                     "email": customer_email,
-                    "subscription_id": subscription_id
+                    "subscription_id": subscription_id,
+                    "token_cleared": token_cleared
                 }}
             )
 

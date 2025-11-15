@@ -55,48 +55,133 @@ class DailyEmailGenerator:
             if not user:
                 raise Exception(f"用户不存在: {email}")
 
-            # 获取用户的长期token
+            # 获取用户的长期token和订阅类型
             access_token = user.get("access_token")
             token_expires_at = user.get("token_expires_at")
+            subscription_type = user.get("subscription_type", "beta")  # 默认为beta
 
             # 检查token是否需要刷新（不存在 或 已过期 或 即将过期）
             should_refresh = False
+            token_expired = False
+
             if not access_token:
                 should_refresh = True
                 logger.warning(
                     f"用户没有访问token，生成新token: {email}",
-                    extra={"extra_fields": {"email": email}}
+                    extra={"extra_fields": {"email": email, "subscription_type": subscription_type}}
                 )
             elif token_expires_at:
                 # 检查token是否已过期或即将过期（提前7天刷新）
                 from dateutil import parser
-                from datetime import timedelta
+                from datetime import datetime, timedelta, timezone
                 try:
-                    expires_dt = parser.parse(token_expires_at)
-                    refresh_threshold = datetime.now(timezone.utc) + timedelta(days=7)
-                    if expires_dt < refresh_threshold:
+                    # 处理不同数据库返回的数据类型
+                    if isinstance(token_expires_at, str):
+                        # SQLite返回字符串，需要解析
+                        expires_dt = parser.parse(token_expires_at)
+                    else:
+                        # PostgreSQL返回datetime对象，直接使用
+                        expires_dt = token_expires_at
+
+                    # 确保有时区信息
+                    if expires_dt.tzinfo is None:
+                        expires_dt = expires_dt.replace(tzinfo=timezone.utc)
+
+                    now_dt = datetime.now(timezone.utc)
+                    refresh_threshold = now_dt + timedelta(days=7)
+
+                    # 检查token是否已经过期
+                    if expires_dt < now_dt:
+                        token_expired = True
                         should_refresh = True
-                        logger.info(
-                            f"Token即将过期，刷新token: {email}",
+                        logger.warning(
+                            f"Token已过期: {email} (订阅类型: {subscription_type})",
                             extra={"extra_fields": {
                                 "email": email,
-                                "expires_at": token_expires_at,
-                                "days_until_expiry": (expires_dt - datetime.now(timezone.utc)).days
+                                "subscription_type": subscription_type,
+                                "expires_at": str(token_expires_at)
+                            }}
+                        )
+                    # 检查token是否即将过期（7天内）
+                    elif expires_dt < refresh_threshold:
+                        should_refresh = True
+                        logger.info(
+                            f"Token即将过期: {email} (订阅类型: {subscription_type})",
+                            extra={"extra_fields": {
+                                "email": email,
+                                "subscription_type": subscription_type,
+                                "expires_at": str(token_expires_at),
+                                "days_until_expiry": (expires_dt - now_dt).days
                             }}
                         )
                 except Exception as e:
-                    logger.error(f"解析token过期时间失败: {e}")
-                    should_refresh = True
+                    logger.error(
+                        f"解析token过期时间失败: {e}",
+                        extra={"extra_fields": {
+                            "email": email,
+                            "token_expires_at": str(token_expires_at),
+                            "type": type(token_expires_at).__name__,
+                            "error": str(e)
+                        }}
+                    )
+                    # 不要因为解析失败就刷新token！
+                    # 只有真的没有token或确实过期时才刷新
+                    should_refresh = False  # 修复：解析失败不应该触发刷新
 
-            # 如果需要刷新，生成新token并保存
+            # 根据订阅类型决定是否刷新token
             if should_refresh:
-                access_token = self.token_manager.generate_long_term_token(expiry_days=90)
-                # 保存到数据库
-                self.user_manager.update_access_token(
-                    email=email,
-                    access_token=access_token,
-                    expiry_days=90
-                )
+                if subscription_type == "paid":
+                    # 订阅用户：刷新token
+                    access_token = self.token_manager.generate_long_term_token(expiry_days=90)
+                    # 保存到数据库
+                    self.user_manager.update_access_token(
+                        email=email,
+                        access_token=access_token,
+                        expiry_days=90
+                    )
+                    logger.info(
+                        f"订阅用户token已刷新: {email}",
+                        extra={"extra_fields": {
+                            "email": email,
+                            "subscription_type": subscription_type,
+                            "new_token_prefix": access_token[:10] + "..." if access_token else None
+                        }}
+                    )
+                elif subscription_type == "beta":
+                    # Beta用户：不刷新，让token自然过期
+                    if token_expired:
+                        # Token已经过期，抛出异常阻止邮件发送
+                        error_msg = f"Beta用户访问权限已过期: {email}"
+                        logger.warning(
+                            error_msg,
+                            extra={"extra_fields": {
+                                "email": email,
+                                "subscription_type": subscription_type,
+                                "token_expires_at": token_expires_at
+                            }}
+                        )
+                        raise Exception(error_msg)
+                    else:
+                        # Token即将过期但还未过期，记录日志但继续发送邮件
+                        logger.info(
+                            f"Beta用户token即将过期，不刷新: {email}",
+                            extra={"extra_fields": {
+                                "email": email,
+                                "subscription_type": subscription_type,
+                                "token_expires_at": token_expires_at
+                            }}
+                        )
+                        # Beta用户即将过期时仍使用现有token
+                        # access_token保持不变
+                else:
+                    # 其他类型（如free）：根据情况处理
+                    logger.warning(
+                        f"未知订阅类型，默认不刷新token: {email} (type: {subscription_type})",
+                        extra={"extra_fields": {
+                            "email": email,
+                            "subscription_type": subscription_type
+                        }}
+                    )
 
             # 获取用户语言偏好
             language = user.get("language", "en")
