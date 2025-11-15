@@ -400,29 +400,29 @@ class StripeWebhookHandler:
             language = user.get('language', 'en') if user else 'en'
             subscription_type = user.get('subscription_type', 'paid') if user else 'paid'
 
-            # 检查用户是否已有有效token（避免重复生成）
-            existing_token = user.get("access_token") if user else None
+            # 从数据库读取已保存的access_token（如果有）
+            db_access_token = user.get("access_token") if user else None
             token_expires_at = user.get("token_expires_at") if user else None
 
-            # 如果已有有效token（未过期），直接使用
-            if existing_token and token_expires_at:
+            # 检查数据库中的token是否有效（未过期）
+            token_is_valid = False
+            if db_access_token and token_expires_at:
                 from dateutil import parser
                 try:
                     expires_dt = parser.parse(token_expires_at)
                     if datetime.now(timezone.utc) < expires_dt:
-                        long_term_token = existing_token
+                        # 数据库中的token仍然有效，直接使用
+                        long_term_token = db_access_token
+                        token_is_valid = True
                         default_logger.info(
-                            f"使用已有的长期token: {email}",
+                            f"使用数据库中已有的access_token: {email}",
                             extra={"extra_fields": {"email": email, "expires_at": token_expires_at}}
                         )
-                    else:
-                        # Token已过期，生成新的
-                        raise ValueError("Token已过期")
-                except:
-                    existing_token = None
+                except Exception as e:
+                    default_logger.warning(f"解析token过期时间失败: {e}")
 
-            # 如果没有有效token，生成新的
-            if not existing_token:
+            # 如果数据库中没有有效token，生成新的
+            if not token_is_valid:
                 long_term_token = self.token_manager.generate_long_term_token(expiry_days=90)
                 token_saved = self.user_manager.update_access_token(
                     email=email,
