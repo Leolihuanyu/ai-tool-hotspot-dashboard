@@ -395,33 +395,52 @@ class StripeWebhookHandler:
             return
 
         try:
-            # 从数据库查询用户语言偏好和订阅类型
+            # 从数据库查询用户信息
             user = self.user_manager.get_user(email)
             language = user.get('language', 'en') if user else 'en'
             subscription_type = user.get('subscription_type', 'paid') if user else 'paid'
 
-            # 生成长期有效token（90天）并保存到数据库
-            long_term_token = self.token_manager.generate_long_term_token(expiry_days=90)
+            # 检查用户是否已有有效token（避免重复生成）
+            existing_token = user.get("access_token") if user else None
+            token_expires_at = user.get("token_expires_at") if user else None
 
-            # 保存token到数据库
-            token_saved = self.user_manager.update_access_token(
-                email=email,
-                access_token=long_term_token,
-                expiry_days=90
-            )
+            # 如果已有有效token（未过期），直接使用
+            if existing_token and token_expires_at:
+                from dateutil import parser
+                try:
+                    expires_dt = parser.parse(token_expires_at)
+                    if datetime.now(timezone.utc) < expires_dt:
+                        long_term_token = existing_token
+                        default_logger.info(
+                            f"使用已有的长期token: {email}",
+                            extra={"extra_fields": {"email": email, "expires_at": token_expires_at}}
+                        )
+                    else:
+                        # Token已过期，生成新的
+                        raise ValueError("Token已过期")
+                except:
+                    existing_token = None
 
-            if not token_saved:
-                default_logger.warning(
-                    f"保存访问token失败，使用临时token: {email}",
-                    extra={"extra_fields": {"email": email}}
+            # 如果没有有效token，生成新的
+            if not existing_token:
+                long_term_token = self.token_manager.generate_long_term_token(expiry_days=90)
+                token_saved = self.user_manager.update_access_token(
+                    email=email,
+                    access_token=long_term_token,
+                    expiry_days=90
                 )
-                # 如果保存失败，回退到临时token
-                long_term_token = self.token_manager.generate_token(email, subscription_type=subscription_type)
-            else:
-                default_logger.info(
-                    f"长期访问token已生成并保存: {email}",
-                    extra={"extra_fields": {"email": email, "expiry_days": 90}}
-                )
+
+                if token_saved:
+                    default_logger.info(
+                        f"长期访问token已生成并保存: {email}",
+                        extra={"extra_fields": {"email": email, "expiry_days": 90}}
+                    )
+                else:
+                    default_logger.error(
+                        f"保存访问token失败: {email}",
+                        extra={"extra_fields": {"email": email}}
+                    )
+                    raise Exception("无法保存访问token，请稍后重试")
 
             # 优先使用 DASHBOARD_BASE_URL（前端地址），向后兼容 DASHBOARD_URL
             dashboard_base_url = os.getenv('DASHBOARD_BASE_URL') or os.getenv('DASHBOARD_URL', 'https://ai-tool-hotspot-dashboard.vercel.app')
