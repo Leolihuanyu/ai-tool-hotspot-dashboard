@@ -1,0 +1,30 @@
+{
+  "subject": "🚀 Daily AI Tool Opportunity Report {date} | Top 10 Opportunities",
+  "title": "🚀 Daily AI Tool Opportunity Report",
+  "subtitle": "Report Date: {date}",
+  "stats_labels": {
+    "ai_tools": "AI Tools",
+    "trending_topics": "Trending Topics",
+    "pain_points": "Pain Points",
+    "top_opportunities": "Top Opportunities"
+  },
+  "sections": {
+    "top_opportunities_title": "📊 Top 10 Product Opportunities"
+  },
+  "opportunity_card": {
+    "pain_point_label": "💡 Pain Point:",
+    "summary_label": "Summary:",
+    "mvp_title": "🎯 MVP Suggestion",
+    "related_tools_label": "🔧 Related AI Tools:",
+    "related_topics_label": "📈 Related Trends:",
+    "view_details_button": "View Dashboard"
+  },
+  "footer": {
+    "generation_time": "📅 Report Generated: {time}",
+    "data_sources": "📊 Data Sources: Futurepedia, ProductHunt, There's an AI for That, Reddit, X, Google Trends",
+    "next_update": "🔄 Next Update: Tomorrow {time}",
+    "powered_by": "🤖 Powered by AI Tool Hotspot Dashboard",
+    "automated_notice": "This email is automatically sent by the AI Tool Hotspot Dashboard system",
+    "unsubscribe": "To unsubscribe from this email, please contact the administrator"
+  }
+}

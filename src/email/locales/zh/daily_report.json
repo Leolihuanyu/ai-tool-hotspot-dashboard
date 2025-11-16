@@ -1,0 +1,30 @@
+{
+  "subject": "🚀 每日AI工具机会报告 {date} | Top 10产品机会",
+  "title": "🚀 每日AI工具机会报告",
+  "subtitle": "报告日期：{date}",
+  "stats_labels": {
+    "ai_tools": "AI工具",
+    "trending_topics": "热门话题",
+    "pain_points": "痛点分析",
+    "top_opportunities": "优质机会"
+  },
+  "sections": {
+    "top_opportunities_title": "📊 Top 10 产品机会"
+  },
+  "opportunity_card": {
+    "pain_point_label": "💡 痛点描述：",
+    "summary_label": "摘要：",
+    "mvp_title": "🎯 MVP建议",
+    "related_tools_label": "🔧 相关AI工具：",
+    "related_topics_label": "📈 相关热点：",
+    "view_details_button": "查看Dashboard"
+  },
+  "footer": {
+    "generation_time": "📅 报告生成时间：{time}",
+    "data_sources": "📊 数据来源：Futurepedia, ProductHunt, There's an AI for That, Reddit, X, Google Trends",
+    "next_update": "🔄 下次更新：明天 {time}",
+    "powered_by": "🤖 由AI工具热点Dashboard提供支持",
+    "automated_notice": "本邮件由AI工具热点Dashboard系统自动发送",
+    "unsubscribe": "如需停止接收此邮件，请联系管理员"
+  }
+}

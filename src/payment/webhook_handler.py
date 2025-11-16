@@ -147,10 +147,44 @@ class StripeWebhookHandler:
                 default_logger.error("无法获取用户邮箱")
                 return {"success": False, "message": "无法获取用户邮箱"}
 
-            # 从 session metadata 获取语言和时区
+            # 从 session metadata 获取语言和时区，并进行智能推断
             metadata = session.get("metadata", {})
-            language = metadata.get("language", "en")
-            timezone = metadata.get("timezone", "UTC")
+            language = metadata.get("language")
+            timezone = metadata.get("timezone")
+
+            # 智能推断language和timezone
+            from src.utils.locale_helper import (
+                infer_language_from_timezone,
+                infer_timezone_from_language,
+                is_timezone_language_compatible
+            )
+
+            # 情况1: 都未提供，使用默认值
+            if not language and not timezone:
+                language = 'en'
+                timezone = 'UTC'
+            # 情况2: 只提供了timezone，根据timezone推断language
+            elif timezone and not language:
+                language = infer_language_from_timezone(timezone)
+                default_logger.info(f"根据timezone {timezone} 推断language为 {language}")
+            # 情况3: 只提供了language，根据language推断timezone
+            elif language and not timezone:
+                timezone = infer_timezone_from_language(language)
+                default_logger.info(f"根据language {language} 推断timezone为 {timezone}")
+            # 情况4: 都提供了，检查兼容性
+            else:
+                if not is_timezone_language_compatible(timezone, language):
+                    suggested_language = infer_language_from_timezone(timezone)
+                    default_logger.warning(
+                        f"时区和语言可能不匹配: timezone={timezone}, language={language}, "
+                        f"建议language={suggested_language}",
+                        extra={"extra_fields": {
+                            "email": customer_email,
+                            "timezone": timezone,
+                            "language": language,
+                            "suggested_language": suggested_language
+                        }}
+                    )
 
             # 更新用户订阅状态
             user = self.user_manager.get_user(customer_email)

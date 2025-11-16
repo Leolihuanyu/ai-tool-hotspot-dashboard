@@ -311,18 +311,46 @@ def register_routes(app):
             data = request.get_json()
             email = data.get('email')
             invite_code = data.get('invite_code')
-            language = data.get('language', 'en')
-
-            # 获取timezone，如果未提供则根据language推断默认值
+            language = data.get('language')
             timezone = data.get('timezone')
-            if not timezone:
-                # 根据语言推断时区
-                timezone_map = {
-                    'zh': 'Asia/Shanghai',
-                    'ja': 'Asia/Tokyo',
-                    'en': 'UTC'
-                }
-                timezone = timezone_map.get(language, 'UTC')
+
+            # 智能推断language和timezone
+            from src.utils.locale_helper import (
+                infer_language_from_timezone,
+                infer_timezone_from_language,
+                is_timezone_language_compatible
+            )
+
+            # 情况1: 都未提供，使用默认值
+            if not language and not timezone:
+                language = 'en'
+                timezone = 'UTC'
+
+            # 情况2: 只提供了timezone，根据timezone推断language
+            elif timezone and not language:
+                language = infer_language_from_timezone(timezone)
+                logger.info(f"根据timezone {timezone} 推断language为 {language}")
+
+            # 情况3: 只提供了language，根据language推断timezone
+            elif language and not timezone:
+                timezone = infer_timezone_from_language(language)
+                logger.info(f"根据language {language} 推断timezone为 {timezone}")
+
+            # 情况4: 都提供了，检查兼容性
+            else:
+                if not is_timezone_language_compatible(timezone, language):
+                    # 记录警告但不阻断注册
+                    suggested_language = infer_language_from_timezone(timezone)
+                    logger.warning(
+                        f"时区和语言可能不匹配: timezone={timezone}, language={language}, "
+                        f"建议language={suggested_language}",
+                        extra={"extra_fields": {
+                            "email": email,
+                            "timezone": timezone,
+                            "language": language,
+                            "suggested_language": suggested_language
+                        }}
+                    )
 
             if not email or not invite_code:
                 return jsonify({

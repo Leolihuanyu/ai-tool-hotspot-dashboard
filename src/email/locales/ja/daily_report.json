@@ -1,0 +1,30 @@
+{
+  "subject": "🚀 毎日AIツール機会レポート {date} | トップ10機会",
+  "title": "🚀 毎日AIツール機会レポート",
+  "subtitle": "レポート日付：{date}",
+  "stats_labels": {
+    "ai_tools": "AIツール",
+    "trending_topics": "トレンドトピック",
+    "pain_points": "ペインポイント",
+    "top_opportunities": "トップ機会"
+  },
+  "sections": {
+    "top_opportunities_title": "📊 トップ10プロダクト機会"
+  },
+  "opportunity_card": {
+    "pain_point_label": "💡 ペインポイント：",
+    "summary_label": "概要：",
+    "mvp_title": "🎯 MVP提案",
+    "related_tools_label": "🔧 関連AIツール：",
+    "related_topics_label": "📈 関連トレンド：",
+    "view_details_button": "ダッシュボードを見る"
+  },
+  "footer": {
+    "generation_time": "📅 レポート生成時刻：{time}",
+    "data_sources": "📊 データソース：Futurepedia, ProductHunt, There's an AI for That, Reddit, X, Google Trends",
+    "next_update": "🔄 次回更新：明日 {time}",
+    "powered_by": "🤖 AI Tool Hotspot Dashboardで提供",
+    "automated_notice": "このメールはAI Tool Hotspot Dashboardシステムにより自動送信されています",
+    "unsubscribe": "このメールの受信を停止するには、管理者にお問い合わせください"
+  }
+}

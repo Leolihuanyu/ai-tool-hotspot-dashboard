@@ -2,10 +2,11 @@ name: 每日邮件发送
 
 on:
   # 一天运行3次，分别在三个时区的本地时间早上9点
+  # 注意：GitHub Actions的schedule可能延迟，因此时间判断使用范围匹配
   schedule:
     - cron: '0 0 * * *'   # UTC 00:00 = 日本时间 09:00 (JST, UTC+9)
     - cron: '0 1 * * *'   # UTC 01:00 = 中国时间 09:00 (CST, UTC+8)
-    - cron: '0 13 * * *'  # UTC 13:00 = 美东时间 09:00 (EDT, UTC-4)
+    - cron: '0 13 * * *'  # UTC 13:00 = 美东时间 09:00 (EST, UTC-5)
 
   # 支持手动触发
   workflow_dispatch:
@@ -87,19 +88,27 @@ jobs:
             fi
           else
             # 自动触发：根据当前UTC时间决定发送给哪个时区
+            # 使用范围匹配以容忍GitHub Actions的延迟（最多3小时）
             CURRENT_HOUR=$(date -u +%H)
+            # 去掉前导0，避免被当作八进制
+            CURRENT_HOUR=$((10#$CURRENT_HOUR))
 
-            if [ "$CURRENT_HOUR" = "00" ]; then
-              TARGET_TIMEZONE="Asia/Tokyo"
-              echo "🇯🇵 UTC 00:00 - 发送给日本用户 (Asia/Tokyo)"
-            elif [ "$CURRENT_HOUR" = "01" ]; then
-              TARGET_TIMEZONE="Asia/Shanghai"
-              echo "🇨🇳 UTC 01:00 - 发送给中国用户 (Asia/Shanghai)"
-            elif [ "$CURRENT_HOUR" = "13" ]; then
+            # 判断逻辑：按cron预定时间的延迟范围匹配
+            # cron '0 13 * * *' 优先级最高（避免与凌晨时间混淆）
+            if [ $CURRENT_HOUR -ge 13 ] && [ $CURRENT_HOUR -lt 16 ]; then
               TARGET_TIMEZONE="America/New_York"
-              echo "🇺🇸 UTC 13:00 - 发送给美国东部用户 (America/New_York)"
+              echo "🇺🇸 UTC ${CURRENT_HOUR}:xx (13:00-15:59范围) - 发送给美国东部用户 (America/New_York)"
+            # cron '0 1 * * *' → 容忍延迟到03:59
+            elif [ $CURRENT_HOUR -ge 1 ] && [ $CURRENT_HOUR -lt 4 ]; then
+              TARGET_TIMEZONE="Asia/Shanghai"
+              echo "🇨🇳 UTC ${CURRENT_HOUR}:xx (01:00-03:59范围) - 发送给中国用户 (Asia/Shanghai)"
+            # cron '0 0 * * *' → 仅匹配00:xx
+            elif [ $CURRENT_HOUR -eq 0 ]; then
+              TARGET_TIMEZONE="Asia/Tokyo"
+              echo "🇯🇵 UTC ${CURRENT_HOUR}:xx (00:00-00:59范围) - 发送给日本用户 (Asia/Tokyo)"
             else
-              echo "⚠️ 未知时间点，发送给所有订阅者"
+              echo "⚠️ 未知时间点 (UTC ${CURRENT_HOUR}:xx)，发送给所有订阅者"
+              echo "💡 提示：这通常表示GitHub Actions延迟超过3小时"
               python -m src.cli.main send-email --use-db
               exit 0
             fi

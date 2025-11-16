@@ -4,8 +4,10 @@
 """
 
 import os
+import json
 from datetime import datetime, timezone
 from typing import Dict, Any, Tuple
+from pathlib import Path
 from src.email.generator import EmailContentGenerator
 from src.user.user_manager import UserManager
 from src.auth.token_manager import TokenManager
@@ -31,6 +33,61 @@ class DailyEmailGenerator:
         self.base_generator = EmailContentGenerator(template_path, data_path)
         self.user_manager = UserManager()
         self.token_manager = TokenManager()
+        self.locales_dir = Path(__file__).parent / "locales"
+
+    def _load_translations(self, language: str) -> Dict[str, Any]:
+        """加载指定语言的翻译文件
+
+        Args:
+            language: 语言代码 (en/zh/ja)
+
+        Returns:
+            Dict: 翻译文本字典
+        """
+        try:
+            locale_file = self.locales_dir / language / "daily_report.json"
+            if not locale_file.exists():
+                logger.warning(
+                    f"翻译文件不存在，使用英文: {locale_file}",
+                    extra={"extra_fields": {"language": language}}
+                )
+                locale_file = self.locales_dir / "en" / "daily_report.json"
+
+            with open(locale_file, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            logger.error(
+                f"加载翻译文件失败: {str(e)}",
+                extra={"extra_fields": {"language": language, "error": str(e)}}
+            )
+            # 返回默认英文翻译
+            return {
+                "subject": "🚀 Daily AI Tool Opportunity Report {date} | Top 10 Opportunities",
+                "title": "🚀 Daily AI Tool Opportunity Report",
+                "subtitle": "Report Date: {date}",
+                "stats_labels": {
+                    "ai_tools": "AI Tools",
+                    "trending_topics": "Trending Topics",
+                    "pain_points": "Pain Points",
+                    "top_opportunities": "Top Opportunities"
+                },
+                "sections": {
+                    "top_opportunities_title": "📊 Top 10 Product Opportunities"
+                },
+                "opportunity_card": {
+                    "mvp_title": "🎯 MVP Suggestion",
+                    "related_tools_label": "🔧 Related AI Tools:",
+                    "related_topics_label": "📈 Related Trends:",
+                    "view_details_button": "View Dashboard"
+                },
+                "footer": {
+                    "generation_time": "📅 Report Generated: {time}",
+                    "data_sources": "📊 Data Sources: Futurepedia, ProductHunt, There's an AI for That, Reddit, X, Google Trends",
+                    "powered_by": "🤖 Powered by AI Tool Hotspot Dashboard",
+                    "automated_notice": "This email is automatically sent by the AI Tool Hotspot Dashboard system",
+                    "unsubscribe": "To unsubscribe from this email, please contact the administrator"
+                }
+            }
 
     def generate_personalized_email(
         self,
@@ -186,6 +243,9 @@ class DailyEmailGenerator:
             # 获取用户语言偏好
             language = user.get("language", "en")
 
+            # 加载该语言的翻译
+            translations = self._load_translations(language)
+
             # 确定 Dashboard URL
             if dashboard_base_url is None:
                 dashboard_base_url = os.getenv('DASHBOARD_URL', 'https://ai-tool-hotspot-dashboard.vercel.app')
@@ -203,8 +263,24 @@ class DailyEmailGenerator:
                 dashboard_url=dashboard_base_url
             )
 
-            # 添加个性化参数到模板数据
+            # 根据用户语言为每个机会选择正确的摘要和MVP建议
+            language_suffix_map = {
+                'en': '_en',
+                'zh': '_cn',
+                'ja': '_ja'
+            }
+            suffix = language_suffix_map.get(language, '_en')
+
+            for opp in template_data['opportunities']:
+                # 选择对应语言的摘要
+                opp['summary'] = opp['pain_point'].get(f'summary{suffix}', opp['pain_point'].get('summary_en', ''))
+                # 选择对应语言的MVP建议
+                opp['mvp_suggestion'] = opp.get(f'mvp_suggestion{suffix}', opp.get('mvp_suggestion_en', ''))
+
+            # 添加个性化参数和翻译到模板数据
             template_data['personalized_params'] = personalized_params
+            template_data['t'] = translations
+            template_data['language'] = language
 
             # 渲染HTML
             html_content = template.render(**template_data)
@@ -214,10 +290,10 @@ class DailyEmailGenerator:
                 template_data["opportunities"]
             )
 
-            # 生成主题
+            # 生成主题（使用翻译）
             from datetime import datetime
             date_str = datetime.now().strftime("%Y-%m-%d")
-            subject = f"🚀 每日AI工具机会报告 {date_str} | Top 10 Opportunities"
+            subject = translations['subject'].replace('{date}', date_str)
 
             logger.info(
                 f"个性化邮件生成成功: {email}",
