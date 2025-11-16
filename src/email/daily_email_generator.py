@@ -250,8 +250,8 @@ class DailyEmailGenerator:
             if dashboard_base_url is None:
                 dashboard_base_url = os.getenv('DASHBOARD_URL', 'https://ai-tool-hotspot-dashboard.vercel.app')
 
-            # 构建个性化参数
-            personalized_params = f"?token={access_token}&email={email}"
+            # 构建个性化参数（包含语言参数，确保前端显示正确语言）
+            personalized_params = f"?token={access_token}&email={email}&lang={language}"
 
             # 加载数据和模板
             data = self.base_generator.load_latest_data()
