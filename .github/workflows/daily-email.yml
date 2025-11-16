@@ -6,7 +6,7 @@ on:
   schedule:
     - cron: '0 0 * * *'   # UTC 00:00 = 日本时间 09:00 (JST, UTC+9)
     - cron: '0 1 * * *'   # UTC 01:00 = 中国时间 09:00 (CST, UTC+8)
-    - cron: '0 13 * * *'  # UTC 13:00 = 美东时间 09:00 (EST, UTC-5)
+    - cron: '0 14 * * *'  # UTC 14:00 = 美东冬令时 09:00 (EST, UTC-5) / 夏令时 10:00 (EDT, UTC-4)
 
   # 支持手动触发
   workflow_dispatch:
@@ -94,10 +94,10 @@ jobs:
             CURRENT_HOUR=$((10#$CURRENT_HOUR))
 
             # 判断逻辑：按cron预定时间的延迟范围匹配
-            # cron '0 13 * * *' 优先级最高（避免与凌晨时间混淆）
-            if [ $CURRENT_HOUR -ge 13 ] && [ $CURRENT_HOUR -lt 16 ]; then
+            # cron '0 14 * * *' 优先级最高（避免与凌晨时间混淆）
+            if [ $CURRENT_HOUR -ge 14 ] && [ $CURRENT_HOUR -lt 17 ]; then
               TARGET_TIMEZONE="America/New_York"
-              echo "🇺🇸 UTC ${CURRENT_HOUR}:xx (13:00-15:59范围) - 发送给美国东部用户 (America/New_York)"
+              echo "🇺🇸 UTC ${CURRENT_HOUR}:xx (14:00-16:59范围) - 发送给美国东部用户 (America/New_York)"
             # cron '0 1 * * *' → 容忍延迟到03:59
             elif [ $CURRENT_HOUR -ge 1 ] && [ $CURRENT_HOUR -lt 4 ]; then
               TARGET_TIMEZONE="Asia/Shanghai"
