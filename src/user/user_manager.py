@@ -40,7 +40,7 @@ class UserManager:
         invite_code: Optional[str] = None,
         referrer_email: Optional[str] = None,
         language: str = "en",
-        timezone: str = "UTC",
+        timezone: str = "Asia/Shanghai",  # 修改：默认使用中国时区而非UTC
     ) -> Dict[str, Any]:
         """
         创建新用户
@@ -91,6 +91,13 @@ class UserManager:
                 from datetime import timedelta
                 trial_days = int(os.getenv("BETA_TRIAL_DAYS", "60"))
                 free_until = (datetime.now(timezone.utc) + timedelta(days=trial_days)).isoformat()
+
+            # 规范化timezone，确保只保存支持的三个时区（Asia/Tokyo, Asia/Shanghai, America/New_York）
+            from src.utils.locale_helper import normalize_timezone
+            timezone = normalize_timezone(timezone)
+            default_logger.info(
+                f"创建用户 {email}，规范化后的timezone: {timezone}, language: {language}"
+            )
 
             # 插入新用户
             query = convert_placeholder("""

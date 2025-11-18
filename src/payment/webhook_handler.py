@@ -159,10 +159,10 @@ class StripeWebhookHandler:
                 is_timezone_language_compatible
             )
 
-            # 情况1: 都未提供，使用默认值
+            # 情况1: 都未提供，使用默认值（优先中国时区）
             if not language and not timezone:
                 language = 'en'
-                timezone = 'UTC'
+                timezone = 'Asia/Shanghai'  # 修改：默认使用中国时区而非UTC
             # 情况2: 只提供了timezone，根据timezone推断language
             elif timezone and not language:
                 language = infer_language_from_timezone(timezone)

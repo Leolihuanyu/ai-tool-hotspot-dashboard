@@ -35,7 +35,7 @@ TIMEZONE_TO_LANGUAGE_MAP = {
 LANGUAGE_TO_TIMEZONE_MAP = {
     'zh': 'Asia/Shanghai',
     'ja': 'Asia/Tokyo',
-    'en': 'UTC',
+    'en': 'America/New_York',  # 修改：英文用户使用美东时区而非UTC
 }
 
 # 时区的主要语言（用于兼容性检查）
@@ -186,6 +186,69 @@ def get_compatibility_info(timezone: str, language: str) -> Tuple[bool, Optional
     suggested_timezone = infer_timezone_from_language(language) if language else None
 
     return is_compatible, suggested_language, suggested_timezone
+
+
+def normalize_timezone(timezone: str) -> str:
+    """
+    规范化时区，确保只返回邮件系统支持的三个时区之一
+
+    邮件系统仅支持以下三个时区的用户接收每日邮件：
+    - Asia/Tokyo (日本时间 UTC+9)
+    - Asia/Shanghai (中国时间 UTC+8)
+    - America/New_York (美东时间 UTC-5/-4)
+
+    Args:
+        timezone: 原始时区字符串（可能是任意IANA时区或UTC）
+
+    Returns:
+        str: 规范化后的时区，保证是上述三个时区之一
+
+    Examples:
+        >>> normalize_timezone('UTC')
+        'Asia/Shanghai'
+        >>> normalize_timezone('Asia/Tokyo')
+        'Asia/Tokyo'
+        >>> normalize_timezone('Asia/Hong_Kong')
+        'Asia/Shanghai'
+        >>> normalize_timezone('Europe/London')
+        'America/New_York'
+        >>> normalize_timezone('')
+        'Asia/Shanghai'
+    """
+    # 如果是UTC、空值或None，默认使用中国时区
+    if not timezone or timezone == 'UTC':
+        return 'Asia/Shanghai'
+
+    # 定义支持的三个时区
+    SUPPORTED_TIMEZONES = ['Asia/Tokyo', 'Asia/Shanghai', 'America/New_York']
+
+    # 如果已经是三个支持的时区之一，直接返回
+    if timezone in SUPPORTED_TIMEZONES:
+        return timezone
+
+    # 根据时区前缀和名称映射到支持的时区
+    if timezone.startswith('Asia/'):
+        # 亚洲时区：根据具体位置映射
+        if any(keyword in timezone for keyword in ['Tokyo', 'Japan']):
+            return 'Asia/Tokyo'
+        else:
+            # 其他亚洲时区（包括香港、台北、北京等）统一映射到上海
+            return 'Asia/Shanghai'
+    elif timezone.startswith('America/'):
+        # 美洲时区统一映射到纽约（美东时间）
+        return 'America/New_York'
+    elif timezone.startswith('Europe/'):
+        # 欧洲时区映射到美东（考虑到时差和业务分布）
+        return 'America/New_York'
+    elif timezone.startswith('Africa/'):
+        # 非洲时区映射到美东
+        return 'America/New_York'
+    elif timezone.startswith('Australia/') or timezone.startswith('Pacific/'):
+        # 澳洲和太平洋时区映射到亚洲时区（时差较近）
+        return 'Asia/Shanghai'
+    else:
+        # 其他未知时区默认使用中国时区
+        return 'Asia/Shanghai'
 
 
 # 测试函数
