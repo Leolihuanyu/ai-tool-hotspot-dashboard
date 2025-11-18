@@ -88,9 +88,9 @@ class UserManager:
             # 计算试用期截止时间（Beta用户：60天）
             free_until = None
             if subscription_type == "beta":
-                from datetime import timedelta
+                from datetime import timedelta, timezone as tz
                 trial_days = int(os.getenv("BETA_TRIAL_DAYS", "60"))
-                free_until = (datetime.now(timezone.utc) + timedelta(days=trial_days)).isoformat()
+                free_until = (datetime.now(tz.utc) + timedelta(days=trial_days)).isoformat()
 
             # 规范化timezone，确保只保存支持的三个时区（Asia/Tokyo, Asia/Shanghai, America/New_York）
             try:
