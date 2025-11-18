@@ -93,11 +93,17 @@ class UserManager:
                 free_until = (datetime.now(timezone.utc) + timedelta(days=trial_days)).isoformat()
 
             # 规范化timezone，确保只保存支持的三个时区（Asia/Tokyo, Asia/Shanghai, America/New_York）
-            from src.utils.locale_helper import normalize_timezone
-            timezone = normalize_timezone(timezone)
-            default_logger.info(
-                f"创建用户 {email}，规范化后的timezone: {timezone}, language: {language}"
-            )
+            try:
+                from src.utils.locale_helper import normalize_timezone
+                timezone = normalize_timezone(timezone)
+                default_logger.info(
+                    f"创建用户 {email}，规范化后的timezone: {timezone}, language: {language}"
+                )
+            except (ImportError, AttributeError) as e:
+                # 向后兼容：如果normalize_timezone不存在，继续使用原始timezone
+                default_logger.warning(
+                    f"normalize_timezone函数不可用，使用原始timezone: {timezone}, error: {str(e)}"
+                )
 
             # 插入新用户
             query = convert_placeholder("""
