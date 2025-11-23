@@ -1,0 +1,171 @@
+name: 每日自动发布
+
+on:
+  schedule:
+    # 每天UTC 00:30运行（中国时间08:30）
+    - cron: '30 0 * * *'
+
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: '演练模式（不实际发布）'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+      platforms:
+        description: '发布平台'
+        required: false
+        default: 'twitter'
+        type: choice
+        options:
+          - twitter
+          - linkedin
+          - reddit
+          - all
+
+env:
+  PYTHONPATH: ${{ github.workspace }}
+  TZ: Asia/Shanghai
+
+jobs:
+  daily-publish:
+    name: 发布每日报告
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 7  # 获取7天的历史用于周报
+
+    - name: 设置Python环境
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+
+    - name: 安装依赖
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: 安装Playwright浏览器（用于截图功能）
+      run: |
+        # 虽然当前使用AI生成图片，但保留此步骤以备将来需要
+        # playwright install chromium
+        echo "Skipping Playwright installation (using AI-generated images)"
+
+    - name: 创建日志目录
+      run: |
+        mkdir -p logs/publish
+        mkdir -p reports/daily
+
+    - name: 运行每日数据抓取
+      id: scrape_data
+      run: |
+        echo "🔄 开始抓取每日数据..."
+        python -m src.cli.main run-pipeline
+        echo "data_scraped=true" >> $GITHUB_OUTPUT
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+    - name: 发布到Twitter（带AI生成内容和配图）
+      if: steps.scrape_data.outputs.data_scraped == 'true' && (github.event.inputs.platforms == 'twitter' || github.event.inputs.platforms == 'all' || github.event_name == 'schedule')
+      run: |
+        echo "🐦 发布到Twitter（LLM生成内容 + AI配图）..."
+        python scripts/publish_to_platform.py \
+          --platform twitter \
+          --type daily \
+          ${{ github.event.inputs.dry_run == 'true' && '--dry-run' || '' }}
+      env:
+        TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
+        TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
+        TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+        TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+    - name: 发布到LinkedIn
+      if: steps.scrape_data.outputs.data_scraped == 'true' && (github.event.inputs.platforms == 'linkedin' || github.event.inputs.platforms == 'all')
+      run: |
+        echo "💼 发布到LinkedIn..."
+        python scripts/publish_to_platform.py \
+          --platform linkedin \
+          --type daily \
+          ${{ github.event.inputs.dry_run == 'true' && '--dry-run' || '' }}
+      env:
+        LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+    - name: 发布到Reddit
+      if: steps.scrape_data.outputs.data_scraped == 'true' && (github.event.inputs.platforms == 'reddit' || github.event.inputs.platforms == 'all')
+      run: |
+        echo "🤖 发布到Reddit..."
+        python scripts/publish_to_platform.py \
+          --platform reddit \
+          --type daily \
+          --subreddit SideProject \
+          ${{ github.event.inputs.dry_run == 'true' && '--dry-run' || '' }}
+      env:
+        REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+        REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+        REDDIT_USERNAME: ${{ secrets.REDDIT_USERNAME }}
+        REDDIT_PASSWORD: ${{ secrets.REDDIT_PASSWORD }}
+
+    - name: 生成发布统计
+      if: always()
+      run: |
+        echo "📊 生成发布统计..."
+        python scripts/generate_publish_stats.py --type daily || true
+
+    - name: 提交发布日志
+      if: success() && github.event.inputs.dry_run != 'true'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add logs/publish/*.json logs/publish/*.log || true
+        git add reports/daily/*.json || true
+        git diff --quiet && git diff --staged --quiet || \
+          git commit -m "🤖 自动发布日报 - $(date +'%Y-%m-%d %H:%M:%S')"
+        git push
+
+    - name: 发送成功通知
+      if: success() && github.event.inputs.dry_run != 'true'
+      run: |
+        echo "✅ 日报发布成功！"
+        python scripts/send_notification.py \
+          --type "daily_publish_success" \
+          --message "每日报告已成功发布到所有平台"
+      env:
+        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      continue-on-error: true
+
+    - name: 发送失败告警
+      if: failure()
+      run: |
+        echo "❌ 日报发布失败！"
+        python scripts/send_notification.py \
+          --type "daily_publish_failed" \
+          --message "每日报告发布失败，请检查日志" \
+          --level "error"
+      env:
+        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        ALERT_EMAIL: ${{ secrets.ALERT_EMAIL }}
+        SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+      continue-on-error: true
+
+    - name: 上传日志artifacts
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: publish-logs-${{ github.run_id }}
+        path: |
+          logs/publish/
+          logs/*.log
+        retention-days: 30
