@@ -30,8 +30,9 @@ stripe>=7.0.0  # Stripe支付集成
 tenacity>=8.2.0  # 重试逻辑（宪法原则I）
 ratelimit>=2.2.1  # 速率限制（宪法原则I）
 
-# === Reddit API ===
+# === 社交媒体 API ===
 praw>=7.7.0  # Reddit API客户端
+tweepy>=4.14.0  # Twitter API客户端
 
 # === Google Trends ===
 pytrends>=4.9.0  # Google Trends非官方API
