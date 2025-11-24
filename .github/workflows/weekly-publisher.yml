@@ -1,0 +1,241 @@
+name: 每周自动发布周报
+
+on:
+  schedule:
+    # 每周五UTC 12:00运行（中国时间20:00）
+    - cron: '0 12 * * 5'
+
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: '演练模式（不实际发布）'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+      platforms:
+        description: '发布平台'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - twitter
+          - medium
+          - zhihu
+          - website
+          - all
+
+env:
+  PYTHONPATH: ${{ github.workspace }}
+  TZ: Asia/Shanghai
+
+jobs:
+  weekly-publish:
+    name: 生成并发布周报
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 14  # 获取两周的历史以便对比
+
+    - name: 设置Python环境
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+
+    - name: 安装依赖
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        # 安装额外的依赖
+        pip install pandas matplotlib seaborn jinja2 markdown
+
+    - name: 创建必要目录
+      run: |
+        mkdir -p logs/publish
+        mkdir -p reports/weekly
+        mkdir -p reports/charts
+        mkdir -p frontend/public/reports
+
+    - name: 生成周报
+      id: generate_weekly
+      run: |
+        echo "📊 开始生成周报..."
+        python scripts/generate_weekly_report.py --generate-only
+
+        # 检查是否生成成功
+        if [ -f "reports/weekly/latest_weekly.json" ]; then
+          echo "weekly_generated=true" >> $GITHUB_OUTPUT
+          echo "✅ 周报生成成功"
+
+          # 获取周报标题用于后续步骤
+          WEEK_TITLE=$(python -c "import json; data=json.load(open('reports/weekly/latest_weekly.json')); print(data.get('title', 'AI工具机会周报'))")
+          echo "week_title=${WEEK_TITLE}" >> $GITHUB_OUTPUT
+        else
+          echo "weekly_generated=false" >> $GITHUB_OUTPUT
+          echo "❌ 周报生成失败"
+          exit 1
+        fi
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+    - name: 生成数据可视化图表
+      if: steps.generate_weekly.outputs.weekly_generated == 'true'
+      run: |
+        echo "📈 生成数据可视化图表..."
+        python scripts/generate_charts.py --type weekly || true
+      continue-on-error: true
+
+    - name: 更新网站周报页面
+      if: steps.generate_weekly.outputs.weekly_generated == 'true' && (contains(github.event.inputs.platforms, 'website') || contains(github.event.inputs.platforms, 'all') || github.event_name == 'schedule')
+      run: |
+        echo "🌐 更新网站周报页面..."
+        # 复制周报到公开目录
+        cp reports/weekly/latest_weekly.json frontend/public/reports/
+        cp reports/weekly/*.md frontend/public/reports/ || true
+
+        # 生成索引文件
+        python scripts/generate_report_index.py
+
+        echo "✅ 网站更新完成"
+
+    - name: 发布Twitter线程
+      if: steps.generate_weekly.outputs.weekly_generated == 'true' && (contains(github.event.inputs.platforms, 'twitter') || contains(github.event.inputs.platforms, 'all') || github.event_name == 'schedule')
+      run: |
+        echo "🐦 发布Twitter线程..."
+        python scripts/publish_twitter_thread.py \
+          --type weekly \
+          ${{ github.event.inputs.dry_run == 'true' && '--dry-run' || '' }}
+      env:
+        TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
+        TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
+        TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+        TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+
+    - name: 发布到Medium
+      if: steps.generate_weekly.outputs.weekly_generated == 'true' && (contains(github.event.inputs.platforms, 'medium') || contains(github.event.inputs.platforms, 'all'))
+      run: |
+        echo "📝 发布到Medium..."
+        python scripts/publish_to_medium.py \
+          --type weekly \
+          --title "${{ steps.generate_weekly.outputs.week_title }}" \
+          ${{ github.event.inputs.dry_run == 'true' && '--dry-run' || '' }}
+      env:
+        MEDIUM_ACCESS_TOKEN: ${{ secrets.MEDIUM_ACCESS_TOKEN }}
+        MEDIUM_PUBLICATION_ID: ${{ secrets.MEDIUM_PUBLICATION_ID }}
+      continue-on-error: true
+
+    - name: 发布到知乎
+      if: steps.generate_weekly.outputs.weekly_generated == 'true' && (contains(github.event.inputs.platforms, 'zhihu') || contains(github.event.inputs.platforms, 'all'))
+      run: |
+        echo "🎯 发布到知乎..."
+        python scripts/publish_to_zhihu.py \
+          --type weekly \
+          ${{ github.event.inputs.dry_run == 'true' && '--dry-run' || '' }}
+      env:
+        ZHIHU_ACCESS_TOKEN: ${{ secrets.ZHIHU_ACCESS_TOKEN }}
+      continue-on-error: true
+
+    - name: 发送邮件周报
+      if: steps.generate_weekly.outputs.weekly_generated == 'true' && github.event.inputs.dry_run != 'true'
+      run: |
+        echo "📧 发送邮件周报给订阅者..."
+        python scripts/send_weekly_newsletter.py
+      env:
+        SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      continue-on-error: true
+
+    - name: 生成发布统计报告
+      if: always()
+      run: |
+        echo "📊 生成周报发布统计..."
+        python scripts/generate_publish_stats.py --type weekly || true
+
+    - name: 提交周报和更新
+      if: success() && github.event.inputs.dry_run != 'true'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+
+        # 添加所有生成的文件
+        git add reports/weekly/*.json reports/weekly/*.md || true
+        git add reports/charts/*.png || true
+        git add frontend/public/reports/ || true
+        git add logs/publish/*.json logs/publish/*.log || true
+
+        # 提交
+        git diff --quiet && git diff --staged --quiet || \
+          git commit -m "📊 自动发布周报 #${{ steps.generate_weekly.outputs.week_number }} - $(date +'%Y-%m-%d')"
+
+        git push
+
+    - name: 创建GitHub Release
+      if: success() && github.event.inputs.dry_run != 'true'
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: weekly-report-${{ steps.generate_weekly.outputs.week_number }}-${{ github.run_id }}
+        release_name: ${{ steps.generate_weekly.outputs.week_title }}
+        body: |
+          ## 📊 本周AI工具机会周报已发布
+
+          ### 发布渠道：
+          - ✅ 网站更新
+          - ✅ Twitter线程
+          - ✅ 邮件推送
+          ${{ contains(github.event.inputs.platforms, 'medium') && '- ✅ Medium文章' || '' }}
+          ${{ contains(github.event.inputs.platforms, 'zhihu') && '- ✅ 知乎专栏' || '' }}
+
+          ### 查看周报：
+          - [在线查看](https://your-domain.vercel.app/weekly)
+          - [JSON数据](https://your-domain.vercel.app/reports/latest_weekly.json)
+
+          ---
+          _自动生成于 ${{ github.event.repository.updated_at }}_
+        draft: false
+        prerelease: false
+
+    - name: 发送成功通知
+      if: success() && github.event.inputs.dry_run != 'true'
+      run: |
+        echo "✅ 周报发布成功！"
+        python scripts/send_notification.py \
+          --type "weekly_publish_success" \
+          --message "周报 ${{ steps.generate_weekly.outputs.week_title }} 已成功发布" \
+          --url "https://your-domain.vercel.app/weekly"
+      env:
+        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      continue-on-error: true
+
+    - name: 发送失败告警
+      if: failure()
+      run: |
+        echo "❌ 周报发布失败！"
+        python scripts/send_notification.py \
+          --type "weekly_publish_failed" \
+          --message "周报发布失败，请立即检查" \
+          --level "critical"
+      env:
+        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        ALERT_EMAIL: ${{ secrets.ALERT_EMAIL }}
+        SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+
+    - name: 上传artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: weekly-report-${{ github.run_id }}
+        path: |
+          reports/weekly/
+          reports/charts/
+          logs/publish/
+        retention-days: 90

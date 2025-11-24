@@ -1,0 +1,344 @@
+name: Dashboard Visual Publisher
+
+on:
+  schedule:
+    # 每天UTC 01:00运行（中国时间09:00）- 在数据更新后30分钟
+    - cron: '0 1 * * *'
+
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: '运行模式'
+        required: false
+        default: 'publish'
+        type: choice
+        options:
+          - publish      # 正式发布
+          - dry-run      # 演练模式
+          - analyze      # 仅分析
+          - capture-only # 仅截图
+
+      platforms:
+        description: '发布平台'
+        required: false
+        default: 'twitter'
+        type: choice
+        options:
+          - twitter
+          - linkedin
+          - instagram
+          - all
+
+      dashboard_url:
+        description: 'Dashboard URL (可选)'
+        required: false
+        default: ''
+
+env:
+  PYTHONPATH: ${{ github.workspace }}
+  TZ: Asia/Shanghai
+
+jobs:
+  capture-and-publish:
+    name: Capture Dashboard & Publish
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: 设置Python环境
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        cache: 'pip'
+
+    - name: 安装Python依赖
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        # 安装额外依赖
+        pip install selenium pillow tweepy numpy
+
+    - name: 安装Chrome和ChromeDriver
+      run: |
+        # 安装Chrome
+        wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+        echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+
+        # 安装ChromeDriver
+        CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
+        CHROMEDRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION%%.*})
+        wget -q "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip"
+        unzip -q chromedriver_linux64.zip
+        sudo mv chromedriver /usr/local/bin/
+        sudo chmod +x /usr/local/bin/chromedriver
+
+        # 验证安装
+        google-chrome --version
+        chromedriver --version
+
+    - name: 创建必要目录
+      run: |
+        mkdir -p screenshots/dashboard
+        mkdir -p screenshots/optimized
+        mkdir -p logs/publish
+        mkdir -p reports
+
+    - name: 启动本地Dashboard服务（如果需要）
+      if: github.event.inputs.dashboard_url == ''
+      run: |
+        # 如果Dashboard是本项目的一部分，启动本地服务
+        cd frontend
+        npm install
+        npm run build
+        npm run preview &
+        sleep 10  # 等待服务启动
+
+        # 设置环境变量
+        echo "DASHBOARD_URL=http://localhost:3000" >> $GITHUB_ENV
+      continue-on-error: true
+
+    - name: 设置Dashboard URL
+      if: github.event.inputs.dashboard_url != ''
+      run: |
+        echo "DASHBOARD_URL=${{ github.event.inputs.dashboard_url }}" >> $GITHUB_ENV
+
+    - name: 截取Dashboard
+      id: capture
+      run: |
+        echo "📸 开始截取Dashboard..."
+
+        # 执行截图
+        if [[ "${{ github.event.inputs.mode }}" == "analyze" ]]; then
+          echo "跳过截图（分析模式）"
+        else
+          python scripts/capture_dashboard.py \
+            --mode twitter \
+            ${DASHBOARD_URL:+--url $DASHBOARD_URL}
+
+          # 检查截图结果
+          if [ -d "screenshots/dashboard" ]; then
+            SCREENSHOT_COUNT=$(ls -1 screenshots/dashboard/*.png 2>/dev/null | wc -l)
+            echo "screenshot_count=${SCREENSHOT_COUNT}" >> $GITHUB_OUTPUT
+            echo "✅ 成功截取 ${SCREENSHOT_COUNT} 张图片"
+            ls -la screenshots/dashboard/
+          else
+            echo "❌ 截图失败"
+            exit 1
+          fi
+        fi
+
+    - name: 处理图片
+      if: steps.capture.outputs.screenshot_count > 0 || github.event.inputs.mode != 'analyze'
+      run: |
+        echo "🎨 处理图片..."
+
+        # 获取最新的截图
+        IMAGES=$(ls screenshots/dashboard/*_$(date +%Y%m%d)*.png | head -3)
+
+        if [ -n "$IMAGES" ]; then
+          python scripts/process_dashboard_images.py \
+            --input $IMAGES \
+            --platforms ${{ github.event.inputs.platforms || 'twitter' }}
+
+          echo "✅ 图片处理完成"
+          ls -la screenshots/optimized/
+        else
+          echo "⚠️ 没有找到今天的截图"
+        fi
+
+    - name: 发布到Twitter
+      if: (github.event.inputs.platforms == 'twitter' || github.event.inputs.platforms == 'all') && github.event.inputs.mode != 'capture-only'
+      run: |
+        echo "🐦 发布到Twitter..."
+
+        MODE="${{ github.event.inputs.mode || 'publish' }}"
+
+        python scripts/publish_dashboard_twitter.py \
+          --mode $MODE \
+          ${DASHBOARD_URL:+--dashboard-url $DASHBOARD_URL}
+
+        # 检查结果
+        if [ $? -eq 0 ]; then
+          echo "✅ Twitter发布成功"
+        else
+          echo "❌ Twitter发布失败"
+          exit 1
+        fi
+      env:
+        TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
+        TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
+        TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+        TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+
+    - name: 发布到LinkedIn
+      if: (github.event.inputs.platforms == 'linkedin' || github.event.inputs.platforms == 'all') && github.event.inputs.mode == 'publish'
+      run: |
+        echo "💼 发布到LinkedIn..."
+
+        # 使用长图版本
+        LONG_IMAGE=$(ls screenshots/optimized/linkedin_long_*.png | head -1)
+
+        if [ -n "$LONG_IMAGE" ]; then
+          python scripts/publish_to_platform.py \
+            --platform linkedin \
+            --type daily \
+            --image $LONG_IMAGE
+        fi
+      env:
+        LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+      continue-on-error: true
+
+    - name: 发布到Instagram
+      if: (github.event.inputs.platforms == 'instagram' || github.event.inputs.platforms == 'all') && github.event.inputs.mode == 'publish'
+      run: |
+        echo "📷 处理Instagram Story格式..."
+
+        # 创建Story格式
+        FIRST_IMAGE=$(ls screenshots/dashboard/*_$(date +%Y%m%d)*.png | head -1)
+
+        if [ -n "$FIRST_IMAGE" ]; then
+          python scripts/process_dashboard_images.py \
+            --input $FIRST_IMAGE \
+            --mode story
+
+          echo "✅ Instagram Story创建成功"
+          # 注意：Instagram API限制较多，通常需要手动发布
+        fi
+      continue-on-error: true
+
+    - name: 生成发布报告
+      if: always()
+      run: |
+        echo "📊 生成发布报告..."
+
+        cat > reports/publish_report_$(date +%Y%m%d).md << EOF
+        # Dashboard发布报告
+        **日期**: $(date +"%Y-%m-%d %H:%M:%S")
+        **模式**: ${{ github.event.inputs.mode || 'publish' }}
+        **平台**: ${{ github.event.inputs.platforms || 'twitter' }}
+
+        ## 执行结果
+        - 截图数量: ${{ steps.capture.outputs.screenshot_count || 0 }}
+        - Dashboard URL: ${DASHBOARD_URL:-'使用默认'}
+
+        ## 文件列表
+        ### 原始截图
+        $(ls -la screenshots/dashboard/ 2>/dev/null || echo "无")
+
+        ### 处理后图片
+        $(ls -la screenshots/optimized/ 2>/dev/null || echo "无")
+
+        ## 日志
+        查看 logs/ 目录获取详细日志
+        EOF
+
+        cat reports/publish_report_$(date +%Y%m%d).md
+
+    - name: 保存artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: dashboard-publish-${{ github.run_id }}
+        path: |
+          screenshots/
+          logs/
+          reports/
+        retention-days: 7
+
+    - name: 提交截图和日志（可选）
+      if: github.event.inputs.mode == 'publish' && success()
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+
+        # 只提交日志，不提交图片（避免仓库过大）
+        git add logs/*.log reports/*.md || true
+
+        git diff --quiet && git diff --staged --quiet || \
+          git commit -m "🤖 Dashboard发布日志 - $(date +'%Y-%m-%d')"
+
+        git push
+      continue-on-error: true
+
+    - name: 发送成功通知
+      if: success() && github.event.inputs.mode == 'publish'
+      run: |
+        echo "✅ Dashboard发布成功！"
+
+        # 发送Discord通知
+        if [ -n "${{ secrets.DISCORD_WEBHOOK_URL }}" ]; then
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"content\":\"✅ Dashboard已成功发布到${{ github.event.inputs.platforms || 'Twitter' }}\\n时间: $(date +'%Y-%m-%d %H:%M:%S')\"}" \
+            ${{ secrets.DISCORD_WEBHOOK_URL }}
+        fi
+      continue-on-error: true
+
+    - name: 发送失败告警
+      if: failure()
+      run: |
+        echo "❌ Dashboard发布失败！"
+
+        # 发送Discord告警
+        if [ -n "${{ secrets.DISCORD_WEBHOOK_URL }}" ]; then
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"content\":\"❌ Dashboard发布失败！\\n平台: ${{ github.event.inputs.platforms }}\\n错误: 请检查GitHub Actions日志\"}" \
+            ${{ secrets.DISCORD_WEBHOOK_URL }}
+        fi
+
+        # 可以添加邮件通知
+        # python scripts/send_notification.py --type "dashboard_publish_failed"
+      continue-on-error: true
+
+  analyze-performance:
+    name: 分析发布效果
+    runs-on: ubuntu-latest
+    needs: capture-and-publish
+    if: github.event.schedule == '0 1 * * *'  # 只在定时任务后运行
+
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v4
+
+    - name: 设置Python环境
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: 收集互动数据
+      run: |
+        echo "📊 收集过去24小时的互动数据..."
+
+        # 这里可以调用Twitter API获取互动数据
+        # python scripts/monitor_engagement.py --platform twitter --hours 24
+
+        echo "数据收集完成（示例）"
+
+    - name: 生成分析报告
+      run: |
+        echo "📈 生成表现分析报告..."
+
+        cat > reports/performance_$(date +%Y%m%d).md << EOF
+        # Dashboard发布表现分析
+        **日期**: $(date +"%Y-%m-%d")
+
+        ## Twitter表现
+        - 浏览量: TBD
+        - 互动率: TBD
+        - 点击率: TBD
+
+        ## 建议
+        - 继续保持每日发布节奏
+        - 测试不同时间段的效果
+        - 优化图片视觉效果
+
+        ---
+        *自动生成报告*
+        EOF
