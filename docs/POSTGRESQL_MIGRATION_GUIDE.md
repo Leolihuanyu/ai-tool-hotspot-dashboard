@@ -60,13 +60,13 @@ DATABASE_PATH=data/dashboard.db
 export DB_TYPE=postgresql
 
 # 设置 PostgreSQL 连接字符串
-export DATABASE_URL=postgresql://username:password@localhost:5432/database_name
+export DATABASE_URL=<DATABASE_URL>
 ```
 
 或在 `.env` 文件中：
 ```
 DB_TYPE=postgresql
-DATABASE_URL=postgresql://username:password@localhost:5432/ai_tool_hotspot
+DATABASE_URL=<DATABASE_URL>
 ```
 
 ## 数据库迁移步骤
@@ -203,7 +203,7 @@ DATABASE_PATH=data/dashboard.db
 **生产环境** (`.env.production`):
 ```
 DB_TYPE=postgresql
-DATABASE_URL=postgresql://user:pass@prod-db:5432/ai_tool_hotspot
+DATABASE_URL=<DATABASE_URL>
 ```
 
 ### Q: 如何确认当前使用的数据库类型？

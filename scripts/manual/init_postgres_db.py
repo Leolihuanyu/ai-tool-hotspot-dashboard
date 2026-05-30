@@ -7,9 +7,12 @@ import os
 import sys
 from pathlib import Path
 
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT_ROOT))
+
 # 设置 PostgreSQL 连接
 os.environ['DB_TYPE'] = 'postgresql'
-os.environ['DATABASE_URL'] = 'postgresql://postgres.pdezvkbhbynfgqtwaqaw:NG86DDhGUIehlLZ8@aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres'
+os.environ['DATABASE_URL'] = os.getenv('DATABASE_URL', '')
 
 from src.database.connection import execute_script, get_connection
 
@@ -21,7 +24,7 @@ def init_database():
     print("=" * 60)
 
     # 读取 schema.sql
-    schema_path = Path(__file__).parent / 'src' / 'database' / 'schema.sql'
+    schema_path = PROJECT_ROOT / 'src' / 'database' / 'schema.sql'
 
     if not schema_path.exists():
         print(f"❌ 错误: schema.sql 文件不存在")

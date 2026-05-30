@@ -63,7 +63,7 @@ EMAIL_PROVIDER=smtp
 SMTP_SERVER=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USERNAME=你的邮箱@gmail.com
-SMTP_PASSWORD=aaaabbbbccccdddd  # 应用专用密码（去掉空格）
+SMTP_PASSWORD=<SMTP_PASSWORD>  # 应用专用密码（去掉空格）
 SMTP_USE_TLS=true
 
 # 发件人和收件人

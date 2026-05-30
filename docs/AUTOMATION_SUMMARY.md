@@ -39,7 +39,7 @@ EMAIL_PROVIDER=smtp
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USERNAME=your-email@gmail.com
-SMTP_PASSWORD=your-16-digit-app-password
+SMTP_PASSWORD=<SMTP_PASSWORD>
 EMAIL_FROM=your-email@gmail.com
 EMAIL_TO_LIST=recipient1@example.com,recipient2@example.com
 ```

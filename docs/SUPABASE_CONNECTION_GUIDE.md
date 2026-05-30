@@ -4,7 +4,7 @@
 
 当前遇到的 DNS 解析错误:
 ```
-could not translate host name "db.pdezvkbhbynfgqtwaqaw.supabase.co" to address
+could not translate host name "db.<SUPABASE_PROJECT_REF>.supabase.co" to address
 ```
 
 **原因**: 使用了错误的连接字符串格式。Supabase 推荐使用 **Connection Pooling** 模式,而不是 Direct Connection。
@@ -15,7 +15,7 @@ could not translate host name "db.pdezvkbhbynfgqtwaqaw.supabase.co" to address
 
 ### 1. 登录 Supabase Dashboard
 
-访问: https://supabase.com/dashboard/project/pdezvkbhbynfgqtwaqaw
+访问: https://supabase.com/dashboard/project/<SUPABASE_PROJECT_REF>
 
 ### 2. 进入数据库设置
 
@@ -56,17 +56,17 @@ Connection string
 
 ```
 # Transaction mode (推荐):
-postgresql://postgres.pdezvkbhbynfgqtwaqaw:[YOUR-PASSWORD]@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres
+<DATABASE_URL>
 
 # Session mode:
-postgresql://postgres.pdezvkbhbynfgqtwaqaw:[YOUR-PASSWORD]@aws-0-ap-northeast-1.pooler.supabase.com:5432/postgres
+<DATABASE_URL>
 ```
 
 **注意事项**:
 - 主机名应该是 `aws-0-<region>.pooler.supabase.com` 格式
 - Transaction 模式端口是 `6543`
 - Session 模式端口是 `5432`
-- `[YOUR-PASSWORD]` 需要替换为你的数据库密码: `NG86DDhGUIehlLZ8`
+- `[YOUR-PASSWORD]` 需要替换为你的数据库密码: `<DB_PASSWORD>`
 
 ---
 
@@ -74,12 +74,12 @@ postgresql://postgres.pdezvkbhbynfgqtwaqaw:[YOUR-PASSWORD]@aws-0-ap-northeast-1.
 
 ### ❌ 错误 (Direct Connection - 会导致 DNS 错误):
 ```
-postgresql://postgres:NG86DDhGUIehlLZ8@db.pdezvkbhbynfgqtwaqaw.supabase.co:5432/postgres
+<DATABASE_URL>
 ```
 
 ### ✅ 正确 (Connection Pooling):
 ```
-postgresql://postgres.pdezvkbhbynfgqtwaqaw:NG86DDhGUIehlLZ8@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres
+<DATABASE_URL>
 ```
 
 **关键区别**:

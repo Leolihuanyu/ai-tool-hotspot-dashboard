@@ -14,7 +14,7 @@
 ```ini
 # === 核心数据库配置 (最重要!) ===
 DB_TYPE=postgresql
-DATABASE_URL=postgresql://postgres.pdezvkbhbynfgqtwaqaw:NG86DDhGUIehlLZ8@aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres
+DATABASE_URL=<DATABASE_URL>
 
 # === Flask环境 (生产环境配置) ===
 FLASK_ENV=production

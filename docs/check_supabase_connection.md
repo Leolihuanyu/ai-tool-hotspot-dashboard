@@ -1,7 +1,7 @@
 # Supabase 连接问题诊断
 
 ## 当前问题
-DNS 无法解析: `db.pdezvkbhbynfgqtwaqaw.supabase.co`
+DNS 无法解析: `db.<SUPABASE_PROJECT_REF>.supabase.co`
 
 ## 可能原因和解决方案
 
@@ -9,7 +9,7 @@ DNS 无法解析: `db.pdezvkbhbynfgqtwaqaw.supabase.co`
 Supabase 提供多种连接字符串:
 
 **在 Supabase Dashboard 中获取正确的连接字符串:**
-1. 进入你的项目: https://supabase.com/dashboard/project/pdezvkbhbynfgqtwaqaw
+1. 进入你的项目: https://supabase.com/dashboard/project/<SUPABASE_PROJECT_REF>
 2. 点击左侧 "Project Settings" (设置图标)
 3. 点击 "Database"
 4. 找到 "Connection string" 部分
@@ -17,7 +17,7 @@ Supabase 提供多种连接字符串:
 **重要: 选择 "Connection Pooling" (连接池) 模式:**
 - URI 选择: "Session" 或 "Transaction" 模式
 - 端口通常是 5432 (Session) 或 6543 (Transaction)
-- 格式示例: `postgresql://postgres.pdezvkbhbynfgqtwaqaw:[YOUR-PASSWORD]@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres`
+- 格式示例: `<DATABASE_URL>`
 
 ### 2. 项目可能还在初始化中
 - 新创建的项目需要 2-5 分钟完成初始化
@@ -33,14 +33,14 @@ Supabase 提供多种连接字符串:
 1. 项目状态是否为 "Active" (绿色)
 2. 复制 "Connection Pooling" 下的连接字符串 (不是 Direct Connection)
 3. 选择 "Transaction" 或 "Session" 模式
-4. 将 `[YOUR-PASSWORD]` 替换为你的密码: NG86DDhGUIehlLZ8
+4. 将 `[YOUR-PASSWORD]` 替换为你的密码: <DB_PASSWORD>
 
 预期的连接字符串格式应该类似:
 ```
-postgresql://postgres.pdezvkbhbynfgqtwaqaw:NG86DDhGUIehlLZ8@aws-0-[region].pooler.supabase.com:6543/postgres
+<DATABASE_URL>
 ```
 
 而不是:
 ```
-postgresql://postgres:NG86DDhGUIehlLZ8@db.pdezvkbhbynfgqtwaqaw.supabase.co:5432/postgres
+<DATABASE_URL>
 ```

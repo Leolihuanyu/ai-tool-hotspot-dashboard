@@ -148,7 +148,7 @@ REDDIT_USER_AGENT=AI-Opportunity-Matcher/1.0
 
 **配置到.env：**
 ```bash
-GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+GITHUB_TOKEN=<GITHUB_TOKEN>
 ```
 
 ---

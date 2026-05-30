@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 import sys
 sys.path.insert(0, '/Users/ri/Projects/ai-tool-hotspot-dashboard')
 
@@ -12,8 +13,8 @@ logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
 
 # Reddit配置
-reddit_client_id = 'uCh9uvRgI68kRagmhNMeLA'
-reddit_client_secret = '6BgDGuMIf5NMuIChvbH9xlUrITweog'
+reddit_client_id = os.getenv('REDDIT_CLIENT_ID', '')
+reddit_client_secret = os.getenv('REDDIT_CLIENT_SECRET', '')
 reddit_user_agent = 'AI-Opportunity-Matcher/1.0'
 
 # 目标子版块（与爬虫相同）

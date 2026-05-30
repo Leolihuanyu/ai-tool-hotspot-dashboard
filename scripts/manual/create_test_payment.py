@@ -5,10 +5,14 @@
 
 import os
 import sys
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT_ROOT))
 
 # 设置环境变量
 os.environ['DB_TYPE'] = 'postgresql'
-os.environ['DATABASE_URL'] = os.getenv('DATABASE_URL', 'postgresql://postgres.pdezvkbhbynfgqtwaqaw:NG86DDhGUIehlLZ8@aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres')
+os.environ['DATABASE_URL'] = os.getenv('DATABASE_URL', '')
 
 from src.payment.stripe_service import StripeService
 from src.database.connection import get_connection, convert_placeholder
@@ -96,7 +100,7 @@ def main():
         print("1. 复制上面的支付链接，在浏览器中打开")
         print("2. 使用上述测试卡信息完成支付")
         print("3. 支付成功后，运行验证脚本:")
-        print(f"   python verify_payment.py {test_email}")
+        print(f"   python scripts/manual/verify_payment.py {test_email}")
         print("4. 检查邮箱 {test_email} 是否收到中文欢迎邮件")
 
         print("\n" + "=" * 70)

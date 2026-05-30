@@ -26,7 +26,7 @@ EMAIL_PROVIDER=smtp
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USERNAME=your-email@gmail.com
-SMTP_PASSWORD=your-app-password
+SMTP_PASSWORD=<SMTP_PASSWORD>
 FROM_EMAIL=your-email@gmail.com
 
 # Dashboard URL

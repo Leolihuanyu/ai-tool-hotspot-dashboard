@@ -104,7 +104,7 @@ cp .env.example .env
 
 ```bash
 # === LLM API配置（research.md推荐：Claude Haiku 3）===
-ANTHROPIC_API_KEY=sk-ant-api03-xxxxxxxxxxxxx
+ANTHROPIC_API_KEY=<ANTHROPIC_API_KEY>
 # 或使用OpenAI（备选方案）
 # OPENAI_API_KEY=sk-xxxxxxxxxxxxx
 
@@ -146,7 +146,7 @@ FLASK_PORT=5000
 
 **最小化配置**（仅用于快速测试，不发送邮件）：
 ```bash
-ANTHROPIC_API_KEY=sk-ant-api03-xxxxxxxxxxxxx
+ANTHROPIC_API_KEY=<ANTHROPIC_API_KEY>
 LLM_PROVIDER=claude
 LLM_MODEL=claude-haiku-3-20240307
 DATABASE_PATH=data/db.sqlite
@@ -345,7 +345,7 @@ pip install -r requirements.txt
 **解决**:
 1. 检查 `.env` 文件是否存在并包含正确的API密钥
 2. 验证API密钥格式：
-   - Claude: `sk-ant-api03-xxxxxxxxxxxxx`
+   - Claude: `<ANTHROPIC_API_KEY>`
    - OpenAI: `sk-xxxxxxxxxxxxx`
 3. 确认API密钥有效（访问API提供商控制台）
 

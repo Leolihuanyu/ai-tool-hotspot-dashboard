@@ -26,7 +26,7 @@ https://signup.sendgrid.com/
 
 ### 1.2 填写注册信息
 
-- **Email**：`leolihuanyu@gmail.com`（或你的工作邮箱）
+- **Email**：`user@example.com`（或你的工作邮箱）
 - **Password**：设置一个强密码
 - 勾选 "I agree to the SendGrid Terms of Service"
 - 点击 **"Create Account"**
@@ -84,7 +84,7 @@ https://app.sendgrid.com/settings/api_keys
 
 ```
 格式类似：
-SG.xxxxxxxxxxxxxxxxxxxxxxxx.yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
+<SENDGRID_API_KEY>
 ```
 
 1. **立即复制** API Key 到安全的地方（如密码管理器）
@@ -117,8 +117,8 @@ https://app.sendgrid.com/settings/sender_auth
 | 字段 | 填写内容 |
 |------|---------|
 | **From Name** | `AI工具热点Dashboard` 或 `AI Tool Hotspot` |
-| **From Email Address** | `leolihuanyu@gmail.com` |
-| **Reply To** | `leolihuanyu@gmail.com` |
+| **From Email Address** | `user@example.com` |
+| **Reply To** | `user@example.com` |
 | **Company Address** | 你的公司/个人地址 |
 | **City** | 城市名称 |
 | **State/Province** | 省份/州 |
@@ -128,7 +128,7 @@ https://app.sendgrid.com/settings/sender_auth
 ### 3.4 验证邮箱
 
 1. 点击 **"Create"**
-2. SendGrid 会发送验证邮件到 `leolihuanyu@gmail.com`
+2. SendGrid 会发送验证邮件到 `user@example.com`
 3. 打开邮件，点击 **"Verify Single Sender"** 按钮
 4. 验证成功后，状态显示为 **"Verified"** ✅
 
@@ -167,10 +167,10 @@ EMAIL_PROVIDER=sendgrid
 SENDGRID_API_KEY=SG.你的API_Key
 
 # 发件人邮箱（必须与 Step 3 验证的邮箱一致）
-EMAIL_FROM=leolihuanyu@gmail.com
+EMAIL_FROM=user@example.com
 
 # 收件人列表（可选，用于测试）
-EMAIL_TO_LIST=leolihuanyu@gmail.com
+EMAIL_TO_LIST=user@example.com
 ```
 
 **重要配置检查：**
@@ -211,16 +211,16 @@ EMAIL_TO_LIST=leolihuanyu@gmail.com
 
 1. 访问前端订阅页面
 2. 使用 Stripe 测试卡号：`4242 4242 4242 4242`
-3. 填写邮箱：`leolihuanyu@gmail.com`
+3. 填写邮箱：`user@example.com`
 4. 完成支付
 
 #### 检查结果
 
 **A. 查看 Render 日志：**
 ```
-✅ "订阅激活成功: leolihuanyu@gmail.com"
+✅ "订阅激活成功: user@example.com"
 ✅ "SendGrid邮件发送成功"
-✅ "订阅欢迎邮件已发送至: leolihuanyu@gmail.com"
+✅ "订阅欢迎邮件已发送至: user@example.com"
 ```
 
 **B. 检查邮箱：**
@@ -337,12 +337,12 @@ EMAIL_TO_LIST=leolihuanyu@gmail.com
   - [ ] 权限包含 "Mail Send" → "Full Access"
 - [ ] 发件人邮箱已验证
   - [ ] 状态为 "Verified" ✅
-  - [ ] 邮箱为 `leolihuanyu@gmail.com`
+  - [ ] 邮箱为 `user@example.com`
 
 ### Render 环境变量
 - [ ] `EMAIL_PROVIDER=sendgrid`
 - [ ] `SENDGRID_API_KEY=SG.xxxxx`（你的 API Key）
-- [ ] `EMAIL_FROM=leolihuanyu@gmail.com`
+- [ ] `EMAIL_FROM=user@example.com`
 - [ ] 已保存并重启服务
 
 ### 功能测试

@@ -97,7 +97,7 @@ jobs:
 #
 # 1. 必需的 GitHub Secrets：
 #    - DATABASE_URL: PostgreSQL数据库连接字符串
-#      格式: postgresql://user:password@host:5432/database
+#      格式: <DATABASE_URL>
 #
 #    - SMTP_USERNAME: SMTP用户名（Gmail邮箱）
 #    - SMTP_PASSWORD: SMTP密码（Gmail应用专用密码）

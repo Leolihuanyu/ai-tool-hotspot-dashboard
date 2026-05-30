@@ -1,6 +1,6 @@
 # 域名迁移操作清单
 
-将邮件发件人从 `leolihuanyu@gmail.com` 迁移到 `noreply@jereo.co.jp`
+将邮件发件人从 `user@example.com` 迁移到 `noreply@jereo.co.jp`
 
 ## 前置准备
 
@@ -91,7 +91,7 @@ dig s2._domainkey.jereo.co.jp CNAME +short
 ### 9. 更新 Single Sender Verification
 
 - [ ] 在 SendGrid Dashboard → Settings → Sender Authentication
-- [ ] 删除或停用旧的 `leolihuanyu@gmail.com` Single Sender
+- [ ] 删除或停用旧的 `user@example.com` Single Sender
 - [ ] （可选）添加新的 Single Sender：`noreply@jereo.co.jp`
   - 注意：域名认证后，Single Sender 不再必需
 
@@ -108,7 +108,7 @@ dig s2._domainkey.jereo.co.jp CNAME +short
 
 - [ ] 在 Render 恢复旧的环境变量：
   ```
-  EMAIL_FROM=leolihuanyu@gmail.com
+  EMAIL_FROM=user@example.com
   ```
 - [ ] Git revert 代码更改
 - [ ] 重新部署

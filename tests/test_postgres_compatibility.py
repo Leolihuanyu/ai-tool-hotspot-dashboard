@@ -143,7 +143,7 @@ def generate_summary():
 
 2. PostgreSQL 模式:
    DB_TYPE=postgresql
-   DATABASE_URL=postgresql://user:password@host:5432/database
+   DATABASE_URL=<DATABASE_URL>
 """
     print(summary)
 

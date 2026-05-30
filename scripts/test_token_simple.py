@@ -26,7 +26,7 @@ def test_email_generation():
     print("=" * 60)
 
     # 使用现有用户 - 从日志看test_paid@example.com已存在
-    test_email = "leolihuanyu@gmail.com"  # 使用您提到的实际用户
+    test_email = "user@example.com"  # 使用您提到的实际用户
 
     # 获取用户信息
     user = user_manager.get_user(test_email)

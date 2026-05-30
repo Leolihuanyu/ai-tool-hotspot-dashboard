@@ -68,7 +68,7 @@ def _get_postgres_connection():
     if not database_url:
         raise ValueError(
             "DATABASE_URL environment variable is not set. "
-            "Example: postgresql://user:password@host:5432/database"
+            "Example: <DATABASE_URL>"
         )
 
     # 创建PostgreSQL连接

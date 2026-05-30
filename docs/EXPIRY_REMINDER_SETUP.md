@@ -89,7 +89,7 @@ BETA_TRIAL_DAYS=60
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USERNAME=your_email@gmail.com
-SMTP_PASSWORD=your_app_password
+SMTP_PASSWORD=<SMTP_PASSWORD>
 EMAIL_FROM=your_email@gmail.com
 
 # 前端URL（用于邮件中的升级链接）

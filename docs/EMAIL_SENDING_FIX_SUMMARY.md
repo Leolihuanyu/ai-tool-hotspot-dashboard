@@ -85,10 +85,10 @@ python verify_smtp_config.py
 ✅ EMAIL_PROVIDER      = smtp (邮件提供商)
 ✅ SMTP_SERVER         = smtp.gmail.com (SMTP服务器地址)
 ✅ SMTP_PORT           = 587 (SMTP端口)
-✅ SMTP_USERNAME       = leolihuanyu@gmail.com (SMTP用户名)
-✅ SMTP_PASSWORD       = ********atyt (SMTP密码)
+✅ SMTP_USERNAME       = user@example.com (SMTP用户名)
+✅ SMTP_PASSWORD       = <SMTP_PASSWORD_REDACTED> (SMTP密码)
 ✅ SMTP_USE_TLS        = true (是否使用TLS)
-✅ EMAIL_FROM          = leolihuanyu@gmail.com (发件人邮箱)
+✅ EMAIL_FROM          = user@example.com (发件人邮箱)
 
 ✅ 所有环境变量配置完整
 
@@ -102,18 +102,18 @@ python verify_smtp_config.py
 ======================================================================
   🔐 测试SMTP认证
 ======================================================================
-正在使用用户名 leolihuanyu@gmail.com 进行认证...
+正在使用用户名 user@example.com 进行认证...
 ✅ SMTP认证成功
 
 ======================================================================
   📧 发送测试邮件
 ======================================================================
 正在发送测试邮件...
-  发件人: leolihuanyu@gmail.com
-  收件人: leolihuanyu@gmail.com
+  发件人: user@example.com
+  收件人: user@example.com
 ✅ 测试邮件发送成功！
 
-请检查邮箱 leolihuanyu@gmail.com 是否收到测试邮件
+请检查邮箱 user@example.com 是否收到测试邮件
 
 ======================================================================
   📊 验证结果总结
@@ -216,10 +216,10 @@ curl -X POST https://ai-tool-hotspot-dashboard.onrender.com/api/test/send-email 
 ✅ EMAIL_PROVIDER=smtp
 ✅ SMTP_SERVER=smtp.gmail.com
 ✅ SMTP_PORT=587
-✅ SMTP_USERNAME=leolihuanyu@gmail.com
+✅ SMTP_USERNAME=user@example.com
 ✅ SMTP_PASSWORD=你的16位Gmail应用专用密码（无空格）
 ✅ SMTP_USE_TLS=true
-✅ EMAIL_FROM=leolihuanyu@gmail.com
+✅ EMAIL_FROM=user@example.com
 ```
 
 ### 步骤2：验证Gmail应用专用密码

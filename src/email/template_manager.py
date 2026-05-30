@@ -508,7 +508,7 @@ class EmailTemplateManager:
                         {strings.get('company_address', 'Tokyo, Japan')}
                     </p>
                     <p class="unsubscribe-link">
-                        <a href="mailto:{strings.get('support_email', 'leolihuanyu@gmail.com')}?subject=Unsubscribe">
+                        <a href="mailto:{strings.get('support_email', 'user@example.com')}?subject=Unsubscribe">
                             {strings.get('unsubscribe_text', 'Unsubscribe from these emails')}
                         </a>
                     </p>

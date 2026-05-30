@@ -95,7 +95,7 @@ $ python test_db_compatibility.py
 设置环境变量后测试:
 ```bash
 export DB_TYPE=postgresql
-export DATABASE_URL=postgresql://user:password@host:5432/database
+export DATABASE_URL=<DATABASE_URL>
 python test_db_compatibility.py
 ```
 

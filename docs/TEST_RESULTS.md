@@ -264,7 +264,7 @@ git push origin main
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USERNAME=your_email@gmail.com
-SMTP_PASSWORD=your_app_password
+SMTP_PASSWORD=<SMTP_PASSWORD>
 EMAIL_FROM=your_email@gmail.com
 
 # Beta试用期配置（可选）

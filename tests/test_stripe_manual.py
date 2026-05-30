@@ -16,7 +16,7 @@ from datetime import datetime, timezone
 
 # 设置环境变量
 os.environ['DB_TYPE'] = 'postgresql'
-os.environ['DATABASE_URL'] = os.getenv('DATABASE_URL', 'postgresql://postgres.pdezvkbhbynfgqtwaqaw:NG86DDhGUIehlLZ8@aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres')
+os.environ['DATABASE_URL'] = os.getenv('DATABASE_URL', '')
 
 from src.payment.stripe_service import StripeService
 from src.user.user_manager import UserManager

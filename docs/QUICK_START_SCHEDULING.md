@@ -26,7 +26,7 @@ EMAIL_PROVIDER=smtp
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USERNAME=your-email@gmail.com
-SMTP_PASSWORD=your-16-digit-app-password  # 从Google生成
+SMTP_PASSWORD=<SMTP_PASSWORD>  # 从Google生成
 EMAIL_FROM=your-email@gmail.com
 EMAIL_TO_LIST=recipient@example.com
 ```
@@ -241,7 +241,7 @@ EMAIL_PROVIDER=smtp
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USERNAME=your-email@gmail.com
-SMTP_PASSWORD=xxxx-xxxx-xxxx-xxxx  # 16位应用密码
+SMTP_PASSWORD=<SMTP_PASSWORD>  # 16位应用密码
 ```
 
 ### Outlook/Hotmail
@@ -251,7 +251,7 @@ EMAIL_PROVIDER=smtp
 SMTP_HOST=smtp-mail.outlook.com
 SMTP_PORT=587
 SMTP_USERNAME=your-email@outlook.com
-SMTP_PASSWORD=your-password
+SMTP_PASSWORD=<SMTP_PASSWORD>
 ```
 
 ### QQ邮箱

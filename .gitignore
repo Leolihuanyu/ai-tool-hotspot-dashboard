@@ -221,12 +221,21 @@ data/*.db.backup
 data/*.sqlite-journal
 data/temp/
 data/cache/
+data/engagement/
 
 # 但允许提交这些文件（用于Dashboard展示和GitHub Actions数据存储）
 !data/latest.json
 !data/archive/
 
 logs/
+reports/
+screenshots/
+preview_images.html
+test_card.png
+test_report.json
+test_dashboard.html
+test_dashboard_publish.py
+test_simple.py
 
 # 环境变量文件
 .env

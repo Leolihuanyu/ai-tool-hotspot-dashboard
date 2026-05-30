@@ -261,9 +261,9 @@ DATABASE_URL='postgresql://...' python scripts/migrate_add_language_timezone.py 
 在 GitHub 仓库设置中添加：
 
 ```
-DATABASE_URL=postgresql://user:pass@host:5432/db
+DATABASE_URL=<DATABASE_URL>
 SMTP_USERNAME=your@gmail.com
-SMTP_PASSWORD=app-specific-password
+SMTP_PASSWORD=<SMTP_PASSWORD>
 EMAIL_FROM=your@gmail.com
 DASHBOARD_URL=https://ai-tool-hotspot-dashboard.vercel.app
 ```

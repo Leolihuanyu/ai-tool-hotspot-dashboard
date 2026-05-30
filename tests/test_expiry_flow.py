@@ -15,7 +15,7 @@ from datetime import datetime, timedelta, timezone
 
 # 设置PostgreSQL连接
 os.environ['DB_TYPE'] = 'postgresql'
-os.environ['DATABASE_URL'] = os.getenv('DATABASE_URL', 'postgresql://postgres.pdezvkbhbynfgqtwaqaw:NG86DDhGUIehlLZ8@aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres')
+os.environ['DATABASE_URL'] = os.getenv('DATABASE_URL', '')
 
 from src.user.user_manager import UserManager
 from src.auth.token_manager import TokenManager

@@ -8,7 +8,7 @@ from datetime import datetime, timedelta, timezone
 
 # 设置环境变量
 os.environ['DB_TYPE'] = 'postgresql'
-os.environ['DATABASE_URL'] = os.getenv('DATABASE_URL', 'postgresql://postgres.pdezvkbhbynfgqtwaqaw:NG86DDhGUIehlLZ8@aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres')
+os.environ['DATABASE_URL'] = os.getenv('DATABASE_URL', '')
 
 from src.email.expiry_reminder import ExpiryReminderService
 
@@ -23,7 +23,7 @@ def send_test_email():
     # 创建一个模拟用户
     test_user = {
         "id": 999,
-        "email": "leolihuanyu@gmail.com",
+        "email": "user@example.com",
         "subscription_type": "beta",
         "free_until": (datetime.now(timezone.utc) + timedelta(days=14)).isoformat(),
         "created_at": datetime.now(timezone.utc).isoformat()

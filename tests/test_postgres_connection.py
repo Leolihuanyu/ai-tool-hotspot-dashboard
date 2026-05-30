@@ -8,7 +8,7 @@ import sys
 
 # 设置 PostgreSQL 连接
 os.environ['DB_TYPE'] = 'postgresql'
-os.environ['DATABASE_URL'] = 'postgresql://postgres.pdezvkbhbynfgqtwaqaw:NG86DDhGUIehlLZ8@aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres'
+os.environ['DATABASE_URL'] = os.getenv('DATABASE_URL', '')
 
 # 导入数据库连接模块
 from src.database.connection import get_connection, get_db_type

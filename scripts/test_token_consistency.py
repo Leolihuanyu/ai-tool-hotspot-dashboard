@@ -26,7 +26,7 @@ def test_token_consistency():
     print("=" * 60)
 
     # 使用真实用户测试
-    test_email = "leolihuanyu@gmail.com"
+    test_email = "user@example.com"
 
     # 获取初始状态
     user = user_manager.get_user(test_email)

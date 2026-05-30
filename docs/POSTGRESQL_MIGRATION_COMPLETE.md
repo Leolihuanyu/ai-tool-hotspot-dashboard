@@ -83,7 +83,7 @@ PostgreSQL 数据库包含以下 10 个表:
 ```ini
 # .env
 DB_TYPE=postgresql
-DATABASE_URL=postgresql://postgres.pdezvkbhbynfgqtwaqaw:[PASSWORD]@aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres
+DATABASE_URL=<DATABASE_URL>
 ```
 
 ### 本地开发 (SQLite)
@@ -147,7 +147,7 @@ else:
 
 ### 1. DNS 解析失败
 
-**问题**: `db.pdezvkbhbynfgqtwaqaw.supabase.co` 无法解析
+**问题**: `db.<SUPABASE_PROJECT_REF>.supabase.co` 无法解析
 
 **解决**:
 - 从 Supabase Dashboard 获取 **Connection Pooling** (不是 Direct Connection)
@@ -224,7 +224,7 @@ else:
 
 ## 资源链接
 
-- **Supabase Dashboard**: https://supabase.com/dashboard/project/pdezvkbhbynfgqtwaqaw
+- **Supabase Dashboard**: https://supabase.com/dashboard/project/<SUPABASE_PROJECT_REF>
 - **连接指南**: `docs/SUPABASE_CONNECTION_GUIDE.md`
 - **测试脚本**: `test_postgres_connection.py`, `test_postgres_crud.py`, `init_postgres_db.py`
 - **兼容性修复报告**: `docs/DB_COMPATIBILITY_FIX_REPORT.md`

@@ -157,7 +157,7 @@ python your_script.py
 
 ```bash
 export DB_TYPE=postgresql
-export DATABASE_URL=postgresql://username:password@localhost:5432/database
+export DATABASE_URL=<DATABASE_URL>
 python your_script.py
 ```
 
@@ -188,7 +188,7 @@ python -m pytest tests/
 
 # 测试 PostgreSQL 模式
 export DB_TYPE=postgresql
-export DATABASE_URL=postgresql://test:test@localhost:5432/test_db
+export DATABASE_URL=<TEST_DATABASE_URL>
 python -m pytest tests/
 ```
 

@@ -5,10 +5,14 @@
 
 import os
 import sys
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT_ROOT))
 
 # 设置环境变量
 os.environ['DB_TYPE'] = 'postgresql'
-os.environ['DATABASE_URL'] = os.getenv('DATABASE_URL', 'postgresql://postgres.pdezvkbhbynfgqtwaqaw:NG86DDhGUIehlLZ8@aws-1-ap-northeast-1.pooler.supabase.com:5432/postgres')
+os.environ['DATABASE_URL'] = os.getenv('DATABASE_URL', '')
 
 from src.user.user_manager import UserManager
 
@@ -98,8 +102,8 @@ def verify_user(email: str):
 def main():
     """主函数"""
     if len(sys.argv) < 2:
-        print("用法: python verify_payment.py <email>")
-        print("例如: python verify_payment.py test_stripe_manual@example.com")
+        print("用法: python scripts/manual/verify_payment.py <email>")
+        print("例如: python scripts/manual/verify_payment.py test_stripe_manual@example.com")
         return 1
 
     email = sys.argv[1]
